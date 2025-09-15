@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio Creative Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">CARREGANDO...</p>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <div class="nav-brand">
+            <h1>CREATIVE STUDIO</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#about">Sobre</a>
+            <a href="#contact">Contato</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2 class="hero-subtitle">ESCOLHA SEU PORTFÓLIO</h2>
+            <div class="portfolio-options">
+                <div class="portfolio-card" id="music-portfolio">
+                    <div class="card-content">
+                        <div class="card-icon">🎵</div>
+                        <h3>Produção Musical</h3>
+                        <p>Explore beats, mixagens e composições exclusivas</p>
+                        <button class="enter-btn" data-portfolio="music">
+                            <span>ENTRAR</span>
+                            <div class="btn-arrow">→</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="portfolio-card" id="visual-portfolio">
+                    <div class="card-content">
+                        <div class="card-icon">🎨</div>
+                        <h3>Visualizers</h3>
+                        <p>Descubra experiências visuais imersivas</p>
+                        <button class="enter-btn" data-portfolio="visual">
+                            <span>ENTRAR</span>
+                            <div class="btn-arrow">→</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Portfolio Section -->
+    <section class="portfolio-section hidden" id="music-section">
+        <div class="portfolio-header">
+            <button class="back-btn" id="back-to-home">← Voltar</button>
+            <h2>Produção Musical</h2>
+        </div>
+        
+        <div class="projects-grid">
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/1a1a1a/ffffff?text=Beat+1" alt="Beat Trap Modern">
+                </div>
+                <div class="project-info">
+                    <h3>Beat Trap Modern</h3>
+                    <p>Produção instrumental com elementos modernos</p>
+                    <div class="project-tags">
+                        <span>Trap</span>
+                        <span>Hip-Hop</span>
+                    </div>
+                    <button class="play-btn">▶ PLAY</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/2a2a2a/ffffff?text=Ambient+Chill" alt="Ambient Chill">
+                </div>
+                <div class="project-info">
+                    <h3>Ambient Chill</h3>
+                    <p>Atmosfera relaxante com texturas sonoras</p>
+                    <div class="project-tags">
+                        <span>Ambient</span>
+                        <span>Chill</span>
+                    </div>
+                    <button class="play-btn">▶ PLAY</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/3a3a3a/ffffff?text=Electronic+Fusion" alt="Electronic Fusion">
+                </div>
+                <div class="project-info">
+                    <h3>Electronic Fusion</h3>
+                    <p>Fusão de elementos eletrônicos e orgânicos</p>
+                    <div class="project-tags">
+                        <span>Electronic</span>
+                        <span>Fusion</span>
+                    </div>
+                    <button class="play-btn">▶ PLAY</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/4a4a4a/ffffff?text=Synthwave+Retro" alt="Synthwave Retro">
+                </div>
+                <div class="project-info">
+                    <h3>Synthwave Retro</h3>
+                    <p>Sonoridades nostálgicas dos anos 80</p>
+                    <div class="project-tags">
+                        <span>Synthwave</span>
+                        <span>Retro</span>
+                    </div>
+                    <button class="play-btn">▶ PLAY</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Portfolio Section -->
+    <section class="portfolio-section hidden" id="visual-section">
+        <div class="portfolio-header">
+            <button class="back-btn" id="back-to-home-visual">← Voltar</button>
+            <h2>Visualizers</h2>
+        </div>
+        
+        <div class="projects-grid">
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/ff6b6b/ffffff?text=Particle+Flow" alt="Particle Flow">
+                </div>
+                <div class="project-info">
+                    <h3>Particle Flow</h3>
+                    <p>Sistema de partículas reativo ao áudio</p>
+                    <div class="project-tags">
+                        <span>WebGL</span>
+                        <span>Audio Reactive</span>
+                    </div>
+                    <button class="view-btn">VER PROJETO</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/4ecdc4/ffffff?text=Geometric+Waves" alt="Geometric Waves">
+                </div>
+                <div class="project-info">
+                    <h3>Geometric Waves</h3>
+                    <p>Formas geométricas em movimento fluido</p>
+                    <div class="project-tags">
+                        <span>Three.js</span>
+                        <span>Animation</span>
+                    </div>
+                    <button class="view-btn">VER PROJETO</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/45b7d1/ffffff?text=Spectrum+Analyzer" alt="Spectrum Analyzer">
+                </div>
+                <div class="project-info">
+                    <h3>Spectrum Analyzer</h3>
+                    <p>Visualização em tempo real do espectro sonoro</p>
+                    <div class="project-tags">
+                        <span>Canvas</span>
+                        <span>Real-time</span>
+                    </div>
+                    <button class="view-btn">VER PROJETO</button>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-image">
+                    <img src="https://via.placeholder.com/400x300/f9ca24/ffffff?text=Fluid+Dynamics" alt="Fluid Dynamics">
+                </div>
+                <div class="project-info">
+                    <h3>Fluid Dynamics</h3>
+                    <p>Simulação de fluidos com interação do usuário</p>
+                    <div class="project-tags">
+                        <span>Shader</span>
+                        <span>Interactive</span>
+                    </div>
+                    <button class="view-btn">VER PROJETO</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section hidden" id="about">
+        <div class="about-content">
+            <h2>Sobre</h2>
+            <p>Creative Studio é um espaço dedicado à criação de experiências sonoras e visuais únicas. Combinamos produção musical de alta qualidade com visualizações interativas inovadoras.</p>
+            <div class="skills">
+                <div class="skill-category">
+                    <h3>Produção Musical</h3>
+                    <ul>
+                        <li>Composição e Arranjo</li>
+                        <li>Mixagem e Masterização</li>
+                        <li>Sound Design</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h3>Visualizers</h3>
+                    <ul>
+                        <li>WebGL e Three.js</li>
+                        <li>Shaders Customizados</li>
+                        <li>Interação Audio-Visual</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section hidden" id="contact">
+        <div class="contact-content">
+            <h2>Contato</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <a href="mailto:hello@creativestudio.com">hello@creativestudio.com</a>
+                </div>
+                <div class="contact-item">
+                    <h3>Social</h3>
+                    <div class="social-links">
+                        <a href="#" target="_blank">Instagram</a>
+                        <a href="#" target="_blank">SoundCloud</a>
+                        <a href="#" target="_blank">YouTube</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Background Animation -->
+    <canvas id="background-canvas"></canvas>
+    
+    <!-- Cinematic Elements -->
+    <div class="cinematic-bars">
+        <div class="bar top-bar"></div>
+        <div class="bar bottom-bar"></div>
+    </div>
+    
+    <!-- Light Rays -->
+    <div class="light-rays">
+        <div class="ray ray-1"></div>
+        <div class="ray ray-2"></div>
+        <div class="ray ray-3"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
