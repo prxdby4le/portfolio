@@ -253,9 +253,12 @@ body::before {
 
 .portfolio-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
     margin-top: 40px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .portfolio-card {
@@ -608,7 +611,7 @@ body::before {
     font-weight: 500;
 }
 
-.play-btn, .view-btn {
+.play-btn, .view-btn, .watch-btn {
     background: 
         linear-gradient(45deg, rgba(255, 107, 107, 0.9), rgba(78, 205, 196, 0.9)),
         linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
@@ -630,7 +633,13 @@ body::before {
     z-index: 2;
 }
 
-.play-btn::before, .view-btn::before {
+.watch-btn {
+    background: 
+        linear-gradient(45deg, rgba(108, 92, 231, 0.9), rgba(162, 155, 254, 0.9)),
+        linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+}
+
+.play-btn::before, .view-btn::before, .watch-btn::before {
     content: '';
     position: absolute;
     top: 0;
@@ -641,7 +650,7 @@ body::before {
     transition: left 0.8s ease;
 }
 
-.play-btn:hover::before, .view-btn:hover::before {
+.play-btn:hover::before, .view-btn:hover::before, .watch-btn:hover::before {
     left: 100%;
 }
 
@@ -650,6 +659,16 @@ body::before {
     box-shadow: 
         0 15px 35px rgba(255, 107, 107, 0.4),
         0 5px 15px rgba(78, 205, 196, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.watch-btn:hover {
+    transform: scale(1.08) perspective(1000px) rotateX(5deg);
+    box-shadow: 
+        0 15px 35px rgba(108, 92, 231, 0.4),
+        0 5px 15px rgba(162, 155, 254, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
     border-color: rgba(255, 255, 255, 0.6);
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
@@ -789,6 +808,95 @@ body::after {
     100% { transform: translate(0, 0) scale(1); }
 }
 
+/* Cinematic Bars */
+.cinematic-bars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.8) 100%);
+    opacity: 0.7;
+}
+
+.top-bar {
+    top: 0;
+    background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.bottom-bar {
+    bottom: 0;
+    background: linear-gradient(0deg, #000 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+/* Light Rays */
+.light-rays {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.ray {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, rgba(78, 205, 196, 0.3) 50%, transparent 100%);
+    animation: rayMove 8s linear infinite;
+}
+
+.ray-1 {
+    left: 20%;
+    animation-delay: 0s;
+    background: linear-gradient(180deg, transparent 0%, rgba(78, 205, 196, 0.2) 50%, transparent 100%);
+}
+
+.ray-2 {
+    left: 60%;
+    animation-delay: -3s;
+    background: linear-gradient(180deg, transparent 0%, rgba(255, 107, 107, 0.2) 50%, transparent 100%);
+}
+
+.ray-3 {
+    left: 80%;
+    animation-delay: -6s;
+    background: linear-gradient(180deg, transparent 0%, rgba(162, 155, 254, 0.2) 50%, transparent 100%);
+}
+
+@keyframes rayMove {
+    0% { 
+        transform: translateX(-10px) scaleY(0.8);
+        opacity: 0.1;
+    }
+    50% { 
+        transform: translateX(10px) scaleY(1.2);
+        opacity: 0.3;
+    }
+    100% { 
+        transform: translateX(-10px) scaleY(0.8);
+        opacity: 0.1;
+    }
+}
+
+/* Video Modal Animations */
+@keyframes trailFade {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.5); }
+}
+
 /* Cinematic Elements */
 .cinematic-bars {
     position: fixed;
@@ -870,6 +978,13 @@ body::after {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .portfolio-options {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
+
 @media (max-width: 768px) {
     .main-nav {
         padding: 15px 20px;
@@ -934,6 +1049,11 @@ body::after {
     .skills {
         grid-template-columns: 1fr;
         gap: 30px;
+    }
+    
+    .portfolio-options {
+        grid-template-columns: 1fr;
+        gap: 25px;
     }
     
     .contact-info {
