@@ -15,9 +15,12 @@ const backgroundCanvas = document.getElementById('background-canvas');
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize intro animations immediately
+    initIntroAnimations();
     initializeApp();
     setupEventListeners();
     initBackgroundAnimation();
+    initCustomCursor();
 });
 
 // Initialize Application
@@ -35,6 +38,25 @@ function initializeApp() {
         }
         loadingProgress.style.width = progress + '%';
     }, 100);
+}
+
+// Initialize intro state immediately
+function initIntroAnimations() {
+    const nav = document.querySelector('.main-nav');
+    const heroContent = document.querySelector('.hero-content');
+    const cards = document.querySelectorAll('.portfolio-card');
+    
+    // Set initial hidden states
+    nav.style.transform = 'translateY(-100%)';
+    nav.style.opacity = '0';
+    
+    heroContent.style.transform = 'scale(0.9) translateY(30px)';
+    heroContent.style.opacity = '0';
+    
+    cards.forEach(card => {
+        card.style.transform = 'translateY(60px) rotateX(15deg)';
+        card.style.opacity = '0';
+    });
 }
 
 // Hide Loading Screen
@@ -327,23 +349,175 @@ function setupProjectButtons() {
     });
 }
 
+// Playlist Data
+const playlistData = {
+    'Beat Trap Modern': {
+        genre: 'Trap',
+        tracks: [
+            { name: 'Dark Trap Beat', artist: 'prxdby4le', duration: '3:24' },
+            { name: 'Heavy 808s', artist: 'prxdby4le', duration: '2:58' },
+            { name: 'Melodic Trap', artist: 'prxdby4le', duration: '3:12' },
+            { name: 'Street Vibes', artist: 'prxdby4le', duration: '2:45' },
+            { name: 'Trap Symphonic', artist: 'prxdby4le', duration: '3:35' }
+        ]
+    },
+    'Ambient Chill': {
+        genre: 'Ambient',
+        tracks: [
+            { name: 'Floating Dreams', artist: 'prxdby4le', duration: '4:22' },
+            { name: 'Ethereal Waves', artist: 'prxdby4le', duration: '5:10' },
+            { name: 'Cosmic Drift', artist: 'prxdby4le', duration: '3:45' },
+            { name: 'Peaceful Mind', artist: 'prxdby4le', duration: '4:18' },
+            { name: 'Aurora Sounds', artist: 'prxdby4le', duration: '3:52' }
+        ]
+    },
+    'Electronic Fusion': {
+        genre: 'Electronic',
+        tracks: [
+            { name: 'Synth Paradise', artist: 'prxdby4le', duration: '3:28' },
+            { name: 'Digital Pulse', artist: 'prxdby4le', duration: '3:15' },
+            { name: 'Future Bass Drop', artist: 'prxdby4le', duration: '2:55' },
+            { name: 'Electronica Mix', artist: 'prxdby4le', duration: '3:40' },
+            { name: 'Cyber Rhythm', artist: 'prxdby4le', duration: '3:08' }
+        ]
+    },
+    'Synthwave Retro': {
+        genre: 'Synthwave',
+        tracks: [
+            { name: 'Neon Nights', artist: 'prxdby4le', duration: '3:55' },
+            { name: 'Retro Drive', artist: 'prxdby4le', duration: '3:32' },
+            { name: '80s Revival', artist: 'prxdby4le', duration: '3:18' },
+            { name: 'Vapor Dreams', artist: 'prxdby4le', duration: '4:05' },
+            { name: 'Synthetic Love', artist: 'prxdby4le', duration: '3:25' }
+        ]
+    }
+};
+
+// Playlist State
+let currentPlaylist = [];
+let currentTrackIndex = 0;
+let isPlaying = false;
+
 // Play Audio Function
 function playAudio(projectName) {
-    // Create a visual feedback for the play action
-    const button = event.target;
-    const originalText = button.textContent;
+    openPlaylist(projectName);
+    showNotification(`Abrindo playlist: ${projectName}`);
+}
+
+// Open Playlist Modal
+function openPlaylist(projectName) {
+    const modal = document.getElementById('playlist-modal');
+    const playlistTitle = document.getElementById('playlist-title');
+    const playlistTracks = document.getElementById('playlist-tracks');
     
-    button.textContent = '⏸ PLAYING';
-    button.style.background = 'linear-gradient(45deg, #4ecdc4, #45b7d1)';
+    // Get playlist data
+    const playlist = playlistData[projectName];
+    if (!playlist) return;
     
-    // Simulate audio playing
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
-    }, 3000);
+    // Set current playlist
+    currentPlaylist = playlist.tracks;
+    currentTrackIndex = 0;
     
-    // Show notification
-    showNotification(`Reproduzindo: ${projectName}`);
+    // Update title
+    playlistTitle.textContent = `Playlist - ${playlist.genre}`;
+    
+    // Generate tracks HTML
+    const tracksHTML = playlist.tracks.map((track, index) => `
+        <div class="track-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+            <span class="track-number">${(index + 1).toString().padStart(2, '0')}</span>
+            <div class="track-info">
+                <h5>${track.name}</h5>
+                <p>${track.artist}</p>
+            </div>
+            <span class="track-duration">${track.duration}</span>
+        </div>
+    `).join('');
+    
+    playlistTracks.innerHTML = tracksHTML;
+    
+    // Update now playing
+    updateNowPlaying();
+    
+    // Show modal
+    modal.classList.add('active');
+    
+    // Add event listeners to tracks
+    document.querySelectorAll('.track-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            selectTrack(index);
+        });
+    });
+}
+
+// Update Now Playing Display
+function updateNowPlaying() {
+    const currentTrack = document.getElementById('current-track');
+    const currentArtist = document.getElementById('current-artist');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    
+    if (currentPlaylist.length > 0) {
+        const track = currentPlaylist[currentTrackIndex];
+        currentTrack.textContent = track.name;
+        currentArtist.textContent = track.artist;
+    }
+    
+    playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+}
+
+// Select Track
+function selectTrack(index) {
+    currentTrackIndex = index;
+    
+    // Update active track
+    document.querySelectorAll('.track-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+    });
+    
+    // Update now playing
+    updateNowPlaying();
+    
+    // Auto play
+    if (!isPlaying) {
+        togglePlayPause();
+    }
+}
+
+// Toggle Play/Pause
+function togglePlayPause() {
+    isPlaying = !isPlaying;
+    updateNowPlaying();
+    
+    if (isPlaying) {
+        showNotification(`Reproduzindo: ${currentPlaylist[currentTrackIndex].name}`);
+    } else {
+        showNotification('Pausado');
+    }
+}
+
+// Next Track
+function nextTrack() {
+    if (currentTrackIndex < currentPlaylist.length - 1) {
+        selectTrack(currentTrackIndex + 1);
+    } else {
+        selectTrack(0); // Loop to first track
+    }
+}
+
+// Previous Track
+function prevTrack() {
+    if (currentTrackIndex > 0) {
+        selectTrack(currentTrackIndex - 1);
+    } else {
+        selectTrack(currentPlaylist.length - 1); // Loop to last track
+    }
+}
+
+// Close Playlist
+function closePlaylist() {
+    const modal = document.getElementById('playlist-modal');
+    modal.classList.remove('active');
+    isPlaying = false;
 }
 
 // View Project Function
@@ -543,166 +717,315 @@ function initBackgroundAnimation() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Enhanced particles array
+    // Minimal particles array
     const particles = [];
-    const particleCount = 80;
-    const connectionDistance = 120;
-    let mouse = { x: 0, y: 0 };
+    const particleCount = 12; // Very minimal
+    const connectionDistance = 150;
+    let mouse = { 
+        x: window.innerWidth / 2, 
+        y: window.innerHeight / 2, 
+        isMoving: false,
+        lastX: 0,
+        lastY: 0,
+        velocity: { x: 0, y: 0 }
+    };
+    
+    // Interactive mouse effects
+    let mouseInfluenceRadius = 150;
+    let mouseParticles = [];
+    let isMousePressed = false;
     
     // Mouse tracking for cinematic effects
     document.addEventListener('mousemove', (e) => {
+        // Calculate velocity
+        mouse.velocity.x = e.clientX - mouse.lastX;
+        mouse.velocity.y = e.clientY - mouse.lastY;
+        
+        mouse.lastX = mouse.x;
+        mouse.lastY = mouse.y;
         mouse.x = e.clientX;
         mouse.y = e.clientY;
+        mouse.isMoving = true;
+        
+        // Create mouse trail particles
+        if (Math.abs(mouse.velocity.x) > 2 || Math.abs(mouse.velocity.y) > 2) {
+            createMouseTrailParticle();
+        }
+        
+        // Reset moving state after a delay
+        clearTimeout(mouse.moveTimeout);
+        mouse.moveTimeout = setTimeout(() => {
+            mouse.isMoving = false;
+        }, 100);
     });
     
-    // Enhanced Cinematic Particle class
-    class CinematicParticle {
+    // Mouse click effects
+    document.addEventListener('mousedown', (e) => {
+        isMousePressed = true;
+        createMouseClickEffect(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isMousePressed = false;
+    });
+    
+    // Remove continuous effects for minimal design
+    
+    // Mouse leave - reduce influence
+    document.addEventListener('mouseleave', () => {
+        mouse.isMoving = false;
+        mouseInfluenceRadius = 0;
+    });
+    
+    document.addEventListener('mouseenter', () => {
+        mouseInfluenceRadius = 150;
+    });
+    
+    // Minimal Particle class
+    class MinimalParticle {
         constructor() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.8;
-            this.vy = (Math.random() - 0.5) * 0.8;
-            this.size = Math.random() * 3 + 1;
-            this.opacity = Math.random() * 0.6 + 0.2;
-            this.color = this.getRandomColor();
-            this.pulseSpeed = Math.random() * 0.02 + 0.01;
-            this.pulse = 0;
-            this.trail = [];
-            this.maxTrailLength = 5;
+            this.vx = (Math.random() - 0.5) * 0.1; // Very slow movement
+            this.vy = (Math.random() - 0.5) * 0.1;
+            this.size = Math.random() * 1 + 0.3; // Very small particles
+            this.opacity = Math.random() * 0.2 + 0.05; // Very subtle
+            this.originalOpacity = this.opacity;
+            this.pulseSpeed = Math.random() * 0.005 + 0.002; // Very slow pulse
+            this.pulse = Math.random() * Math.PI * 2;
+            this.driftAngle = Math.random() * Math.PI * 2;
+            this.driftSpeed = Math.random() * 0.0003 + 0.0001;
         }
         
-        getRandomColor() {
-            const colors = [
-                { r: 255, g: 255, b: 255 },
-                { r: 78, g: 205, b: 196 },
-                { r: 255, g: 107, b: 107 },
-                { r: 120, g: 119, b: 198 }
-            ];
-            return colors[Math.floor(Math.random() * colors.length)];
+        getColor() {
+            return { r: 78, g: 205, b: 196 }; // Single minimal color
         }
         
         update() {
-            // Mouse interaction
+            // Minimal drift animation
+            this.driftAngle += this.driftSpeed;
+            const driftX = Math.sin(this.driftAngle) * 0.05;
+            const driftY = Math.cos(this.driftAngle * 0.8) * 0.05;
+            
+            // Very subtle mouse interaction
             const dx = mouse.x - this.x;
             const dy = mouse.y - this.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            if (distance < 150) {
-                const force = (150 - distance) / 150;
-                this.vx += (dx / distance) * force * 0.1;
-                this.vy += (dy / distance) * force * 0.1;
+            if (distance < 100 && mouse.isMoving) {
+                const force = (100 - distance) / 100;
+                this.opacity = Math.min(this.opacity + force * 0.1, 0.3);
+            } else {
+                this.opacity = Math.max(this.opacity - 0.005, this.originalOpacity);
             }
             
-            // Apply some friction
-            this.vx *= 0.99;
-            this.vy *= 0.99;
-            
-            // Add to trail
-            this.trail.push({ x: this.x, y: this.y });
-            if (this.trail.length > this.maxTrailLength) {
-                this.trail.shift();
-            }
-            
-            this.x += this.vx;
-            this.y += this.vy;
+            // Apply minimal movement
+            this.x += this.vx + driftX;
+            this.y += this.vy + driftY;
             
             // Pulse effect
             this.pulse += this.pulseSpeed;
             
-            // Wrap around screen
-            if (this.x < -50) this.x = canvas.width + 50;
-            if (this.x > canvas.width + 50) this.x = -50;
-            if (this.y < -50) this.y = canvas.height + 50;
-            if (this.y > canvas.height + 50) this.y = -50;
+            // Screen wrapping
+            if (this.x < -10) this.x = canvas.width + 10;
+            if (this.x > canvas.width + 10) this.x = -10;
+            if (this.y < -10) this.y = canvas.height + 10;
+            if (this.y > canvas.height + 10) this.y = -10;
         }
         
         draw() {
-            // Draw trail
-            this.trail.forEach((point, index) => {
-                const trailOpacity = (index / this.trail.length) * this.opacity * 0.3;
-                const trailSize = this.size * (index / this.trail.length) * 0.5;
-                
-                ctx.beginPath();
-                ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${trailOpacity})`;
-                ctx.fill();
-            });
+            const color = this.getColor();
+            const pulseEffect = Math.sin(this.pulse) * 0.1;
+            const currentOpacity = this.opacity + pulseEffect * 0.05;
             
-            // Draw main particle with glow
-            const glowSize = this.size + Math.sin(this.pulse) * 2;
-            const currentOpacity = this.opacity + Math.sin(this.pulse) * 0.2;
-            
-            // Outer glow
+            // Single minimal dot
             ctx.beginPath();
-            ctx.arc(this.x, this.y, glowSize * 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${currentOpacity * 0.1})`;
-            ctx.fill();
-            
-            // Inner particle
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${currentOpacity})`;
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${currentOpacity})`;
             ctx.fill();
         }
     }
     
-    // Initialize cinematic particles
+    // Initialize minimal particles
     for (let i = 0; i < particleCount; i++) {
-        particles.push(new CinematicParticle());
+        particles.push(new MinimalParticle());
+    }
+    
+    // Mouse Trail Particle Class
+    class MouseTrailParticle {
+        constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx * 0.1;
+            this.vy = vy * 0.1;
+            this.size = Math.random() * 4 + 2;
+            this.opacity = 1;
+            this.life = 1;
+            this.decay = Math.random() * 0.02 + 0.02;
+            this.color = {
+                r: 78 + Math.random() * 50,
+                g: 205 + Math.random() * 50,
+                b: 196 + Math.random() * 50
+            };
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vx;
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+            this.life -= this.decay;
+            this.opacity = this.life;
+            this.size *= 0.99;
+        }
+        
+        draw() {
+            if (this.life <= 0) return;
+            
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+            ctx.fill();
+            
+            // Glow effect
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity * 0.3})`;
+            ctx.fill();
+        }
+    }
+    
+    // Create mouse trail particle
+    function createMouseTrailParticle() {
+        if (mouseParticles.length > 15) { // Reduced max particles
+            mouseParticles.shift();
+        }
+        
+        // No mouse trail for minimal design
+    }
+    
+    // Create subtle sparkle near mouse
+    function createMouseSparkle() {
+        const sparkle = new MouseTrailParticle(
+            mouse.x + (Math.random() - 0.5) * 30,
+            mouse.y + (Math.random() - 0.5) * 30,
+            (Math.random() - 0.5) * 2,
+            (Math.random() - 0.5) * 2
+        );
+        sparkle.size = Math.random() * 1.5 + 0.5;
+        sparkle.decay = 0.05;
+        sparkle.color = {
+            r: 78 + Math.random() * 30,
+            g: 205 + Math.random() * 30,
+            b: 196 + Math.random() * 30
+        };
+        mouseParticles.push(sparkle);
+    }
+    
+    // Minimal click effect
+    function createMouseClickEffect(x, y) {
+        // Only create a simple ripple
+        createRippleEffect(x, y);
+    }
+    
+    // Ripple Effect
+    let ripples = [];
+    
+    function createRippleEffect(x, y) {
+        ripples.push({
+            x: x,
+            y: y,
+            radius: 0,
+            opacity: 0.3,
+            maxRadius: 50
+        });
+    }
+    
+    function updateRipples() {
+        ripples = ripples.filter(ripple => {
+            ripple.radius += 2;
+            ripple.opacity = 0.3 * (1 - ripple.radius / ripple.maxRadius);
+            
+            if (ripple.opacity > 0) {
+                // Single minimal ripple
+                ctx.beginPath();
+                ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(78, 205, 196, ${ripple.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                return true;
+            }
+            return false;
+        });
     }
     
     // Animation loop
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Update and draw particles
+        // Update and draw main particles
         particles.forEach(particle => {
             particle.update();
             particle.draw();
         });
         
+        // Update and draw mouse trail particles
+        mouseParticles = mouseParticles.filter(particle => {
+            particle.update();
+            particle.draw();
+            return particle.life > 0;
+        });
+        
         // Draw connections
         drawConnections();
+        
+        // Draw mouse interactions
+        drawMouseEffects();
+        
+        // Update ripples
+        updateRipples();
         
         requestAnimationFrame(animate);
     }
     
-    // Enhanced cinematic connections
+    // Minimal mouse effects
+    function drawMouseEffects() {
+        // Only very subtle glow when moving
+        if (mouse.isMoving) {
+            const glowRadius = 30;
+            const gradient = ctx.createRadialGradient(
+                mouse.x, mouse.y, 0,
+                mouse.x, mouse.y, glowRadius
+            );
+            
+            gradient.addColorStop(0, 'rgba(78, 205, 196, 0.02)');
+            gradient.addColorStop(1, 'rgba(78, 205, 196, 0)');
+            
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, glowRadius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+    }
+    
+    // Minimal connections - only draw very few
     function drawConnections() {
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
+        for (let i = 0; i < particles.length; i += 2) { // Skip every other particle
+            for (let j = i + 2; j < particles.length; j += 2) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < connectionDistance) {
-                    const opacity = 0.3 * (1 - distance / connectionDistance);
-                    
-                    // Create gradient line
-                    const gradient = ctx.createLinearGradient(
-                        particles[i].x, particles[i].y,
-                        particles[j].x, particles[j].y
-                    );
-                    
-                    gradient.addColorStop(0, `rgba(${particles[i].color.r}, ${particles[i].color.g}, ${particles[i].color.b}, ${opacity})`);
-                    gradient.addColorStop(1, `rgba(${particles[j].color.r}, ${particles[j].color.g}, ${particles[j].color.b}, ${opacity})`);
+                    const opacity = 0.05 * (1 - distance / connectionDistance);
                     
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = gradient;
-                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = `rgba(78, 205, 196, ${opacity})`;
+                    ctx.lineWidth = 0.5;
                     ctx.stroke();
-                    
-                    // Add glow effect to connections
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(78, 205, 196, ${opacity * 0.5})`;
-                    ctx.lineWidth = 4;
-                    ctx.globalCompositeOperation = 'lighter';
-                    ctx.stroke();
-                    ctx.globalCompositeOperation = 'source-over';
                 }
             }
         }
@@ -721,9 +1044,9 @@ window.addEventListener('popstate', function(e) {
     }
 });
 
-// Mouse movement effect for cards
+// Enhanced mouse movement effect for cards
 document.addEventListener('mousemove', function(e) {
-    const cards = document.querySelectorAll('.portfolio-card');
+    const cards = document.querySelectorAll('.portfolio-card, .project-item');
     
     cards.forEach(card => {
         const rect = card.getBoundingClientRect();
@@ -736,16 +1059,84 @@ document.addEventListener('mousemove', function(e) {
         const deltaX = (x - centerX) / centerX;
         const deltaY = (y - centerY) / centerY;
         
-        const rotateX = deltaY * 5;
-        const rotateY = deltaX * 5;
+        const rotateX = deltaY * 8;
+        const rotateY = deltaX * 8;
         
         if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            // Enhanced 3D transform
+            card.style.transform = `
+                perspective(1000px) 
+                rotateX(${rotateX}deg) 
+                rotateY(${rotateY}deg) 
+                translateY(-15px) 
+                scale(1.02)
+            `;
+            
+            // Add dynamic glow effect
+            const glowIntensity = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+            card.style.boxShadow = `
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 ${30 + glowIntensity * 20}px rgba(78, 205, 196, ${0.2 + glowIntensity * 0.3}),
+                inset 0 1px 0 rgba(255, 255, 255, ${0.1 + glowIntensity * 0.2})
+            `;
+            
+            // Create light streak effect
+            createLightStreak(card, deltaX, deltaY);
+            
         } else {
-            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)';
+            card.style.boxShadow = '';
+            removeLightStreak(card);
         }
     });
 });
+
+// Light streak effect functions
+function createLightStreak(card, deltaX, deltaY) {
+    let streak = card.querySelector('.light-streak');
+    if (!streak) {
+        streak = document.createElement('div');
+        streak.className = 'light-streak';
+        streak.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                ${Math.atan2(deltaY, deltaX) * 180 / Math.PI + 90}deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(78, 205, 196, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%
+            );
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        card.appendChild(streak);
+    }
+    
+    streak.style.opacity = Math.max(Math.abs(deltaX), Math.abs(deltaY)) * 0.8;
+    streak.style.background = `linear-gradient(
+        ${Math.atan2(deltaY, deltaX) * 180 / Math.PI + 90}deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 45%,
+        rgba(78, 205, 196, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 55%,
+        transparent 100%
+    )`;
+}
+
+function removeLightStreak(card) {
+    const streak = card.querySelector('.light-streak');
+    if (streak) {
+        streak.style.opacity = '0';
+    }
+}
 
 // Smooth scrolling for project grid
 function setupSmoothScrolling() {
@@ -767,6 +1158,46 @@ function setupSmoothScrolling() {
 
 // Initialize smooth scrolling after DOM is loaded
 document.addEventListener('DOMContentLoaded', setupSmoothScrolling);
+
+// Initialize Playlist Controls
+document.addEventListener('DOMContentLoaded', function() {
+    // Close playlist button
+    document.getElementById('close-playlist').addEventListener('click', closePlaylist);
+    
+    // Player controls
+    document.getElementById('play-pause-btn').addEventListener('click', togglePlayPause);
+    document.getElementById('next-btn').addEventListener('click', nextTrack);
+    document.getElementById('prev-btn').addEventListener('click', prevTrack);
+    
+    // Close playlist when clicking outside
+    document.getElementById('playlist-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePlaylist();
+        }
+    });
+    
+    // Keyboard controls
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('playlist-modal');
+        if (modal.classList.contains('active')) {
+            switch(e.key) {
+                case 'Escape':
+                    closePlaylist();
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'ArrowRight':
+                    nextTrack();
+                    break;
+                case 'ArrowLeft':
+                    prevTrack();
+                    break;
+            }
+        }
+    });
+});
 
 // Cinematic sound effects (Web Audio API)
 function createCinematicSounds() {
@@ -889,6 +1320,106 @@ function updateCursorTrail() {
         }, 500);
     });
 }
+
+// Initialize Custom Cursor
+function initCustomCursor() {
+    const cursor = document.getElementById('custom-cursor');
+    
+    // Update cursor position
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX - 10 + 'px';
+        cursor.style.top = e.clientY - 10 + 'px';
+    });
+    
+    // Cursor hover effects
+    const hoverElements = document.querySelectorAll('button, a, .portfolio-card, .project-item');
+    
+    hoverElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            cursor.classList.add('hover');
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            cursor.classList.remove('hover');
+        });
+    });
+    
+    // Cursor click effect
+    document.addEventListener('mousedown', () => {
+        cursor.classList.add('click');
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursor.classList.remove('click');
+    });
+}
+
+// Magnetic effect for interactive elements
+function initMagneticEffect() {
+    const magneticElements = document.querySelectorAll('.enter-btn, .play-btn, .view-btn, .watch-btn, .back-btn');
+    
+    magneticElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const moveX = x * 0.1;
+            const moveY = y * 0.1;
+            
+            element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'translate(0px, 0px) scale(1)';
+        });
+    });
+}
+
+// Initialize magnetic effect
+document.addEventListener('DOMContentLoaded', initMagneticEffect);
+
+// Scroll interaction with background
+let scrollY = 0;
+let scrollSpeed = 0;
+
+window.addEventListener('scroll', () => {
+    const newScrollY = window.scrollY;
+    scrollSpeed = Math.abs(newScrollY - scrollY);
+    scrollY = newScrollY;
+    
+    // Affect background animation based on scroll
+    if (typeof particles !== 'undefined') {
+        particles.forEach(particle => {
+            if (scrollSpeed > 5) {
+                particle.vx += (Math.random() - 0.5) * scrollSpeed * 0.001;
+                particle.vy += (Math.random() - 0.5) * scrollSpeed * 0.001;
+            }
+        });
+    }
+});
+
+// Parallax effect for cinematic elements
+function initParallaxEffects() {
+    const rays = document.querySelectorAll('.ray');
+    const bars = document.querySelectorAll('.bar');
+    
+    window.addEventListener('scroll', () => {
+        const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        
+        rays.forEach((ray, index) => {
+            const speed = (index + 1) * 0.5;
+            ray.style.transform = `translateY(${scrollPercent * speed * 50}px)`;
+        });
+        
+        bars.forEach(bar => {
+            bar.style.opacity = 0.7 - scrollPercent * 0.3;
+        });
+    });
+}
+
+// Initialize parallax effects
+document.addEventListener('DOMContentLoaded', initParallaxEffects);
 
 // Export functions for global access
 window.portfolio = {
