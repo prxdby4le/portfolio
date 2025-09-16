@@ -1,6 +1,40 @@
 // Global Variables
 let currentSection = 'home';
 let backgroundAnimation;
+// Environment flags (optimize detection for GitHub Pages)
+const IS_GITHUB_PAGES = /github\.io$/i.test(window.location.hostname);
+const DEBUG_SCAN = /[?&]debug=1/.test(window.location.search);
+const DETECT_MAX_INDEX = IS_GITHUB_PAGES ? 20 : 60; // limit scan length
+const DETECT_STOP_IF_NONE_AFTER = IS_GITHUB_PAGES ? 6 : 12; // early-stop if none found
+const SUPPORTED_FORMATS = IS_GITHUB_PAGES ? ['mp3'] : ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+const MAX_ATTEMPTS_PER_FOLDER = IS_GITHUB_PAGES ? 80 : 400; // hard cap of URL probes per folder
+const PROBE_TIMEOUT_MS = IS_GITHUB_PAGES ? 3500 : 5000; // slightly tighter timeout on pages
+const VERBOSE_DETECTION_LOGS = !IS_GITHUB_PAGES; // reduce log noise in prod
+// Cache for detection results to avoid repeated network requests per folder
+const audioDetectionCache = new Map();
+// Lazy-loaded manifest of exact filenames per folder (optional)
+let audioManifest = null;
+let audioManifestLoadAttempted = false;
+
+async function loadAudioManifest() {
+    if (audioManifestLoadAttempted) return audioManifest;
+    audioManifestLoadAttempted = true;
+    try {
+        const res = await fetch('assets/audio/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) {
+            if (VERBOSE_DETECTION_LOGS) console.warn('Manifest not found (optional).');
+            audioManifest = null;
+            return null;
+        }
+        audioManifest = await res.json();
+        if (VERBOSE_DETECTION_LOGS) console.log('Audio manifest loaded.', audioManifest);
+        return audioManifest;
+    } catch (e) {
+        if (VERBOSE_DETECTION_LOGS) console.warn('Failed to load manifest (optional):', e);
+        audioManifest = null;
+        return null;
+    }
+}
 
 // DOM Elements
 const heroSection = document.querySelector('.hero-section');
@@ -557,7 +591,7 @@ function buildAudioUrl(folderPath, filename) {
     return `assets/audio/${folderPath}/${safe}`;
 }
 
-function probeAudio(url, timeoutMs = 5000) {
+function probeAudio(url, timeoutMs = PROBE_TIMEOUT_MS) {
     // Try to load audio metadata using an <audio> element (works locally and over http)
     return new Promise((resolve) => {
         const audio = new Audio();
@@ -614,65 +648,110 @@ function deriveTrackNameFromFilename(filename) {
 
 async function detectAudioFiles(folderPath) {
     const audioFiles = [];
-    const supportedFormats = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
-    
-    console.log(`🔍 Detecting audio files in: assets/audio/${folderPath}`);
-    
-    // Get the base name from folder (e.g., '1-boombap' -> 'boombap')
+    let attempts = 0;
+
+    if (VERBOSE_DETECTION_LOGS) {
+        console.log(`🔍 Detecting audio files in: assets/audio/${folderPath}`);
+    }
+
+    // Try manifest first (exact filenames, minimal requests)
+    const manifest = await loadAudioManifest();
+    const manifestFiles = manifest && manifest[folderPath];
+    if (Array.isArray(manifestFiles) && manifestFiles.length > 0) {
+        for (let i = 0; i < manifestFiles.length; i++) {
+            const filename = manifestFiles[i];
+            const url = buildAudioUrl(folderPath, filename);
+            attempts++;
+            const duration = await probeAudio(url);
+            if (duration !== null) {
+                audioFiles.push({
+                    index: i + 1,
+                    name: deriveTrackNameFromFilename(filename) || `Track ${i + 1}`,
+                    file: filename,
+                    duration: duration || 0,
+                    path: url
+                });
+            }
+            if (attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
+        }
+        if (VERBOSE_DETECTION_LOGS) console.log(`✅ Used manifest for ${folderPath}: ${audioFiles.length} files`);
+        return audioFiles.sort((a, b) => a.index - b.index);
+    }
+
     const baseName = folderPath.split('-').slice(1).join('-');
-    // Additional synonyms per folder to match your naming convention
-    const folderSynonyms = {
-        '1-boombap': ['boombap', 'BoomBap', 'Boom Bap'],
-        '2-dnb': ['dnb', 'DnB', 'DrumandBass', 'Drum and Bass', 'Drum& Bass', 'Drum & Bass'],
-        '3-trap_under': ['trap_under', 'trapunder', 'TrapUnderground', 'Trap Underground', 'Trap'],
-        '4-synthwave': ['synthwave', 'Synthwave', 'Synthwaves'],
-        '6-hyper': ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic', 'HyperType', 'Hyper Type'],
-        '7-hoodtrap': ['hoodtrap', 'Hoodtrap'],
-        '8-plugnb': ['pluggnb', 'plugg', "Plugg'nb", 'Plugg'],
-        '9-ambient': ['ambient', 'Ambient'],
-        '10-drumless': ['drumless', 'Drumless'],
-    '11-voltmix': ['voltmix', 'Voltmix', "Voltmix's", "voltmix's"],
-    '12-other_rythms': ['other_rythms', 'Other', 'other', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others']
-    };
-    const candidateBases = Array.from(new Set([
+
+    // Minimal, folder-aware base names for production
+    const prodBases = (() => {
+        const bases = [baseName];
+        if (folderPath === '12-other_rythms') bases.push('Other', 'other');
+        if (folderPath === '11-voltmix') bases.push('Voltmix', "Voltmix's");
+        return Array.from(new Set(bases.filter(Boolean)));
+    })();
+
+    // Dev synonyms (more permissive)
+    const devBases = Array.from(new Set([
         baseName,
         baseName.replace(/[-_\s]/g, ''),
-        ...(folderSynonyms[folderPath] || [])
+        ...(folderPath === '1-boombap' ? ['boombap', 'BoomBap', 'Boom Bap'] : []),
+        ...(folderPath === '2-dnb' ? ['dnb', 'DnB', 'DrumandBass', 'Drum and Bass', 'Drum & Bass'] : []),
+        ...(folderPath === '3-trap_under' ? ['trap_under', 'trapunder', 'TrapUnderground', 'Trap Underground', 'Trap'] : []),
+        ...(folderPath === '4-synthwave' ? ['synthwave', 'Synthwave', 'Synthwaves'] : []),
+        ...(folderPath === '6-hyper' ? ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic', 'HyperType'] : []),
+        ...(folderPath === '7-hoodtrap' ? ['hoodtrap', 'Hoodtrap'] : []),
+        ...(folderPath === '8-plugnb' ? ['pluggnb', 'plugg', "Plugg'nb", 'Plugg'] : []),
+        ...(folderPath === '9-ambient' ? ['ambient', 'Ambient'] : []),
+        ...(folderPath === '10-drumless' ? ['drumless', 'Drumless'] : []),
+        ...(folderPath === '11-voltmix' ? ['voltmix', 'Voltmix', "Voltmix's", "voltmix's"] : []),
+        ...(folderPath === '12-other_rythms' ? ['other_rythms', 'Other', 'other', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others'] : [])
     ].filter(Boolean)));
-    
-    // Check files sequentially to avoid browser overload
-    for (let i = 1; i <= 60; i++) {
+
+    const candidateBases = IS_GITHUB_PAGES ? prodBases : devBases;
+
+    // Helper to build patterns per folder/index (minimalistic in production)
+    const buildNamingPatterns = (i) => {
+        const patterns = [];
+        const two = i.toString().padStart(2, '0');
+
+        if (folderPath === '12-other_rythms') {
+            // Known pattern: Other (N)
+            patterns.push(`Other (${i})`);
+        } else {
+            // Prefer base's (i) and base (i)
+            candidateBases.forEach(base => {
+                patterns.push(`${base}'s (${i})`);
+                patterns.push(`${base} (${i})`);
+            });
+            // Generic fallbacks
+            patterns.push(two);
+            patterns.push(`${i}`);
+            patterns.push(`Track ${i}`);
+        }
+        return Array.from(new Set(patterns));
+    };
+
+    // Single-file patterns (only when i === 1)
+    const buildSingleFilePatterns = () => {
+        const singles = [];
+        if (folderPath === '11-voltmix') {
+            singles.push("Voltmix's", 'Voltmix');
+        }
+        // Keep conservative for other folders
+        return Array.from(new Set(singles));
+    };
+
+    let lastFoundIndex = 0;
+    for (let i = 1; i <= DETECT_MAX_INDEX; i++) {
         let foundFile = null;
-        
-        // Try different naming patterns using candidate base names
-        const namingPatterns = [
-            // Prefer named patterns first (match your actual files), then generic
-            ...candidateBases.flatMap(base => [
-                `${base}'s (${i})`, // boombap's (1).mp3, DrumandBass's (1).mp3
-                `${base} (${i})`,   // boombap (1).mp3
-                `${base}_${i}`,     // boombap_1.mp3
-                `${base}-${i}`      // boombap-1.mp3
-            ]),
-            `Track ${i}`, // Track 1.mp3
-            `${i.toString().padStart(2, '0')}`, // 01.mp3, 02.mp3
-            `${i}` // 1.mp3, 2.mp3
-        ];
-        
-        // For i === 1, also try non-indexed single-file patterns like "Voltmix's.mp3" or "Synthwaves.mp3"
-        if (i === 1 && !foundFile) {
-            const singleNamePatterns = [
-                ...candidateBases.flatMap(base => [
-                    `${base}'s`, // Voltmix's.mp3, Synthwaves's.mp3, HyperType's.mp3
-                    `${base}`    // Voltmix.mp3, Synthwaves.mp3, HyperType.mp3
-                ]),
-                // Extra guesses for Other folder (files already start with Other (N))
-                ...(folderPath === '12-other_rythms' ? ['Other', 'other'] : [])
-            ];
-            for (const single of singleNamePatterns) {
-                for (const format of supportedFormats) {
+
+        // Try single-file only on first index for specific folder(s)
+        if (i === 1) {
+            const singles = buildSingleFilePatterns();
+            for (const single of singles) {
+                for (const format of SUPPORTED_FORMATS) {
                     const filename = `${single}.${format}`;
                     const url = buildAudioUrl(folderPath, filename);
-                    const duration = await probeAudio(url, 5000);
+                    attempts++;
+                    const duration = await probeAudio(url);
                     if (duration !== null) {
                         foundFile = {
                             index: 1,
@@ -681,23 +760,24 @@ async function detectAudioFiles(folderPath) {
                             duration: duration || 0,
                             path: url
                         };
-                        console.log(`✅ Found single: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
+                        if (VERBOSE_DETECTION_LOGS) console.log(`✅ Found single: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
                         break;
                     }
+                    if (attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
                 }
-                if (foundFile) break;
+                if (foundFile || attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
             }
         }
 
-        // Try each format for this number
+        // Try indexed patterns
+        const namingPatterns = buildNamingPatterns(i);
         for (const pattern of namingPatterns) {
-            if (foundFile) break;
-            
-            for (const format of supportedFormats) {
+            if (foundFile || attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
+            for (const format of SUPPORTED_FORMATS) {
                 const filename = `${pattern}.${format}`;
                 const url = buildAudioUrl(folderPath, filename);
-                
-                const duration = await probeAudio(url, 5000);
+                attempts++;
+                const duration = await probeAudio(url);
                 if (duration !== null) {
                     foundFile = {
                         index: i,
@@ -706,29 +786,34 @@ async function detectAudioFiles(folderPath) {
                         duration: duration || 0,
                         path: url
                     };
-                    console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
-                    break; // Found file with this number, move to next number
+                    if (VERBOSE_DETECTION_LOGS) console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
+                    break;
                 }
             }
         }
-        
+
         if (foundFile) {
             audioFiles.push(foundFile);
+            lastFoundIndex = i;
         } else {
-            // If we haven't found any files in the last 3 consecutive numbers after finding some, stop
-            if (audioFiles.length > 0 && i > audioFiles[audioFiles.length - 1].index + 3) {
-                console.log(`ℹ️ Stopping search near index ${i}: consecutive gaps`);
+            // early break heuristics
+            if (audioFiles.length > 0 && i > lastFoundIndex + 2) {
+                if (VERBOSE_DETECTION_LOGS) console.log(`ℹ️ Stopping near index ${i}: consecutive gaps`);
                 break;
             }
-            // If we haven't found any files in the first 12 numbers, stop
-            if (i >= 12 && audioFiles.length === 0) {
-                console.log(`❌ No files found after checking first ${i} numbers, stopping search`);
+            if (i >= DETECT_STOP_IF_NONE_AFTER && audioFiles.length === 0) {
+                if (VERBOSE_DETECTION_LOGS) console.log(`❌ No files after first ${i} tries, stopping`);
                 break;
             }
         }
+
+        if (attempts >= MAX_ATTEMPTS_PER_FOLDER) {
+            if (VERBOSE_DETECTION_LOGS) console.log(`⛔ Max attempts reached (${attempts}) for ${folderPath}`);
+            break;
+        }
     }
-    
-    console.log(`✅ Detection complete: Found ${audioFiles.length} audio files in ${folderPath}`);
+
+    if (VERBOSE_DETECTION_LOGS) console.log(`✅ Detection complete: Found ${audioFiles.length} audio files in ${folderPath} (attempts: ${attempts})`);
     return audioFiles.sort((a, b) => a.index - b.index);
 }
 
@@ -800,8 +885,12 @@ async function updatePlaylistWithRealData(playlistName) {
     try {
         showNotification('Carregando informações da playlist...');
         console.log(`🔍 Scanning folder: ${playlist.folder}`);
-        
-    const realAudioFiles = await detectAudioFiles(playlist.folder);
+        // Use cache when available to prevent repeated scans on Pages
+        let realAudioFiles = audioDetectionCache.get(playlist.folder);
+        if (!realAudioFiles) {
+            realAudioFiles = await detectAudioFiles(playlist.folder);
+            audioDetectionCache.set(playlist.folder, realAudioFiles);
+        }
         
     if (realAudioFiles.length > 0) {
             // Calculate total duration
@@ -1978,6 +2067,10 @@ document.addEventListener('DOMContentLoaded', initParallaxEffects);
 
 // Test function to check all folders
 async function testAllFolders() {
+    if (IS_GITHUB_PAGES && !DEBUG_SCAN) {
+        console.warn('🧪 Teste pesado desativado no GitHub Pages. Adicione ?debug=1 à URL para habilitar.');
+        return;
+    }
     console.log('🧪 Testing all playlist folders...');
     
     for (const [playlistName, playlist] of Object.entries(playlistData)) {
@@ -2001,6 +2094,10 @@ async function testAllFolders() {
 
 // Test single folder function
 async function testSingleFolder(folderName) {
+    if (IS_GITHUB_PAGES && !DEBUG_SCAN) {
+        console.warn('🧪 Teste desativado no GitHub Pages. Adicione ?debug=1 à URL para habilitar.');
+        return [];
+    }
     console.log(`🧪 Testing single folder: ${folderName}`);
     try {
         const files = await detectAudioFiles(folderName);
