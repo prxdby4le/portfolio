@@ -3,8 +3,6 @@ let currentSection = 'home';
 let backgroundAnimation;
 
 // DOM Elements
-const loadingScreen = document.getElementById('loading-screen');
-const loadingProgress = document.getElementById('loading-progress');
 const heroSection = document.querySelector('.hero-section');
 const musicSection = document.getElementById('music-section');
 const visualSection = document.getElementById('visual-section');
@@ -17,33 +15,20 @@ const backgroundCanvas = document.getElementById('background-canvas');
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize intro animations immediately
     initIntroAnimations();
-    initializeApp();
     setupEventListeners();
     initBackgroundAnimation();
     initCustomCursor();
     
-    // Setup project buttons immediately
+    // Start entrance animations directly
+    setTimeout(() => {
+        triggerEntranceAnimations();
+    }, 300);
+    
+    // Setup project buttons
     setTimeout(() => {
         setupProjectButtons();
-    }, 100);
+    }, 500);
 });
-
-// Initialize Application
-function initializeApp() {
-    // Simulate loading
-    let progress = 0;
-    const loadingInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(loadingInterval);
-            setTimeout(() => {
-                hideLoading();
-            }, 500);
-        }
-        loadingProgress.style.width = progress + '%';
-    }, 100);
-}
 
 // Initialize intro state immediately
 function initIntroAnimations() {
@@ -65,19 +50,6 @@ function initIntroAnimations() {
 }
 
 // Hide Loading Screen
-function hideLoading() {
-    // Cinematic fade out with scale effect
-    loadingScreen.style.transform = 'scale(0.8)';
-    loadingScreen.style.opacity = '0';
-    loadingScreen.style.filter = 'blur(10px)';
-    
-    setTimeout(() => {
-        loadingScreen.style.display = 'none';
-        // Trigger entrance animations
-        triggerEntranceAnimations();
-    }, 1500);
-}
-
 // Cinematic entrance animations
 function triggerEntranceAnimations() {
     const nav = document.querySelector('.main-nav');
