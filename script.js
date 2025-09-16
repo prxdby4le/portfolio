@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     initBackgroundAnimation();
     initCustomCursor();
+    
+    // Setup project buttons immediately
+    setTimeout(() => {
+        setupProjectButtons();
+    }, 100);
 });
 
 // Initialize Application
@@ -275,6 +280,11 @@ function cinematicEntrancePortfolio(type) {
             project.style.filter = 'blur(0)';
         }, 500 + (index * 150));
     });
+    
+    // Reconfigure project buttons after animation
+    setTimeout(() => {
+        setupProjectButtons();
+    }, 1000);
 }
 
 function cinematicEntranceAbout() {
@@ -321,9 +331,14 @@ function setupProjectButtons() {
     // Play buttons for music projects
     const playButtons = document.querySelectorAll('.play-btn');
     playButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        // Remove existing event listeners by cloning the element
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        newBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             const projectName = this.closest('.project-item').querySelector('h3').textContent;
+            console.log('Play button clicked for:', projectName); // Debug log
             playAudio(projectName);
         });
     });
@@ -331,7 +346,10 @@ function setupProjectButtons() {
     // View buttons for visual projects
     const viewButtons = document.querySelectorAll('.view-btn');
     viewButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        newBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             const projectName = this.closest('.project-item').querySelector('h3').textContent;
             viewProject(projectName);
@@ -341,7 +359,10 @@ function setupProjectButtons() {
     // Watch buttons for video projects
     const watchButtons = document.querySelectorAll('.watch-btn');
     watchButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        newBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             const projectName = this.closest('.project-item').querySelector('h3').textContent;
             watchVideo(projectName);
@@ -351,37 +372,37 @@ function setupProjectButtons() {
 
 // Playlist Data
 const playlistData = {
-    'Beat Trap Modern': {
+    'O Fino do Boombap': {
+        genre: 'Boombap',
+        tracks: [
+            { name: 'Barras e Versos', artist: 'prxdby4le', duration: '3:45' },
+            { name: 'Boom Bap Classic', artist: 'prxdby4le', duration: '3:12' },
+            { name: 'Underground Flow', artist: 'prxdby4le', duration: '2:58' },
+            { name: 'Old School Vibes', artist: 'prxdby4le', duration: '3:28' },
+            { name: 'Hip Hop Essence', artist: 'prxdby4le', duration: '3:15' }
+        ]
+    },
+    'Drum & Bass': {
+        genre: 'DnB',
+        tracks: [
+            { name: 'Neurofunk Bass', artist: 'prxdby4le', duration: '4:12' },
+            { name: 'Liquid DnB Flow', artist: 'prxdby4le', duration: '5:34' },
+            { name: 'Breakcore Madness', artist: 'prxdby4le', duration: '3:48' },
+            { name: 'Jungle Rhythm', artist: 'prxdby4le', duration: '4:22' },
+            { name: 'Bass Heavy Drop', artist: 'prxdby4le', duration: '3:55' }
+        ]
+    },
+    'Trap Underground': {
         genre: 'Trap',
         tracks: [
-            { name: 'Dark Trap Beat', artist: 'prxdby4le', duration: '3:24' },
-            { name: 'Heavy 808s', artist: 'prxdby4le', duration: '2:58' },
-            { name: 'Melodic Trap', artist: 'prxdby4le', duration: '3:12' },
-            { name: 'Street Vibes', artist: 'prxdby4le', duration: '2:45' },
-            { name: 'Trap Symphonic', artist: 'prxdby4le', duration: '3:35' }
+            { name: 'Underground Vibes', artist: 'prxdby4le', duration: '3:24' },
+            { name: 'Dark Atmosphere', artist: 'prxdby4le', duration: '2:58' },
+            { name: 'Experimental Trap', artist: 'prxdby4le', duration: '3:42' },
+            { name: 'Street Sounds', artist: 'prxdby4le', duration: '2:45' },
+            { name: 'Raw Energy', artist: 'prxdby4le', duration: '3:18' }
         ]
     },
-    'Ambient Chill': {
-        genre: 'Ambient',
-        tracks: [
-            { name: 'Floating Dreams', artist: 'prxdby4le', duration: '4:22' },
-            { name: 'Ethereal Waves', artist: 'prxdby4le', duration: '5:10' },
-            { name: 'Cosmic Drift', artist: 'prxdby4le', duration: '3:45' },
-            { name: 'Peaceful Mind', artist: 'prxdby4le', duration: '4:18' },
-            { name: 'Aurora Sounds', artist: 'prxdby4le', duration: '3:52' }
-        ]
-    },
-    'Electronic Fusion': {
-        genre: 'Electronic',
-        tracks: [
-            { name: 'Synth Paradise', artist: 'prxdby4le', duration: '3:28' },
-            { name: 'Digital Pulse', artist: 'prxdby4le', duration: '3:15' },
-            { name: 'Future Bass Drop', artist: 'prxdby4le', duration: '2:55' },
-            { name: 'Electronica Mix', artist: 'prxdby4le', duration: '3:40' },
-            { name: 'Cyber Rhythm', artist: 'prxdby4le', duration: '3:08' }
-        ]
-    },
-    'Synthwave Retro': {
+    'Synthwave': {
         genre: 'Synthwave',
         tracks: [
             { name: 'Neon Nights', artist: 'prxdby4le', duration: '3:55' },
@@ -389,6 +410,36 @@ const playlistData = {
             { name: '80s Revival', artist: 'prxdby4le', duration: '3:18' },
             { name: 'Vapor Dreams', artist: 'prxdby4le', duration: '4:05' },
             { name: 'Synthetic Love', artist: 'prxdby4le', duration: '3:25' }
+        ]
+    },
+    'Bluecore': {
+        genre: 'Bluecore',
+        tracks: [
+            { name: 'Blue Trash Talk', artist: 'prxdby4le ft. Yung Loof', duration: '2:58' },
+            { name: 'Core Essence', artist: 'prxdby4le', duration: '3:12' },
+            { name: 'Experimental Blue', artist: 'prxdby4le ft. Yung Loof', duration: '3:35' },
+            { name: 'Trash Vibes', artist: 'prxdby4le', duration: '2:45' },
+            { name: 'Blue Energy', artist: 'prxdby4le ft. Yung Loof', duration: '3:22' }
+        ]
+    },
+    'Trap Mainstream': {
+        genre: 'Trap',
+        tracks: [
+            { name: 'Popular Vibes', artist: 'prxdby4le', duration: '3:15' },
+            { name: 'Commercial Beat', artist: 'prxdby4le', duration: '2:48' },
+            { name: 'Radio Ready', artist: 'prxdby4le', duration: '3:28' },
+            { name: 'Chart Topper', artist: 'prxdby4le', duration: '3:05' },
+            { name: 'Mainstream Flow', artist: 'prxdby4le', duration: '2:55' }
+        ]
+    },
+    'Diversos': {
+        genre: 'Experimental',
+        tracks: [
+            { name: 'Violino Sessions', artist: 'o violino', duration: '4:18' },
+            { name: 'Personal Sound', artist: 'prxdby4le', duration: '3:45' },
+            { name: 'Experimental Vibe', artist: 'prxdby4le', duration: '5:12' },
+            { name: 'Mixed Feelings', artist: 'o violino', duration: '3:32' },
+            { name: 'Creative Flow', artist: 'prxdby4le', duration: '4:05' }
         ]
     }
 };
@@ -406,13 +457,18 @@ function playAudio(projectName) {
 
 // Open Playlist Modal
 function openPlaylist(projectName) {
+    console.log('Opening playlist for:', projectName); // Debug log
     const modal = document.getElementById('playlist-modal');
     const playlistTitle = document.getElementById('playlist-title');
     const playlistTracks = document.getElementById('playlist-tracks');
     
     // Get playlist data
     const playlist = playlistData[projectName];
-    if (!playlist) return;
+    console.log('Playlist data found:', playlist); // Debug log
+    if (!playlist) {
+        console.log('No playlist found for:', projectName);
+        return;
+    }
     
     // Set current playlist
     currentPlaylist = playlist.tracks;

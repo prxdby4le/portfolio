@@ -1120,7 +1120,7 @@ body::after {
 .track-image {
     width: 60px;
     height: 60px;
-    background: linear-gradient(45deg, rgba(78, 205, 196, 0.3), rgba(255, 107, 107, 0.2));
+    background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -1128,38 +1128,29 @@ body::after {
     margin-right: 15px;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(78, 205, 196, 0.2);
 }
 
 .play-indicator {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: rgba(78, 205, 196, 0.4);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    align-items: end;
+    gap: 2px;
+    height: 20px;
 }
 
-.play-indicator::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(78, 205, 196, 0.8);
-    animation: subtlePulse 2s ease-in-out infinite;
+.play-indicator .bar {
+    width: 3px;
+    background: white;
+    border-radius: 2px;
+    animation: musicBars 1s ease-in-out infinite;
 }
 
-@keyframes subtlePulse {
-    0%, 100% { 
-        opacity: 0.6;
-        transform: scale(1);
-    }
-    50% { 
-        opacity: 1;
-        transform: scale(1.2);
-    }
+.play-indicator .bar:nth-child(1) { height: 60%; animation-delay: 0s; }
+.play-indicator .bar:nth-child(2) { height: 100%; animation-delay: 0.2s; }
+.play-indicator .bar:nth-child(3) { height: 80%; animation-delay: 0.4s; }
+
+@keyframes musicBars {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.3); }
 }
 
 .track-details h4 {
