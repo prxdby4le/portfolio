@@ -678,6 +678,12 @@ async function detectAudioFiles(folderPath) {
         return audioFiles.sort((a, b) => a.index - b.index);
     }
 
+    // On GitHub Pages, avoid guessed scanning to prevent 404 floods
+    if (IS_GITHUB_PAGES) {
+        console.warn(`⚠️ No manifest entry for ${folderPath}. Evitando varredura no GitHub Pages. Adicione os arquivos no assets/audio/manifest.json.`);
+        return [];
+    }
+
     const baseName = folderPath.split('-').slice(1).join('-');
 
     // Minimal, folder-aware base names for production
