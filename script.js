@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initIntroAnimations();
     setupEventListeners();
     initBackgroundAnimation();
-    initCustomCursor();
     
     // Start entrance animations directly
     setTimeout(() => {
@@ -346,42 +345,46 @@ function setupProjectButtons() {
 const playlistData = {
     'O Fino do Boombap': {
         genre: 'Boombap',
+        folder: '1-boombap',
         tracks: [
-            { name: 'Barras e Versos', artist: 'prxdby4le', duration: '3:45' },
-            { name: 'Boom Bap Classic', artist: 'prxdby4le', duration: '3:12' },
-            { name: 'Underground Flow', artist: 'prxdby4le', duration: '2:58' },
-            { name: 'Old School Vibes', artist: 'prxdby4le', duration: '3:28' },
-            { name: 'Hip Hop Essence', artist: 'prxdby4le', duration: '3:15' }
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:45', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '2:58', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:28', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:15', file: '5.mp3' }
         ]
     },
     'Drum & Bass': {
         genre: 'DnB',
+        folder: '2-dnb',
         tracks: [
-            { name: 'Neurofunk Bass', artist: 'prxdby4le', duration: '4:12' },
-            { name: 'Liquid DnB Flow', artist: 'prxdby4le', duration: '5:34' },
-            { name: 'Breakcore Madness', artist: 'prxdby4le', duration: '3:48' },
-            { name: 'Jungle Rhythm', artist: 'prxdby4le', duration: '4:22' },
-            { name: 'Bass Heavy Drop', artist: 'prxdby4le', duration: '3:55' }
+            { name: 'Track 1', artist: 'prxdby4le', duration: '4:12', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '5:34', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:48', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '4:22', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:55', file: '5.mp3' }
         ]
     },
     'Trap Underground': {
-        genre: 'Trap',
+        genre: 'Trap Underground',
+        folder: '3-trap_under',
         tracks: [
-            { name: 'Underground Vibes', artist: 'prxdby4le', duration: '3:24' },
-            { name: 'Dark Atmosphere', artist: 'prxdby4le', duration: '2:58' },
-            { name: 'Experimental Trap', artist: 'prxdby4le', duration: '3:42' },
-            { name: 'Street Sounds', artist: 'prxdby4le', duration: '2:45' },
-            { name: 'Raw Energy', artist: 'prxdby4le', duration: '3:18' }
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:24', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '2:58', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:42', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '2:45', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:18', file: '5.mp3' }
         ]
     },
     'Synthwave': {
         genre: 'Synthwave',
+        folder: '4-synthwave',
         tracks: [
-            { name: 'Neon Nights', artist: 'prxdby4le', duration: '3:55' },
-            { name: 'Retro Drive', artist: 'prxdby4le', duration: '3:32' },
-            { name: '80s Revival', artist: 'prxdby4le', duration: '3:18' },
-            { name: 'Vapor Dreams', artist: 'prxdby4le', duration: '4:05' },
-            { name: 'Synthetic Love', artist: 'prxdby4le', duration: '3:25' }
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:55', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:32', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:18', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:25', file: '5.mp3' }
         ]
     },
     'Bluecore': {
@@ -413,6 +416,113 @@ const playlistData = {
             { name: 'Mixed Feelings', artist: 'o violino', duration: '3:32' },
             { name: 'Creative Flow', artist: 'prxdby4le', duration: '4:05' }
         ]
+    },
+    'Hyper Aesthetic': {
+        genre: 'Hyper Aesthetic',
+        folder: '6-hyper',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:28', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '4:15', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:42', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:55', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '4:08', file: '5.mp3' }
+        ]
+    },
+    'Hoodtrap': {
+        genre: 'Hoodtrap',
+        folder: '7-hoodtrap',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '2:48', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '2:35', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:25', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:08', file: '5.mp3' }
+        ]
+    },
+    'Plugg\'nb': {
+        genre: 'Plugg\'nb',
+        folder: '8-plugnb',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:18', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '4:02', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:28', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:55', file: '5.mp3' }
+        ]
+    },
+    'Ambient': {
+        genre: 'Ambient',
+        folder: '9-ambient',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '5:32', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '6:18', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '4:45', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '5:12', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '4:28', file: '5.mp3' }
+        ]
+    },
+    'Drumless': {
+        genre: 'Drumless',
+        folder: '10-drumless',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:42', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '4:15', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:28', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:58', file: '5.mp3' }
+        ]
+    },
+    'Voltmix': {
+        genre: 'Voltmix',
+        folder: '11-voltmix',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '2:42', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:15', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '2:58', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:22', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '2:48', file: '5.mp3' }
+        ]
+    },
+    'Outros Ritmos': {
+        genre: 'Outros Ritmos',
+        folder: '12-other_rythms',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:28', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:12', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '3:38', file: '5.mp3' }
+        ]
+    },
+    'Bluecore': {
+        genre: 'Bluecore',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le ft. Yung Loof', duration: '2:58', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le ft. Yung Loof', duration: '3:35', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '2:45', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le ft. Yung Loof', duration: '3:22', file: '5.mp3' }
+        ]
+    },
+    'Trap Mainstream': {
+        genre: 'Trap Mainstream',
+        tracks: [
+            { name: 'Track 1', artist: 'prxdby4le', duration: '3:15', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '2:48', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '3:28', file: '3.mp3' },
+            { name: 'Track 4', artist: 'prxdby4le', duration: '3:05', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '2:55', file: '5.mp3' }
+        ]
+    },
+    'Diversos': {
+        genre: 'Diversos',
+        tracks: [
+            { name: 'Track 1', artist: 'o violino', duration: '4:18', file: '1.mp3' },
+            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
+            { name: 'Track 3', artist: 'prxdby4le', duration: '5:12', file: '3.mp3' },
+            { name: 'Track 4', artist: 'o violino', duration: '3:32', file: '4.mp3' },
+            { name: 'Track 5', artist: 'prxdby4le', duration: '4:05', file: '5.mp3' }
+        ]
     }
 };
 
@@ -420,6 +530,280 @@ const playlistData = {
 let currentPlaylist = [];
 let currentTrackIndex = 0;
 let isPlaying = false;
+let audioPlayer = null;
+let currentVolume = 0.7;
+
+// Audio Detection and Utility Functions
+async function detectAudioFiles(folderPath) {
+    const audioFiles = [];
+    const supportedFormats = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+    
+    console.log(`🔍 Detecting audio files in: assets/audio/${folderPath}`);
+    
+    // Get the base name from folder (e.g., '1-boombap' -> 'boombap')
+    const baseName = folderPath.split('-').slice(1).join('-');
+    
+    // Check files sequentially to avoid browser overload
+    for (let i = 1; i <= 50; i++) {
+        let foundFile = null;
+        
+        // Try different naming patterns
+        const namingPatterns = [
+            `${i}`, // 1.mp3, 2.mp3
+            `${baseName}'s (${i})`, // boombap's (1).mp3
+            `${baseName} (${i})`, // boombap (1).mp3
+            `Track ${i}`, // Track 1.mp3
+            `${baseName}_${i}`, // boombap_1.mp3
+            `${i.toString().padStart(2, '0')}` // 01.mp3, 02.mp3
+        ];
+        
+        // Try each format for this number
+        for (const pattern of namingPatterns) {
+            if (foundFile) break;
+            
+            for (const format of supportedFormats) {
+                const filename = `${pattern}.${format}`;
+                const fullPath = `assets/audio/${folderPath}/${filename}`;
+                
+                try {
+                    // First check if file exists with a simple fetch
+                    const fileExists = await checkFileExists(fullPath);
+                    if (fileExists) {
+                        // If file exists, get its duration
+                        const duration = await getAudioDuration(fullPath);
+                        foundFile = {
+                            index: i,
+                            name: `Track ${i}`,
+                            file: filename,
+                            duration: duration,
+                            path: fullPath
+                        };
+                        console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration)})`);
+                        break; // Found file with this number, move to next number
+                    }
+                } catch (error) {
+                    // File doesn't exist or couldn't load, try next format
+                    continue;
+                }
+            }
+        }
+        
+        if (foundFile) {
+            audioFiles.push(foundFile);
+        } else {
+            // If we haven't found any files in the last 3 consecutive numbers after finding some, stop
+            if (audioFiles.length > 0 && i > audioFiles.length + 3) {
+                console.log(`❌ No files found after ${audioFiles.length} files, stopping search at ${i}`);
+                break;
+            }
+            // If we haven't found any files in the first 10 numbers, stop
+            if (i > 10 && audioFiles.length === 0) {
+                console.log(`❌ No files found after checking ${i} numbers, stopping search`);
+                break;
+            }
+        }
+    }
+    
+    console.log(`✅ Detection complete: Found ${audioFiles.length} audio files in ${folderPath}`);
+    return audioFiles.sort((a, b) => a.index - b.index);
+}
+
+async function checkFileExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
+}
+
+async function getAudioDuration(url) {
+    return new Promise((resolve) => {
+        const audio = new Audio();
+        
+        const cleanup = () => {
+            audio.removeEventListener('loadedmetadata', onLoad);
+            audio.removeEventListener('error', onError);
+        };
+        
+        const onLoad = () => {
+            cleanup();
+            resolve(audio.duration || 0);
+        };
+        
+        const onError = () => {
+            cleanup();
+            resolve(0);
+        };
+        
+        const timeout = setTimeout(() => {
+            cleanup();
+            resolve(0);
+        }, 3000);
+        
+        audio.addEventListener('loadedmetadata', () => {
+            clearTimeout(timeout);
+            onLoad();
+        });
+        
+        audio.addEventListener('error', () => {
+            clearTimeout(timeout);
+            onError();
+        });
+        
+        audio.preload = 'metadata';
+        audio.src = url;
+    });
+}
+
+
+
+function formatDurationFromSeconds(seconds) {
+    if (isNaN(seconds) || seconds === 0) return '0:00';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+async function updatePlaylistWithRealData(playlistName) {
+    const playlist = playlistData[playlistName];
+    if (!playlist || !playlist.folder) return playlist;
+    
+    try {
+        showNotification('Carregando informações da playlist...');
+        console.log(`🔍 Scanning folder: ${playlist.folder}`);
+        
+        const realAudioFiles = await detectAudioFiles(playlist.folder);
+        
+        if (realAudioFiles.length > 0) {
+            // Calculate total duration
+            const totalDuration = realAudioFiles.reduce((sum, file) => {
+                const duration = file.duration && !isNaN(file.duration) ? file.duration : 0;
+                return sum + duration;
+            }, 0);
+            
+            // Update the playlist with real data
+            playlist.tracks = realAudioFiles.map((file, index) => ({
+                name: `Track ${file.index}`,
+                artist: playlist.tracks[index]?.artist || 'prxdby4le',
+                duration: formatDurationFromSeconds(file.duration || 0),
+                file: file.file
+            }));
+            
+            // Update playlist metadata
+            playlist.duration = formatDurationFromSeconds(totalDuration);
+            playlist.totalTracks = realAudioFiles.length;
+            
+            console.log(`✅ Updated ${playlistName}: ${realAudioFiles.length} tracks, total: ${formatDurationFromSeconds(totalDuration)}`);
+            showNotification(`Playlist carregada: ${realAudioFiles.length} músicas encontradas`);
+        } else {
+            console.warn(`⚠️ No audio files found in folder: ${playlist.folder}`);
+            showNotification('Nenhuma música encontrada na pasta');
+        }
+        
+        return playlist;
+    } catch (error) {
+        console.error('❌ Error detecting audio files:', error);
+        showNotification('Erro ao carregar playlist');
+        return playlist; // Return original if detection fails
+    }
+}
+
+function createAudioPlayer() {
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer = null;
+    }
+    
+    audioPlayer = new Audio();
+    audioPlayer.volume = currentVolume;
+    audioPlayer.preload = 'metadata';
+    
+    // Audio event listeners
+    audioPlayer.addEventListener('loadedmetadata', () => {
+        updateProgressBar();
+    });
+    
+    audioPlayer.addEventListener('timeupdate', () => {
+        updateProgressBar();
+    });
+    
+    audioPlayer.addEventListener('ended', () => {
+        nextTrack();
+    });
+    
+    audioPlayer.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        showNotification('Erro ao carregar a música - Pulando para próxima');
+        setTimeout(() => {
+            nextTrack();
+        }, 1000);
+    });
+    
+    audioPlayer.addEventListener('loadstart', () => {
+        showNotification('Carregando música...');
+    });
+    
+    audioPlayer.addEventListener('canplay', () => {
+        console.log('Audio ready to play');
+    });
+    
+    return audioPlayer;
+}
+
+function loadTrack(playlistName, trackIndex) {
+    const playlist = playlistData[playlistName];
+    if (!playlist || !playlist.tracks[trackIndex]) return false;
+    
+    const track = playlist.tracks[trackIndex];
+    const audioPath = `assets/audio/${playlist.folder}/${track.file}`;
+    
+    if (!audioPlayer) {
+        createAudioPlayer();
+    }
+    
+    audioPlayer.src = audioPath;
+    audioPlayer.load();
+    
+    return true;
+}
+
+function updateProgressBar() {
+    if (!audioPlayer) return;
+    
+    const currentTime = audioPlayer.currentTime;
+    const duration = audioPlayer.duration;
+    
+    if (duration && !isNaN(duration)) {
+        const progressPercent = (currentTime / duration) * 100;
+        
+        // Update progress bar if it exists
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            progressBar.style.width = progressPercent + '%';
+        }
+        
+        // Update time display
+        const currentTimeDisplay = document.querySelector('.current-time');
+        const totalTimeDisplay = document.querySelector('.total-time');
+        
+        if (currentTimeDisplay) {
+            currentTimeDisplay.textContent = formatTime(currentTime);
+        }
+        if (totalTimeDisplay) {
+            totalTimeDisplay.textContent = formatTime(duration);
+        }
+    }
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return '0:00';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
 
 // Play Audio Function
 function playAudio(projectName) {
@@ -428,26 +812,48 @@ function playAudio(projectName) {
 }
 
 // Open Playlist Modal
-function openPlaylist(projectName) {
-    console.log('Opening playlist for:', projectName); // Debug log
+async function openPlaylist(projectName) {
+    console.log('Opening playlist for:', projectName);
     const modal = document.getElementById('playlist-modal');
     const playlistTitle = document.getElementById('playlist-title');
     const playlistTracks = document.getElementById('playlist-tracks');
     
     // Get playlist data
-    const playlist = playlistData[projectName];
-    console.log('Playlist data found:', playlist); // Debug log
+    let playlist = playlistData[projectName];
     if (!playlist) {
         console.log('No playlist found for:', projectName);
+        showNotification('Playlist não encontrada');
         return;
     }
     
-    // Set current playlist
+    // Show modal first with loading state
+    modal.classList.add('active');
+    playlistTitle.textContent = `Carregando - ${playlist.genre}`;
+    playlistTracks.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Detectando músicas...</div>';
+    
+    // Update playlist with real audio file data
+    playlist = await updatePlaylistWithRealData(projectName);
+    
+    // Store current playlist info globally
+    window.currentPlaylistName = projectName;
     currentPlaylist = playlist.tracks;
     currentTrackIndex = 0;
     
-    // Update title
-    playlistTitle.textContent = `Playlist - ${playlist.genre}`;
+    // Calculate total duration
+    let totalDuration = '0:00';
+    if (playlist.duration) {
+        totalDuration = playlist.duration;
+    } else {
+        const totalSeconds = playlist.tracks.reduce((total, track) => {
+            const [minutes, seconds] = track.duration.split(':').map(Number);
+            return total + (minutes * 60) + seconds;
+        }, 0);
+        totalDuration = formatDurationFromSeconds(totalSeconds);
+    }
+    
+    // Update title with track count and total duration
+    const trackCount = playlist.totalTracks || playlist.tracks.length;
+    playlistTitle.textContent = `${playlist.genre} (${trackCount} ${trackCount === 1 ? 'música' : 'músicas'} • ${totalDuration})`;
     
     // Generate tracks HTML
     const tracksHTML = playlist.tracks.map((track, index) => `
@@ -463,11 +869,15 @@ function openPlaylist(projectName) {
     
     playlistTracks.innerHTML = tracksHTML;
     
-    // Update now playing
-    updateNowPlaying();
-    
-    // Show modal
-    modal.classList.add('active');
+    // Load first track if available
+    if (playlist.tracks.length > 0) {
+        loadTrack(projectName, 0);
+        updateNowPlaying();
+        showNotification(`Playlist carregada: ${playlist.tracks.length} ${playlist.tracks.length === 1 ? 'música' : 'músicas'}`);
+    } else {
+        playlistTracks.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Nenhuma música encontrada nesta pasta</div>';
+        showNotification('Nenhuma música encontrada na pasta');
+    }
     
     // Add event listeners to tracks
     document.querySelectorAll('.track-item').forEach(item => {
@@ -491,36 +901,74 @@ function updateNowPlaying() {
     }
     
     playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+    
+    // Update play indicator visibility
+    const playIndicator = document.querySelector('.play-indicator');
+    if (playIndicator) {
+        playIndicator.style.display = isPlaying ? 'flex' : 'none';
+    }
 }
 
 // Select Track
 function selectTrack(index) {
+    if (index < 0 || index >= currentPlaylist.length) return;
+    
+    // Stop current track
+    if (audioPlayer) {
+        audioPlayer.pause();
+    }
+    
     currentTrackIndex = index;
     
-    // Update active track
+    // Update active track visually
     document.querySelectorAll('.track-item').forEach((item, i) => {
         item.classList.toggle('active', i === index);
     });
     
-    // Update now playing
+    // Load new track
+    if (window.currentPlaylistName) {
+        loadTrack(window.currentPlaylistName, index);
+    }
+    
+    // Update now playing display
     updateNowPlaying();
     
-    // Auto play
-    if (!isPlaying) {
-        togglePlayPause();
+    // Auto play the new track
+    if (isPlaying || !audioPlayer.paused) {
+        setTimeout(() => {
+            togglePlayPause();
+        }, 100);
     }
 }
 
 // Toggle Play/Pause
 function togglePlayPause() {
-    isPlaying = !isPlaying;
-    updateNowPlaying();
+    if (!audioPlayer) {
+        showNotification('Nenhuma música carregada');
+        return;
+    }
     
     if (isPlaying) {
-        showNotification(`Reproduzindo: ${currentPlaylist[currentTrackIndex].name}`);
-    } else {
+        // Pause
+        audioPlayer.pause();
+        isPlaying = false;
         showNotification('Pausado');
+    } else {
+        // Play
+        const playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+                showNotification(`Reproduzindo: ${currentPlaylist[currentTrackIndex].name}`);
+            }).catch(error => {
+                console.error('Error playing audio:', error);
+                showNotification('Erro ao reproduzir música');
+                isPlaying = false;
+            });
+        }
     }
+    
+    updateNowPlaying();
 }
 
 // Next Track
@@ -545,7 +993,15 @@ function prevTrack() {
 function closePlaylist() {
     const modal = document.getElementById('playlist-modal');
     modal.classList.remove('active');
+    
+    // Stop audio playback
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+    }
+    
     isPlaying = false;
+    updateNowPlaying();
 }
 
 // View Project Function
@@ -745,24 +1201,6 @@ function initBackgroundAnimation() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Minimal particles array
-    const particles = [];
-    const particleCount = 12; // Very minimal
-    const connectionDistance = 150;
-    let mouse = { 
-        x: window.innerWidth / 2, 
-        y: window.innerHeight / 2, 
-        isMoving: false,
-        lastX: 0,
-        lastY: 0,
-        velocity: { x: 0, y: 0 }
-    };
-    
-    // Interactive mouse effects
-    let mouseInfluenceRadius = 150;
-    let mouseParticles = [];
-    let isMousePressed = false;
-    
     // Mouse tracking for cinematic effects
     document.addEventListener('mousemove', (e) => {
         // Calculate velocity
@@ -797,17 +1235,25 @@ function initBackgroundAnimation() {
         isMousePressed = false;
     });
     
-    // Remove continuous effects for minimal design
+    // Minimal particles array
+    const particles = [];
+    const particleCount = 12; // Very minimal
+    const connectionDistance = 150;
+    let mouse = { 
+        x: window.innerWidth / 2, 
+        y: window.innerHeight / 2, 
+        isMoving: false,
+        lastX: 0,
+        lastY: 0,
+        velocity: { x: 0, y: 0 }
+    };
     
-    // Mouse leave - reduce influence
-    document.addEventListener('mouseleave', () => {
-        mouse.isMoving = false;
-        mouseInfluenceRadius = 0;
-    });
+    // Interactive mouse effects
+    let mouseInfluenceRadius = 150;
+    let mouseParticles = [];
+    let isMousePressed = false;
     
-    document.addEventListener('mouseenter', () => {
-        mouseInfluenceRadius = 150;
-    });
+
     
     // Minimal Particle class
     class MinimalParticle {
@@ -899,7 +1345,7 @@ function initBackgroundAnimation() {
         
         update() {
             this.x += this.vx;
-            this.y += this.vx;
+            this.y += this.vy;
             this.vx *= 0.98;
             this.vy *= 0.98;
             this.life -= this.decay;
@@ -929,25 +1375,13 @@ function initBackgroundAnimation() {
             mouseParticles.shift();
         }
         
-        // No mouse trail for minimal design
-    }
-    
-    // Create subtle sparkle near mouse
-    function createMouseSparkle() {
-        const sparkle = new MouseTrailParticle(
-            mouse.x + (Math.random() - 0.5) * 30,
-            mouse.y + (Math.random() - 0.5) * 30,
-            (Math.random() - 0.5) * 2,
-            (Math.random() - 0.5) * 2
+        const particle = new MouseTrailParticle(
+            mouse.x + (Math.random() - 0.5) * 20,
+            mouse.y + (Math.random() - 0.5) * 20,
+            mouse.velocity.x,
+            mouse.velocity.y
         );
-        sparkle.size = Math.random() * 1.5 + 0.5;
-        sparkle.decay = 0.05;
-        sparkle.color = {
-            r: 78 + Math.random() * 30,
-            g: 205 + Math.random() * 30,
-            b: 196 + Math.random() * 30
-        };
-        mouseParticles.push(sparkle);
+        mouseParticles.push(particle);
     }
     
     // Minimal click effect
@@ -988,6 +1422,10 @@ function initBackgroundAnimation() {
         });
     }
     
+
+    
+
+    
     // Animation loop
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1008,34 +1446,13 @@ function initBackgroundAnimation() {
         // Draw connections
         drawConnections();
         
-        // Draw mouse interactions
-        drawMouseEffects();
-        
         // Update ripples
         updateRipples();
         
         requestAnimationFrame(animate);
     }
     
-    // Minimal mouse effects
-    function drawMouseEffects() {
-        // Only very subtle glow when moving
-        if (mouse.isMoving) {
-            const glowRadius = 30;
-            const gradient = ctx.createRadialGradient(
-                mouse.x, mouse.y, 0,
-                mouse.x, mouse.y, glowRadius
-            );
-            
-            gradient.addColorStop(0, 'rgba(78, 205, 196, 0.02)');
-            gradient.addColorStop(1, 'rgba(78, 205, 196, 0)');
-            
-            ctx.beginPath();
-            ctx.arc(mouse.x, mouse.y, glowRadius, 0, Math.PI * 2);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-        }
-    }
+
     
     // Minimal connections - only draw very few
     function drawConnections() {
@@ -1166,6 +1583,10 @@ function removeLightStreak(card) {
     }
 }
 
+
+
+
+
 // Smooth scrolling for project grid
 function setupSmoothScrolling() {
     const observer = new IntersectionObserver((entries) => {
@@ -1187,6 +1608,31 @@ function setupSmoothScrolling() {
 // Initialize smooth scrolling after DOM is loaded
 document.addEventListener('DOMContentLoaded', setupSmoothScrolling);
 
+// Magnetic effect for interactive elements
+function initMagneticEffect() {
+    const magneticElements = document.querySelectorAll('.enter-btn, .play-btn, .view-btn, .watch-btn, .back-btn');
+    
+    magneticElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const moveX = x * 0.1;
+            const moveY = y * 0.1;
+            
+            element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'translate(0px, 0px) scale(1)';
+        });
+    });
+}
+
+// Initialize magnetic effect
+document.addEventListener('DOMContentLoaded', initMagneticEffect);
+
 // Initialize Playlist Controls
 document.addEventListener('DOMContentLoaded', function() {
     // Close playlist button
@@ -1204,6 +1650,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Progress bar click functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.progress-track')) {
+            const progressTrack = e.target.closest('.progress-track');
+            const rect = progressTrack.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const progressPercent = clickX / rect.width;
+            
+            if (audioPlayer && audioPlayer.duration) {
+                const newTime = progressPercent * audioPlayer.duration;
+                audioPlayer.currentTime = newTime;
+                updateProgressBar();
+            }
+        }
+    });
+    
     // Keyboard controls
     document.addEventListener('keydown', function(e) {
         const modal = document.getElementById('playlist-modal');
@@ -1217,10 +1679,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     togglePlayPause();
                     break;
                 case 'ArrowRight':
-                    nextTrack();
+                    if (e.ctrlKey) {
+                        nextTrack();
+                    } else {
+                        // Skip forward 10 seconds
+                        if (audioPlayer) {
+                            audioPlayer.currentTime = Math.min(audioPlayer.currentTime + 10, audioPlayer.duration || 0);
+                        }
+                    }
                     break;
                 case 'ArrowLeft':
-                    prevTrack();
+                    if (e.ctrlKey) {
+                        prevTrack();
+                    } else {
+                        // Skip backward 10 seconds
+                        if (audioPlayer) {
+                            audioPlayer.currentTime = Math.max(audioPlayer.currentTime - 10, 0);
+                        }
+                    }
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    // Volume up
+                    if (audioPlayer) {
+                        currentVolume = Math.min(currentVolume + 0.1, 1);
+                        audioPlayer.volume = currentVolume;
+                        showNotification(`Volume: ${Math.round(currentVolume * 100)}%`);
+                    }
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    // Volume down
+                    if (audioPlayer) {
+                        currentVolume = Math.max(currentVolume - 0.1, 0);
+                        audioPlayer.volume = currentVolume;
+                        showNotification(`Volume: ${Math.round(currentVolume * 100)}%`);
+                    }
                     break;
             }
         }
@@ -1301,111 +1795,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Enhanced cursor trail effect
-let cursorTrail = [];
-const maxTrailLength = 10;
 
-document.addEventListener('mousemove', (e) => {
-    cursorTrail.push({
-        x: e.clientX,
-        y: e.clientY,
-        time: Date.now()
-    });
-    
-    if (cursorTrail.length > maxTrailLength) {
-        cursorTrail.shift();
-    }
-    
-    updateCursorTrail();
-});
 
-function updateCursorTrail() {
-    // Remove existing trail elements
-    document.querySelectorAll('.cursor-trail').forEach(el => el.remove());
-    
-    cursorTrail.forEach((point, index) => {
-        const trail = document.createElement('div');
-        trail.className = 'cursor-trail';
-        trail.style.cssText = `
-            position: fixed;
-            left: ${point.x - 3}px;
-            top: ${point.y - 3}px;
-            width: 6px;
-            height: 6px;
-            background: radial-gradient(circle, rgba(78, 205, 196, ${0.8 - index * 0.08}), transparent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            animation: trailFade 0.5s ease-out forwards;
-        `;
-        
-        document.body.appendChild(trail);
-        
-        setTimeout(() => {
-            if (trail.parentNode) {
-                trail.parentNode.removeChild(trail);
-            }
-        }, 500);
-    });
-}
 
-// Initialize Custom Cursor
-function initCustomCursor() {
-    const cursor = document.getElementById('custom-cursor');
-    
-    // Update cursor position
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX - 10 + 'px';
-        cursor.style.top = e.clientY - 10 + 'px';
-    });
-    
-    // Cursor hover effects
-    const hoverElements = document.querySelectorAll('button, a, .portfolio-card, .project-item');
-    
-    hoverElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            cursor.classList.add('hover');
-        });
-        
-        element.addEventListener('mouseleave', () => {
-            cursor.classList.remove('hover');
-        });
-    });
-    
-    // Cursor click effect
-    document.addEventListener('mousedown', () => {
-        cursor.classList.add('click');
-    });
-    
-    document.addEventListener('mouseup', () => {
-        cursor.classList.remove('click');
-    });
-}
 
-// Magnetic effect for interactive elements
-function initMagneticEffect() {
-    const magneticElements = document.querySelectorAll('.enter-btn, .play-btn, .view-btn, .watch-btn, .back-btn');
-    
-    magneticElements.forEach(element => {
-        element.addEventListener('mousemove', (e) => {
-            const rect = element.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            const moveX = x * 0.1;
-            const moveY = y * 0.1;
-            
-            element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
-        });
-        
-        element.addEventListener('mouseleave', () => {
-            element.style.transform = 'translate(0px, 0px) scale(1)';
-        });
-    });
-}
 
-// Initialize magnetic effect
-document.addEventListener('DOMContentLoaded', initMagneticEffect);
 
 // Scroll interaction with background
 let scrollY = 0;
@@ -1449,11 +1843,52 @@ function initParallaxEffects() {
 // Initialize parallax effects
 document.addEventListener('DOMContentLoaded', initParallaxEffects);
 
+// Test function to check all folders
+async function testAllFolders() {
+    console.log('🧪 Testing all playlist folders...');
+    
+    for (const [playlistName, playlist] of Object.entries(playlistData)) {
+        if (playlist.folder) {
+            console.log(`\n📁 Testing folder: ${playlist.folder}`);
+            try {
+                const files = await detectAudioFiles(playlist.folder);
+                console.log(`✅ Found ${files.length} files in ${playlist.folder}`);
+                files.slice(0, 5).forEach(file => {
+                    console.log(`  - ${file.file} (${formatDurationFromSeconds(file.duration || 0)})`);
+                });
+                if (files.length > 5) {
+                    console.log(`  ... and ${files.length - 5} more files`);
+                }
+            } catch (error) {
+                console.error(`❌ Error in ${playlist.folder}:`, error);
+            }
+        }
+    }
+}
+
+// Test single folder function
+async function testSingleFolder(folderName) {
+    console.log(`🧪 Testing single folder: ${folderName}`);
+    try {
+        const files = await detectAudioFiles(folderName);
+        console.log(`✅ Found ${files.length} files`);
+        files.forEach(file => {
+            console.log(`  - ${file.file} (${formatDurationFromSeconds(file.duration || 0)})`);
+        });
+        return files;
+    } catch (error) {
+        console.error(`❌ Error:`, error);
+        return [];
+    }
+}
+
 // Export functions for global access
 window.portfolio = {
     showSection,
     playAudio,
     viewProject,
     watchVideo,
-    cinematicSounds
+    cinematicSounds,
+    testAllFolders,
+    testSingleFolder
 };
