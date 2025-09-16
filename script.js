@@ -547,6 +547,7 @@ function probeAudio(url, timeoutMs = 5000) {
     return new Promise((resolve) => {
         const audio = new Audio();
         let settled = false;
+        let sawLoadStart = false;
 
         const complete = (result) => {
             if (settled) return;
@@ -554,19 +555,30 @@ function probeAudio(url, timeoutMs = 5000) {
             clearTimeout(timeoutId);
             audio.removeEventListener('loadedmetadata', onLoad);
             audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('canplay', onCanPlay);
+            audio.removeEventListener('loadeddata', onLoadedData);
             audio.removeEventListener('error', onError);
+            audio.removeEventListener('loadstart', onLoadStart);
             resolve(result);
         };
 
         const onLoad = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
         const onCanPlay = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
+        const onLoadedData = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
         const onError = () => complete(null);
+        const onLoadStart = () => { sawLoadStart = true; };
 
         audio.addEventListener('loadedmetadata', onLoad);
         audio.addEventListener('canplaythrough', onCanPlay);
+        audio.addEventListener('canplay', onCanPlay);
+        audio.addEventListener('loadeddata', onLoadedData);
         audio.addEventListener('error', onError);
+        audio.addEventListener('loadstart', onLoadStart);
 
-        const timeoutId = setTimeout(() => complete(null), timeoutMs);
+        const timeoutId = setTimeout(() => {
+            // If carregamento iniciou mas não obteve metadata, considere existente sem duração
+            if (sawLoadStart) complete(0); else complete(null);
+        }, timeoutMs);
         audio.preload = 'metadata';
         audio.src = url;
         try { audio.load(); } catch {}
@@ -598,14 +610,14 @@ async function detectAudioFiles(folderPath) {
         '1-boombap': ['boombap', 'BoomBap', 'Boom Bap'],
         '2-dnb': ['dnb', 'DnB', 'DrumandBass', 'Drum and Bass', 'Drum& Bass', 'Drum & Bass'],
         '3-trap_under': ['trap_under', 'trapunder', 'TrapUnderground', 'Trap Underground', 'Trap'],
-        '4-synthwave': ['synthwave', 'Synthwave'],
-        '6-hyper': ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic'],
+        '4-synthwave': ['synthwave', 'Synthwave', 'Synthwaves'],
+        '6-hyper': ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic', 'HyperType', 'Hyper Type'],
         '7-hoodtrap': ['hoodtrap', 'Hoodtrap'],
         '8-plugnb': ['pluggnb', 'plugg', "Plugg'nb", 'Plugg'],
         '9-ambient': ['ambient', 'Ambient'],
         '10-drumless': ['drumless', 'Drumless'],
-        '11-voltmix': ['voltmix', 'Voltmix'],
-        '12-other_rythms': ['other_rythms', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others']
+    '11-voltmix': ['voltmix', 'Voltmix', "Voltmix's", "voltmix's"],
+    '12-other_rythms': ['other_rythms', 'Other', 'other', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others']
     };
     const candidateBases = Array.from(new Set([
         baseName,
@@ -631,6 +643,37 @@ async function detectAudioFiles(folderPath) {
             `${i}` // 1.mp3, 2.mp3
         ];
         
+        // For i === 1, also try non-indexed single-file patterns like "Voltmix's.mp3" or "Synthwaves.mp3"
+        if (i === 1 && !foundFile) {
+            const singleNamePatterns = [
+                ...candidateBases.flatMap(base => [
+                    `${base}'s`, // Voltmix's.mp3, Synthwaves's.mp3, HyperType's.mp3
+                    `${base}`    // Voltmix.mp3, Synthwaves.mp3, HyperType.mp3
+                ]),
+                // Extra guesses for Other folder (files already start with Other (N))
+                ...(folderPath === '12-other_rythms' ? ['Other', 'other'] : [])
+            ];
+            for (const single of singleNamePatterns) {
+                for (const format of supportedFormats) {
+                    const filename = `${single}.${format}`;
+                    const url = buildAudioUrl(folderPath, filename);
+                    const duration = await probeAudio(url, 5000);
+                    if (duration !== null) {
+                        foundFile = {
+                            index: 1,
+                            name: deriveTrackNameFromFilename(filename) || 'Track 1',
+                            file: filename,
+                            duration: duration || 0,
+                            path: url
+                        };
+                        console.log(`✅ Found single: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
+                        break;
+                    }
+                }
+                if (foundFile) break;
+            }
+        }
+
         // Try each format for this number
         for (const pattern of namingPatterns) {
             if (foundFile) break;
@@ -639,7 +682,7 @@ async function detectAudioFiles(folderPath) {
                 const filename = `${pattern}.${format}`;
                 const url = buildAudioUrl(folderPath, filename);
                 
-                const duration = await probeAudio(url, 3000);
+                const duration = await probeAudio(url, 5000);
                 if (duration !== null) {
                     foundFile = {
                         index: i,
