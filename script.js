@@ -49,6 +49,8 @@ function initIntroAnimations() {
 }
 
 // Hide Loading Screen
+
+    console.log('[portfolio] Dicas: use portfolio.testAllFolders() ou portfolio.testSingleFolder("1-boombap") no console para diagnosticar arquivos de áudio.');
 // Cinematic entrance animations
 function triggerEntranceAnimations() {
     const nav = document.querySelector('.main-nav');
@@ -534,6 +536,55 @@ let audioPlayer = null;
 let currentVolume = 0.7;
 
 // Audio Detection and Utility Functions
+function buildAudioUrl(folderPath, filename) {
+    // Encode only the filename to preserve relative path
+    const safe = encodeURIComponent(filename).replace(/'/g, '%27');
+    return `assets/audio/${folderPath}/${safe}`;
+}
+
+function probeAudio(url, timeoutMs = 5000) {
+    // Try to load audio metadata using an <audio> element (works locally and over http)
+    return new Promise((resolve) => {
+        const audio = new Audio();
+        let settled = false;
+
+        const complete = (result) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            audio.removeEventListener('loadedmetadata', onLoad);
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            resolve(result);
+        };
+
+        const onLoad = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
+        const onCanPlay = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
+        const onError = () => complete(null);
+
+        audio.addEventListener('loadedmetadata', onLoad);
+        audio.addEventListener('canplaythrough', onCanPlay);
+        audio.addEventListener('error', onError);
+
+        const timeoutId = setTimeout(() => complete(null), timeoutMs);
+        audio.preload = 'metadata';
+        audio.src = url;
+        try { audio.load(); } catch {}
+    });
+}
+
+function deriveTrackNameFromFilename(filename) {
+    try {
+        const base = filename.replace(/\.[^/.]+$/, '');
+        return base
+            .replace(/[_-]+/g, ' ')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+    } catch {
+        return filename;
+    }
+}
+
 async function detectAudioFiles(folderPath) {
     const audioFiles = [];
     const supportedFormats = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
@@ -542,19 +593,42 @@ async function detectAudioFiles(folderPath) {
     
     // Get the base name from folder (e.g., '1-boombap' -> 'boombap')
     const baseName = folderPath.split('-').slice(1).join('-');
+    // Additional synonyms per folder to match your naming convention
+    const folderSynonyms = {
+        '1-boombap': ['boombap', 'BoomBap', 'Boom Bap'],
+        '2-dnb': ['dnb', 'DnB', 'DrumandBass', 'Drum and Bass', 'Drum& Bass', 'Drum & Bass'],
+        '3-trap_under': ['trap_under', 'trapunder', 'TrapUnderground', 'Trap Underground', 'Trap'],
+        '4-synthwave': ['synthwave', 'Synthwave'],
+        '6-hyper': ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic'],
+        '7-hoodtrap': ['hoodtrap', 'Hoodtrap'],
+        '8-plugnb': ['pluggnb', 'plugg', "Plugg'nb", 'Plugg'],
+        '9-ambient': ['ambient', 'Ambient'],
+        '10-drumless': ['drumless', 'Drumless'],
+        '11-voltmix': ['voltmix', 'Voltmix'],
+        '12-other_rythms': ['other_rythms', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others']
+    };
+    const candidateBases = Array.from(new Set([
+        baseName,
+        baseName.replace(/[-_\s]/g, ''),
+        ...(folderSynonyms[folderPath] || [])
+    ].filter(Boolean)));
     
     // Check files sequentially to avoid browser overload
-    for (let i = 1; i <= 50; i++) {
+    for (let i = 1; i <= 60; i++) {
         let foundFile = null;
         
-        // Try different naming patterns
+        // Try different naming patterns using candidate base names
         const namingPatterns = [
-            `${i}`, // 1.mp3, 2.mp3
-            `${baseName}'s (${i})`, // boombap's (1).mp3
-            `${baseName} (${i})`, // boombap (1).mp3
+            // Prefer named patterns first (match your actual files), then generic
+            ...candidateBases.flatMap(base => [
+                `${base}'s (${i})`, // boombap's (1).mp3, DrumandBass's (1).mp3
+                `${base} (${i})`,   // boombap (1).mp3
+                `${base}_${i}`,     // boombap_1.mp3
+                `${base}-${i}`      // boombap-1.mp3
+            ]),
             `Track ${i}`, // Track 1.mp3
-            `${baseName}_${i}`, // boombap_1.mp3
-            `${i.toString().padStart(2, '0')}` // 01.mp3, 02.mp3
+            `${i.toString().padStart(2, '0')}`, // 01.mp3, 02.mp3
+            `${i}` // 1.mp3, 2.mp3
         ];
         
         // Try each format for this number
@@ -563,27 +637,19 @@ async function detectAudioFiles(folderPath) {
             
             for (const format of supportedFormats) {
                 const filename = `${pattern}.${format}`;
-                const fullPath = `assets/audio/${folderPath}/${filename}`;
+                const url = buildAudioUrl(folderPath, filename);
                 
-                try {
-                    // First check if file exists with a simple fetch
-                    const fileExists = await checkFileExists(fullPath);
-                    if (fileExists) {
-                        // If file exists, get its duration
-                        const duration = await getAudioDuration(fullPath);
-                        foundFile = {
-                            index: i,
-                            name: `Track ${i}`,
-                            file: filename,
-                            duration: duration,
-                            path: fullPath
-                        };
-                        console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration)})`);
-                        break; // Found file with this number, move to next number
-                    }
-                } catch (error) {
-                    // File doesn't exist or couldn't load, try next format
-                    continue;
+                const duration = await probeAudio(url, 3000);
+                if (duration !== null) {
+                    foundFile = {
+                        index: i,
+                        name: deriveTrackNameFromFilename(filename) || `Track ${i}`,
+                        file: filename,
+                        duration: duration || 0,
+                        path: url
+                    };
+                    console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
+                    break; // Found file with this number, move to next number
                 }
             }
         }
@@ -592,13 +658,13 @@ async function detectAudioFiles(folderPath) {
             audioFiles.push(foundFile);
         } else {
             // If we haven't found any files in the last 3 consecutive numbers after finding some, stop
-            if (audioFiles.length > 0 && i > audioFiles.length + 3) {
-                console.log(`❌ No files found after ${audioFiles.length} files, stopping search at ${i}`);
+            if (audioFiles.length > 0 && i > audioFiles[audioFiles.length - 1].index + 3) {
+                console.log(`ℹ️ Stopping search near index ${i}: consecutive gaps`);
                 break;
             }
-            // If we haven't found any files in the first 10 numbers, stop
-            if (i > 10 && audioFiles.length === 0) {
-                console.log(`❌ No files found after checking ${i} numbers, stopping search`);
+            // If we haven't found any files in the first 12 numbers, stop
+            if (i >= 12 && audioFiles.length === 0) {
+                console.log(`❌ No files found after checking first ${i} numbers, stopping search`);
                 break;
             }
         }
@@ -659,7 +725,7 @@ async function getAudioDuration(url) {
 
 
 function formatDurationFromSeconds(seconds) {
-    if (isNaN(seconds) || seconds === 0) return '0:00';
+    if (!seconds || isNaN(seconds) || seconds <= 0) return '0:00';
     
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
@@ -668,15 +734,18 @@ function formatDurationFromSeconds(seconds) {
 
 async function updatePlaylistWithRealData(playlistName) {
     const playlist = playlistData[playlistName];
-    if (!playlist || !playlist.folder) return playlist;
+    if (!playlist || !playlist.folder) {
+        // Playlists without folder remain static
+        return playlist;
+    }
     
     try {
         showNotification('Carregando informações da playlist...');
         console.log(`🔍 Scanning folder: ${playlist.folder}`);
         
-        const realAudioFiles = await detectAudioFiles(playlist.folder);
+    const realAudioFiles = await detectAudioFiles(playlist.folder);
         
-        if (realAudioFiles.length > 0) {
+    if (realAudioFiles.length > 0) {
             // Calculate total duration
             const totalDuration = realAudioFiles.reduce((sum, file) => {
                 const duration = file.duration && !isNaN(file.duration) ? file.duration : 0;
@@ -685,7 +754,7 @@ async function updatePlaylistWithRealData(playlistName) {
             
             // Update the playlist with real data
             playlist.tracks = realAudioFiles.map((file, index) => ({
-                name: `Track ${file.index}`,
+                name: deriveTrackNameFromFilename(file.file) || `Track ${file.index}`,
                 artist: playlist.tracks[index]?.artist || 'prxdby4le',
                 duration: formatDurationFromSeconds(file.duration || 0),
                 file: file.file
@@ -699,6 +768,10 @@ async function updatePlaylistWithRealData(playlistName) {
             showNotification(`Playlist carregada: ${realAudioFiles.length} músicas encontradas`);
         } else {
             console.warn(`⚠️ No audio files found in folder: ${playlist.folder}`);
+            // Evita usar placeholders errados; limpa a lista para refletir que não há arquivos válidos
+            playlist.tracks = [];
+            delete playlist.duration;
+            playlist.totalTracks = 0;
             showNotification('Nenhuma música encontrada na pasta');
         }
         
@@ -734,8 +807,8 @@ function createAudioPlayer() {
     });
     
     audioPlayer.addEventListener('error', (e) => {
-        console.error('Audio error:', e);
-        showNotification('Erro ao carregar a música - Pulando para próxima');
+        console.error('Audio error:', e, 'src:', audioPlayer?.src);
+        showNotification('Erro ao carregar a música - pulando para próxima');
         setTimeout(() => {
             nextTrack();
         }, 1000);
@@ -757,7 +830,7 @@ function loadTrack(playlistName, trackIndex) {
     if (!playlist || !playlist.tracks[trackIndex]) return false;
     
     const track = playlist.tracks[trackIndex];
-    const audioPath = `assets/audio/${playlist.folder}/${track.file}`;
+    const audioPath = buildAudioUrl(playlist.folder, track.file);
     
     if (!audioPlayer) {
         createAudioPlayer();
@@ -844,9 +917,11 @@ async function openPlaylist(projectName) {
     if (playlist.duration) {
         totalDuration = playlist.duration;
     } else {
-        const totalSeconds = playlist.tracks.reduce((total, track) => {
-            const [minutes, seconds] = track.duration.split(':').map(Number);
-            return total + (minutes * 60) + seconds;
+        const totalSeconds = (playlist.tracks || []).reduce((total, track) => {
+            if (!track || !track.duration) return total;
+            const parts = String(track.duration).split(':').map(Number);
+            if (parts.length !== 2 || parts.some(isNaN)) return total;
+            return total + (parts[0] * 60 + parts[1]);
         }, 0);
         totalDuration = formatDurationFromSeconds(totalSeconds);
     }
@@ -870,7 +945,7 @@ async function openPlaylist(projectName) {
     playlistTracks.innerHTML = tracksHTML;
     
     // Load first track if available
-    if (playlist.tracks.length > 0) {
+    if (playlist.tracks && playlist.tracks.length > 0 && playlist.folder) {
         loadTrack(projectName, 0);
         updateNowPlaying();
         showNotification(`Playlist carregada: ${playlist.tracks.length} ${playlist.tracks.length === 1 ? 'música' : 'músicas'}`);
