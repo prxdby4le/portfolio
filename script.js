@@ -29,6 +29,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 
+// Open correct section on initial load if URL contains a hash (GitHub Pages friendly)
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = (window.location.hash || '').replace(/^#/, '');
+    const validSections = new Set(['home', 'music', 'visual', 'video', 'about', 'contact']);
+    if (hash && validSections.has(hash)) {
+        showSection(hash);
+    }
+});
+
+// Keep UI in sync when the hash changes (e.g., manual URL change or external link)
+window.addEventListener('hashchange', function() {
+    const section = (window.location.hash || '').replace(/^#/, '') || 'home';
+    showSection(section);
+});
+
 // Initialize intro state immediately
 function initIntroAnimations() {
     const nav = document.querySelector('.main-nav');
@@ -174,8 +189,8 @@ function showSection(section) {
                 break;
         }
         
-        // Update URL without page reload
-        history.pushState({section: section}, '', section === 'home' ? '/' : `/#${section}`);
+    // Update URL without page reload (use hash-only to work on GitHub Pages project paths)
+    history.pushState({ section: section }, '', section === 'home' ? '#' : `#${section}`);
     }, 800);
 }
 
