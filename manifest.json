@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "cdnBase": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev",
+  "generatedAt": "2025-09-17T00:00:00Z",
+  "notes": [
+    "Ajuste os basePattern se os nomes reais divergirem.",
+    "Durations permanecem 0:00 até captar metadata (opcional)."
+  ],
+  "playlists": {
+    "O Fino do Boombap": {
+      "pattern": { "basePattern": "boombap's", "count": 39, "ext": "mp3" },
+      "genre": "Boombap"
+    },
+    "Drum & Bass": {
+      "pattern": { "basePattern": "DrumandBass's", "count": 10, "ext": "mp3" },
+      "genre": "DnB"
+    },
+    "Trap Underground": {
+      "pattern": { "basePattern": "Trap's", "count": 39, "ext": "mp3" },
+      "genre": "Trap Underground"
+    },
+    "Hoodtrap": {
+      "pattern": { "basePattern": "Hoodtrap's", "count": 4, "ext": "mp3" },
+      "genre": "Hoodtrap"
+    },
+    "Plugg'nb": {
+      "pattern": { "basePattern": "Plugg's", "count": 5, "ext": "mp3" },
+      "genre": "Plugg'nb"
+    },
+    "Drumless": {
+      "pattern": { "basePattern": "Drumless's", "count": 2, "ext": "mp3" },
+      "genre": "Drumless"
+    },
+    "Outros Ritmos": {
+      "pattern": { "basePattern": "Other", "count": 11, "ext": "mp3" },
+      "genre": "Outros Ritmos"
+    },
+    "Ambient": {
+      "files": [ "Ambient's (1).wav", "Ambient's (2).mp3" ],
+      "genre": "Ambient"
+    },
+    "Synthwave": {
+      "files": [ "Synthwaves's.mp3" ],
+      "genre": "Synthwave"
+    },
+    "Hyper Aesthetic": {
+      "files": [ "HyperType's.mp3" ],
+      "genre": "Hyper Aesthetic"
+    },
+    "Voltmix": {
+      "files": [ "Voltmix's.mp3" ],
+      "genre": "Voltmix"
+    }
+  }
+}

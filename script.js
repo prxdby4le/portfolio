@@ -1,40 +1,10 @@
-// Global Variables
+// Global Variables (CDN simplified)
 let currentSection = 'home';
 let backgroundAnimation;
-// Environment flags (optimize detection for GitHub Pages)
-const IS_GITHUB_PAGES = /github\.io$/i.test(window.location.hostname);
-const DEBUG_SCAN = /[?&]debug=1/.test(window.location.search);
-const DETECT_MAX_INDEX = IS_GITHUB_PAGES ? 20 : 60; // limit scan length
-const DETECT_STOP_IF_NONE_AFTER = IS_GITHUB_PAGES ? 6 : 12; // early-stop if none found
-const SUPPORTED_FORMATS = IS_GITHUB_PAGES ? ['mp3'] : ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
-const MAX_ATTEMPTS_PER_FOLDER = IS_GITHUB_PAGES ? 80 : 400; // hard cap of URL probes per folder
-const PROBE_TIMEOUT_MS = IS_GITHUB_PAGES ? 3500 : 5000; // slightly tighter timeout on pages
-const VERBOSE_DETECTION_LOGS = !IS_GITHUB_PAGES; // reduce log noise in prod
-// Cache for detection results to avoid repeated network requests per folder
-const audioDetectionCache = new Map();
-// Lazy-loaded manifest of exact filenames per folder (optional)
-let audioManifest = null;
-let audioManifestLoadAttempted = false;
-
-async function loadAudioManifest() {
-    if (audioManifestLoadAttempted) return audioManifest;
-    audioManifestLoadAttempted = true;
-    try {
-        const res = await fetch('assets/audio/manifest.json', { cache: 'no-cache' });
-        if (!res.ok) {
-            if (VERBOSE_DETECTION_LOGS) console.warn('Manifest not found (optional).');
-            audioManifest = null;
-            return null;
-        }
-        audioManifest = await res.json();
-        if (VERBOSE_DETECTION_LOGS) console.log('Audio manifest loaded.', audioManifest);
-        return audioManifest;
-    } catch (e) {
-        if (VERBOSE_DETECTION_LOGS) console.warn('Failed to load manifest (optional):', e);
-        audioManifest = null;
-        return null;
-    }
-}
+// Base CDN (atualize com seu domínio Cloudflare/R2)
+// Base pública Cloudflare R2 (namespace plano, sem subpastas)
+const CDN_BASE = 'https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev';
+function buildCdnUrl(path) { return `${CDN_BASE}/${path.split('/').map(encodeURIComponent).join('/')}`; }
 
 // DOM Elements
 const heroSection = document.querySelector('.hero-section');
@@ -99,7 +69,7 @@ function initIntroAnimations() {
 
 // Hide Loading Screen
 
-    console.log('[portfolio] Dicas: use portfolio.testAllFolders() ou portfolio.testSingleFolder("1-boombap") no console para diagnosticar arquivos de áudio.');
+    console.log('[portfolio] Modo CDN ativo. Ajuste playlistData com URLs reais.');
 // Cinematic entrance animations
 function triggerEntranceAnimations() {
     const nav = document.querySelector('.main-nav');
@@ -392,190 +362,77 @@ function setupProjectButtons() {
     });
 }
 
-// Playlist Data
-const playlistData = {
-    'O Fino do Boombap': {
-        genre: 'Boombap',
-        folder: '1-boombap',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:45', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '2:58', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:28', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:15', file: '5.mp3' }
-        ]
-    },
-    'Drum & Bass': {
-        genre: 'DnB',
-        folder: '2-dnb',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '4:12', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '5:34', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:48', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '4:22', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:55', file: '5.mp3' }
-        ]
-    },
-    'Trap Underground': {
-        genre: 'Trap Underground',
-        folder: '3-trap_under',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:24', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '2:58', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:42', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '2:45', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:18', file: '5.mp3' }
-        ]
-    },
-    'Synthwave': {
-        genre: 'Synthwave',
-        folder: '4-synthwave',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:55', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:32', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:18', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:25', file: '5.mp3' }
-        ]
-    },
-    'Bluecore': {
-        genre: 'Bluecore',
-        tracks: [
-            { name: 'Blue Trash Talk', artist: 'prxdby4le ft. Yung Loof', duration: '2:58' },
-            { name: 'Core Essence', artist: 'prxdby4le', duration: '3:12' },
-            { name: 'Experimental Blue', artist: 'prxdby4le ft. Yung Loof', duration: '3:35' },
-            { name: 'Trash Vibes', artist: 'prxdby4le', duration: '2:45' },
-            { name: 'Blue Energy', artist: 'prxdby4le ft. Yung Loof', duration: '3:22' }
-        ]
-    },
-    'Trap Mainstream': {
-        genre: 'Trap',
-        tracks: [
-            { name: 'Popular Vibes', artist: 'prxdby4le', duration: '3:15' },
-            { name: 'Commercial Beat', artist: 'prxdby4le', duration: '2:48' },
-            { name: 'Radio Ready', artist: 'prxdby4le', duration: '3:28' },
-            { name: 'Chart Topper', artist: 'prxdby4le', duration: '3:05' },
-            { name: 'Mainstream Flow', artist: 'prxdby4le', duration: '2:55' }
-        ]
-    },
-    'Diversos': {
-        genre: 'Experimental',
-        tracks: [
-            { name: 'Violino Sessions', artist: 'o violino', duration: '4:18' },
-            { name: 'Personal Sound', artist: 'prxdby4le', duration: '3:45' },
-            { name: 'Experimental Vibe', artist: 'prxdby4le', duration: '5:12' },
-            { name: 'Mixed Feelings', artist: 'o violino', duration: '3:32' },
-            { name: 'Creative Flow', artist: 'prxdby4le', duration: '4:05' }
-        ]
-    },
-    'Hyper Aesthetic': {
-        genre: 'Hyper Aesthetic',
-        folder: '6-hyper',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:28', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '4:15', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:42', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:55', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '4:08', file: '5.mp3' }
-        ]
-    },
-    'Hoodtrap': {
-        genre: 'Hoodtrap',
-        folder: '7-hoodtrap',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '2:48', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '2:35', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:25', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:08', file: '5.mp3' }
-        ]
-    },
-    'Plugg\'nb': {
-        genre: 'Plugg\'nb',
-        folder: '8-plugnb',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:18', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '4:02', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:28', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:55', file: '5.mp3' }
-        ]
-    },
-    'Ambient': {
-        genre: 'Ambient',
-        folder: '9-ambient',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '5:32', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '6:18', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '4:45', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '5:12', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '4:28', file: '5.mp3' }
-        ]
-    },
-    'Drumless': {
-        genre: 'Drumless',
-        folder: '10-drumless',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:42', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '4:15', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:28', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:58', file: '5.mp3' }
-        ]
-    },
-    'Voltmix': {
-        genre: 'Voltmix',
-        folder: '11-voltmix',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '2:42', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:15', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '2:58', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:22', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '2:48', file: '5.mp3' }
-        ]
-    },
-    'Outros Ritmos': {
-        genre: 'Outros Ritmos',
-        folder: '12-other_rythms',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:28', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:12', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '4:05', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '3:38', file: '5.mp3' }
-        ]
-    },
-    'Bluecore': {
-        genre: 'Bluecore',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le ft. Yung Loof', duration: '2:58', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:12', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le ft. Yung Loof', duration: '3:35', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '2:45', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le ft. Yung Loof', duration: '3:22', file: '5.mp3' }
-        ]
-    },
-    'Trap Mainstream': {
-        genre: 'Trap Mainstream',
-        tracks: [
-            { name: 'Track 1', artist: 'prxdby4le', duration: '3:15', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '2:48', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '3:28', file: '3.mp3' },
-            { name: 'Track 4', artist: 'prxdby4le', duration: '3:05', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '2:55', file: '5.mp3' }
-        ]
-    },
-    'Diversos': {
-        genre: 'Diversos',
-        tracks: [
-            { name: 'Track 1', artist: 'o violino', duration: '4:18', file: '1.mp3' },
-            { name: 'Track 2', artist: 'prxdby4le', duration: '3:45', file: '2.mp3' },
-            { name: 'Track 3', artist: 'prxdby4le', duration: '5:12', file: '3.mp3' },
-            { name: 'Track 4', artist: 'o violino', duration: '3:32', file: '4.mp3' },
-            { name: 'Track 5', artist: 'prxdby4le', duration: '4:05', file: '5.mp3' }
-        ]
+// =========== HELPERS PARA PADRÃO "Nome's (n).mp3" EM NAMESPACE PLANO ===========
+// Gera faixas numeradas a partir de um padrão base (ex: base="boombap's", gera "boombap's (1).mp3")
+function buildPatternTracks({ basePattern, count, displayBase, artist = 'prxdby4le', ext = 'mp3' }) {
+    const safeDisplay = displayBase || basePattern.replace(/'s$/i,'');
+    const tracks = [];
+    for (let i = 1; i <= count; i++) {
+        const filename = `${basePattern} (${i}).${ext}`; // Ex: boombap's (1).mp3
+        tracks.push({
+            name: `${safeDisplay} ${i}`,
+            artist,
+            duration: '0:00', // ajuste depois se quiser a duração real
+            url: buildCdnUrl(filename)
+        });
     }
-};
+    return tracks;
+}
+
+// CONFIG: Ajuste os counts conforme a quantidade real de arquivos no bucket.
+// Se depois você subir mais arquivos, só aumentar o número.
+// =============== PLAYLISTS GERADAS POR PADRÃO (AJUSTADAS COM OS NÚMEROS ENVIADOS) ===============
+// ATENÇÃO: BasePattern deve corresponder exatamente ao prefixo dos arquivos no bucket.
+// Se algum nome abaixo estiver diferente dos arquivos reais, ajuste apenas a string basePattern.
+// Exemplos esperados de arquivos: "boombap's (1).mp3", "DrumandBass's (10).mp3" etc.
+// Assumido (precisa confirmar se o prefixo está correto): TrapUnder's, pluggnb's, ambient's, drumless's, otherrythms's
+// Caso o seu naming real seja diferente (ex: "trapunderground's"), troque o basePattern correspondente.
+// Base real observada nas capturas:
+// boombap's (n).mp3, DrumandBass's (n).mp3, Trap's (n).mp3, Plugg's (n).mp3,
+// Hoodtrap's (n).mp3, Drumless's (n).mp3, Other (n).mp3
+// Ambient possui 2 arquivos: Ambient's (1).wav e Ambient's (2).mp3 (trataremos manual)
+// ================= DYNAMIC MANIFEST LOADER =================
+let playlistData = {}; // será preenchido dinamicamente
+let manifestLoaded = false;
+
+async function loadManifest() {
+    if (manifestLoaded) return playlistData;
+    try {
+        const res = await fetch('manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error('Manifest fetch falhou');
+        const manifest = await res.json();
+        const base = manifest.cdnBase || CDN_BASE;
+        const playlists = manifest.playlists || {};
+        const built = {};
+        Object.entries(playlists).forEach(([name, cfg]) => {
+            if (cfg.pattern) {
+                built[name] = {
+                    genre: cfg.genre || name,
+                    tracks: buildPatternTracks({ basePattern: cfg.pattern.basePattern, count: cfg.pattern.count, ext: cfg.pattern.ext || 'mp3' })
+                };
+            } else if (cfg.files) {
+                built[name] = {
+                    genre: cfg.genre || name,
+                    tracks: cfg.files.map((f, i) => ({
+                        name: (name === 'Ambient' ? 'Ambient ' + (i+1) : name + (cfg.files.length>1? ' ' + (i+1): '')),
+                        artist: 'prxdby4le',
+                        duration: '0:00',
+                        url: buildCdnUrl(f.replace(/\s/g, '%20'))
+                    }))
+                };
+            }
+        });
+        playlistData = built;
+        manifestLoaded = true;
+        console.log('[manifest] carregado');
+    } catch (e) {
+        console.error('Erro carregando manifest:', e);
+        showNotification('Falha ao carregar manifest.json – usando configuração vazia');
+    }
+    return playlistData;
+}
+
+// (Playlists agora 100% vindas do manifest.json)
 
 // Playlist State
 let currentPlaylist = [];
@@ -584,295 +441,9 @@ let isPlaying = false;
 let audioPlayer = null;
 let currentVolume = 0.7;
 
-// Audio Detection and Utility Functions
-function buildAudioUrl(folderPath, filename) {
-    // Encode only the filename to preserve relative path
-    const safe = encodeURIComponent(filename).replace(/'/g, '%27');
-    return `assets/audio/${folderPath}/${safe}`;
-}
+// (Removido: funções de detecção buildAudioUrl / probeAudio)
 
-function probeAudio(url, timeoutMs = PROBE_TIMEOUT_MS) {
-    // Try to load audio metadata using an <audio> element (works locally and over http)
-    return new Promise((resolve) => {
-        const audio = new Audio();
-        let settled = false;
-        let sawLoadStart = false;
-
-        const complete = (result) => {
-            if (settled) return;
-            settled = true;
-            clearTimeout(timeoutId);
-            audio.removeEventListener('loadedmetadata', onLoad);
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('canplay', onCanPlay);
-            audio.removeEventListener('loadeddata', onLoadedData);
-            audio.removeEventListener('error', onError);
-            audio.removeEventListener('loadstart', onLoadStart);
-            resolve(result);
-        };
-
-        const onLoad = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
-        const onCanPlay = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
-        const onLoadedData = () => complete(audio.duration && !isNaN(audio.duration) ? audio.duration : 0);
-        const onError = () => complete(null);
-        const onLoadStart = () => { sawLoadStart = true; };
-
-        audio.addEventListener('loadedmetadata', onLoad);
-        audio.addEventListener('canplaythrough', onCanPlay);
-        audio.addEventListener('canplay', onCanPlay);
-        audio.addEventListener('loadeddata', onLoadedData);
-        audio.addEventListener('error', onError);
-        audio.addEventListener('loadstart', onLoadStart);
-
-        const timeoutId = setTimeout(() => {
-            // If carregamento iniciou mas não obteve metadata, considere existente sem duração
-            if (sawLoadStart) complete(0); else complete(null);
-        }, timeoutMs);
-        audio.preload = 'metadata';
-        audio.src = url;
-        try { audio.load(); } catch {}
-    });
-}
-
-function deriveTrackNameFromFilename(filename) {
-    try {
-        const base = filename.replace(/\.[^/.]+$/, '');
-        return base
-            .replace(/[_-]+/g, ' ')
-            .replace(/\s{2,}/g, ' ')
-            .trim();
-    } catch {
-        return filename;
-    }
-}
-
-async function detectAudioFiles(folderPath) {
-    const audioFiles = [];
-    let attempts = 0;
-
-    if (VERBOSE_DETECTION_LOGS) {
-        console.log(`🔍 Detecting audio files in: assets/audio/${folderPath}`);
-    }
-
-    // Try manifest first (exact filenames, minimal requests)
-    const manifest = await loadAudioManifest();
-    const manifestFiles = manifest && manifest[folderPath];
-    if (Array.isArray(manifestFiles) && manifestFiles.length > 0) {
-        for (let i = 0; i < manifestFiles.length; i++) {
-            const filename = manifestFiles[i];
-            const url = buildAudioUrl(folderPath, filename);
-            attempts++;
-            const duration = await probeAudio(url);
-            if (duration !== null) {
-                audioFiles.push({
-                    index: i + 1,
-                    name: deriveTrackNameFromFilename(filename) || `Track ${i + 1}`,
-                    file: filename,
-                    duration: duration || 0,
-                    path: url
-                });
-            }
-            if (attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
-        }
-        if (VERBOSE_DETECTION_LOGS) console.log(`✅ Used manifest for ${folderPath}: ${audioFiles.length} files`);
-        return audioFiles.sort((a, b) => a.index - b.index);
-    }
-
-    // On GitHub Pages, avoid guessed scanning to prevent 404 floods
-    if (IS_GITHUB_PAGES) {
-        console.warn(`⚠️ No manifest entry for ${folderPath}. Evitando varredura no GitHub Pages. Adicione os arquivos no assets/audio/manifest.json.`);
-        return [];
-    }
-
-    const baseName = folderPath.split('-').slice(1).join('-');
-
-    // Minimal, folder-aware base names for production
-    const prodBases = (() => {
-        const bases = [baseName];
-        if (folderPath === '12-other_rythms') bases.push('Other', 'other');
-        if (folderPath === '11-voltmix') bases.push('Voltmix', "Voltmix's");
-        return Array.from(new Set(bases.filter(Boolean)));
-    })();
-
-    // Dev synonyms (more permissive)
-    const devBases = Array.from(new Set([
-        baseName,
-        baseName.replace(/[-_\s]/g, ''),
-        ...(folderPath === '1-boombap' ? ['boombap', 'BoomBap', 'Boom Bap'] : []),
-        ...(folderPath === '2-dnb' ? ['dnb', 'DnB', 'DrumandBass', 'Drum and Bass', 'Drum & Bass'] : []),
-        ...(folderPath === '3-trap_under' ? ['trap_under', 'trapunder', 'TrapUnderground', 'Trap Underground', 'Trap'] : []),
-        ...(folderPath === '4-synthwave' ? ['synthwave', 'Synthwave', 'Synthwaves'] : []),
-        ...(folderPath === '6-hyper' ? ['hyper', 'Hyper', 'HyperAesthetic', 'Hyper Aesthetic', 'HyperType'] : []),
-        ...(folderPath === '7-hoodtrap' ? ['hoodtrap', 'Hoodtrap'] : []),
-        ...(folderPath === '8-plugnb' ? ['pluggnb', 'plugg', "Plugg'nb", 'Plugg'] : []),
-        ...(folderPath === '9-ambient' ? ['ambient', 'Ambient'] : []),
-        ...(folderPath === '10-drumless' ? ['drumless', 'Drumless'] : []),
-        ...(folderPath === '11-voltmix' ? ['voltmix', 'Voltmix', "Voltmix's", "voltmix's"] : []),
-        ...(folderPath === '12-other_rythms' ? ['other_rythms', 'Other', 'other', 'Other Rythms', 'OutrosRitmos', 'Outros Ritmos', 'others'] : [])
-    ].filter(Boolean)));
-
-    const candidateBases = IS_GITHUB_PAGES ? prodBases : devBases;
-
-    // Helper to build patterns per folder/index (minimalistic in production)
-    const buildNamingPatterns = (i) => {
-        const patterns = [];
-        const two = i.toString().padStart(2, '0');
-
-        if (folderPath === '12-other_rythms') {
-            // Known pattern: Other (N)
-            patterns.push(`Other (${i})`);
-        } else {
-            // Prefer base's (i) and base (i)
-            candidateBases.forEach(base => {
-                patterns.push(`${base}'s (${i})`);
-                patterns.push(`${base} (${i})`);
-            });
-            // Generic fallbacks
-            patterns.push(two);
-            patterns.push(`${i}`);
-            patterns.push(`Track ${i}`);
-        }
-        return Array.from(new Set(patterns));
-    };
-
-    // Single-file patterns (only when i === 1)
-    const buildSingleFilePatterns = () => {
-        const singles = [];
-        if (folderPath === '11-voltmix') {
-            singles.push("Voltmix's", 'Voltmix');
-        }
-        // Keep conservative for other folders
-        return Array.from(new Set(singles));
-    };
-
-    let lastFoundIndex = 0;
-    for (let i = 1; i <= DETECT_MAX_INDEX; i++) {
-        let foundFile = null;
-
-        // Try single-file only on first index for specific folder(s)
-        if (i === 1) {
-            const singles = buildSingleFilePatterns();
-            for (const single of singles) {
-                for (const format of SUPPORTED_FORMATS) {
-                    const filename = `${single}.${format}`;
-                    const url = buildAudioUrl(folderPath, filename);
-                    attempts++;
-                    const duration = await probeAudio(url);
-                    if (duration !== null) {
-                        foundFile = {
-                            index: 1,
-                            name: deriveTrackNameFromFilename(filename) || 'Track 1',
-                            file: filename,
-                            duration: duration || 0,
-                            path: url
-                        };
-                        if (VERBOSE_DETECTION_LOGS) console.log(`✅ Found single: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
-                        break;
-                    }
-                    if (attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
-                }
-                if (foundFile || attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
-            }
-        }
-
-        // Try indexed patterns
-        const namingPatterns = buildNamingPatterns(i);
-        for (const pattern of namingPatterns) {
-            if (foundFile || attempts >= MAX_ATTEMPTS_PER_FOLDER) break;
-            for (const format of SUPPORTED_FORMATS) {
-                const filename = `${pattern}.${format}`;
-                const url = buildAudioUrl(folderPath, filename);
-                attempts++;
-                const duration = await probeAudio(url);
-                if (duration !== null) {
-                    foundFile = {
-                        index: i,
-                        name: deriveTrackNameFromFilename(filename) || `Track ${i}`,
-                        file: filename,
-                        duration: duration || 0,
-                        path: url
-                    };
-                    if (VERBOSE_DETECTION_LOGS) console.log(`✅ Found: ${filename} (${formatDurationFromSeconds(duration || 0)}) -> ${url}`);
-                    break;
-                }
-            }
-        }
-
-        if (foundFile) {
-            audioFiles.push(foundFile);
-            lastFoundIndex = i;
-        } else {
-            // early break heuristics
-            if (audioFiles.length > 0 && i > lastFoundIndex + 2) {
-                if (VERBOSE_DETECTION_LOGS) console.log(`ℹ️ Stopping near index ${i}: consecutive gaps`);
-                break;
-            }
-            if (i >= DETECT_STOP_IF_NONE_AFTER && audioFiles.length === 0) {
-                if (VERBOSE_DETECTION_LOGS) console.log(`❌ No files after first ${i} tries, stopping`);
-                break;
-            }
-        }
-
-        if (attempts >= MAX_ATTEMPTS_PER_FOLDER) {
-            if (VERBOSE_DETECTION_LOGS) console.log(`⛔ Max attempts reached (${attempts}) for ${folderPath}`);
-            break;
-        }
-    }
-
-    if (VERBOSE_DETECTION_LOGS) console.log(`✅ Detection complete: Found ${audioFiles.length} audio files in ${folderPath} (attempts: ${attempts})`);
-    return audioFiles.sort((a, b) => a.index - b.index);
-}
-
-async function checkFileExists(url) {
-    try {
-        const response = await fetch(url, { method: 'HEAD' });
-        return response.ok;
-    } catch (error) {
-        return false;
-    }
-}
-
-async function getAudioDuration(url) {
-    return new Promise((resolve) => {
-        const audio = new Audio();
-        
-        const cleanup = () => {
-            audio.removeEventListener('loadedmetadata', onLoad);
-            audio.removeEventListener('error', onError);
-        };
-        
-        const onLoad = () => {
-            cleanup();
-            resolve(audio.duration || 0);
-        };
-        
-        const onError = () => {
-            cleanup();
-            resolve(0);
-        };
-        
-        const timeout = setTimeout(() => {
-            cleanup();
-            resolve(0);
-        }, 3000);
-        
-        audio.addEventListener('loadedmetadata', () => {
-            clearTimeout(timeout);
-            onLoad();
-        });
-        
-        audio.addEventListener('error', () => {
-            clearTimeout(timeout);
-            onError();
-        });
-        
-        audio.preload = 'metadata';
-        audio.src = url;
-    });
-}
-
-
-
+// (Funções de detecção removidas - uso direto de URLs CDN)
 function formatDurationFromSeconds(seconds) {
     if (!seconds || isNaN(seconds) || seconds <= 0) return '0:00';
     
@@ -882,58 +453,8 @@ function formatDurationFromSeconds(seconds) {
 }
 
 async function updatePlaylistWithRealData(playlistName) {
-    const playlist = playlistData[playlistName];
-    if (!playlist || !playlist.folder) {
-        // Playlists without folder remain static
-        return playlist;
-    }
-    
-    try {
-        showNotification('Carregando informações da playlist...');
-        console.log(`🔍 Scanning folder: ${playlist.folder}`);
-        // Use cache when available to prevent repeated scans on Pages
-        let realAudioFiles = audioDetectionCache.get(playlist.folder);
-        if (!realAudioFiles) {
-            realAudioFiles = await detectAudioFiles(playlist.folder);
-            audioDetectionCache.set(playlist.folder, realAudioFiles);
-        }
-        
-    if (realAudioFiles.length > 0) {
-            // Calculate total duration
-            const totalDuration = realAudioFiles.reduce((sum, file) => {
-                const duration = file.duration && !isNaN(file.duration) ? file.duration : 0;
-                return sum + duration;
-            }, 0);
-            
-            // Update the playlist with real data
-            playlist.tracks = realAudioFiles.map((file, index) => ({
-                name: deriveTrackNameFromFilename(file.file) || `Track ${file.index}`,
-                artist: playlist.tracks[index]?.artist || 'prxdby4le',
-                duration: formatDurationFromSeconds(file.duration || 0),
-                file: file.file
-            }));
-            
-            // Update playlist metadata
-            playlist.duration = formatDurationFromSeconds(totalDuration);
-            playlist.totalTracks = realAudioFiles.length;
-            
-            console.log(`✅ Updated ${playlistName}: ${realAudioFiles.length} tracks, total: ${formatDurationFromSeconds(totalDuration)}`);
-            showNotification(`Playlist carregada: ${realAudioFiles.length} músicas encontradas`);
-        } else {
-            console.warn(`⚠️ No audio files found in folder: ${playlist.folder}`);
-            // Evita usar placeholders errados; limpa a lista para refletir que não há arquivos válidos
-            playlist.tracks = [];
-            delete playlist.duration;
-            playlist.totalTracks = 0;
-            showNotification('Nenhuma música encontrada na pasta');
-        }
-        
-        return playlist;
-    } catch (error) {
-        console.error('❌ Error detecting audio files:', error);
-        showNotification('Erro ao carregar playlist');
-        return playlist; // Return original if detection fails
-    }
+    if (!manifestLoaded) await loadManifest();
+    return playlistData[playlistName];
 }
 
 function createAudioPlayer() {
@@ -978,21 +499,88 @@ function createAudioPlayer() {
     return audioPlayer;
 }
 
+// Captura durações reais assincronamente e atualiza UI
+function captureDurations(playlistName, tracks) {
+    tracks.forEach((t, idx) => {
+        if (!t.url) return;
+        const temp = document.createElement('audio');
+        temp.preload = 'metadata';
+        temp.src = t.url;
+        temp.addEventListener('loadedmetadata', () => {
+            const d = temp.duration;
+            if (!isNaN(d) && d > 0) {
+                t.duration = formatTime(d);
+                const span = document.querySelector(`.track-duration[data-duration-index="${idx}"]`);
+                if (span) span.textContent = t.duration;
+                // Atualiza total no título se todas carregarem
+                if (tracks.every(tr => tr.duration && tr.duration !== '0:00')) {
+                    const totalSeconds = tracks.reduce((acc, tr) => {
+                        const parts = tr.duration.split(':').map(Number); return acc + parts[0]*60 + parts[1];
+                    },0);
+                    const playlistTitle = document.getElementById('playlist-title');
+                    if (playlistTitle) {
+                        const base = playlistTitle.textContent.replace(/•.+$/, '').trim();
+                        playlistTitle.textContent = `${base} • ${formatDurationFromSeconds(totalSeconds)}`;
+                    }
+                }
+            }
+        });
+    });
+}
+
+// Injeta controle de volume (slider) se não existir
+function ensureVolumeControl() {
+    const controls = document.querySelector('.player-controls');
+    if (!controls) return;
+    if (document.getElementById('volume-slider')) return;
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    wrap.style.gap = '6px';
+    wrap.style.marginLeft = '12px';
+    wrap.innerHTML = `<span style="font-size:12px;color:#888;">VOL</span><input id="volume-slider" type="range" min="0" max="100" value="${Math.round(currentVolume*100)}" style="width:90px;">`;
+    controls.parentNode.insertBefore(wrap, controls.nextSibling);
+    const slider = wrap.querySelector('#volume-slider');
+    slider.addEventListener('input', e => {
+        currentVolume = slider.value/100;
+        if (audioPlayer) audioPlayer.volume = currentVolume;
+    });
+}
+
 function loadTrack(playlistName, trackIndex) {
     const playlist = playlistData[playlistName];
     if (!playlist || !playlist.tracks[trackIndex]) return false;
-    
     const track = playlist.tracks[trackIndex];
-    const audioPath = buildAudioUrl(playlist.folder, track.file);
-    
-    if (!audioPlayer) {
-        createAudioPlayer();
-    }
-    
-    audioPlayer.src = audioPath;
+    if (!track.url) return false;
+    if (!audioPlayer) createAudioPlayer();
+    audioPlayer.src = track.url;
     audioPlayer.load();
-    
     return true;
+}
+
+// Garante reprodução (autoplay) assim que a mídia puder tocar
+function ensurePlayback() {
+    if (!audioPlayer) return;
+    const attempt = () => {
+        const promise = audioPlayer.play();
+        if (promise && typeof promise.then === 'function') {
+            promise.then(() => {
+                isPlaying = true;
+                updateNowPlaying();
+            }).catch(err => {
+                console.warn('Falha ao iniciar autoplay:', err);
+                showNotification('Interação necessária para reproduzir (clique ▶)');
+            });
+        } else {
+            isPlaying = true;
+            updateNowPlaying();
+        }
+    };
+    if (audioPlayer.readyState >= 2) {
+        attempt();
+    } else {
+        audioPlayer.addEventListener('canplay', attempt, { once: true });
+    }
 }
 
 function updateProgressBar() {
@@ -1045,6 +633,7 @@ async function openPlaylist(projectName) {
     const playlistTracks = document.getElementById('playlist-tracks');
     
     // Get playlist data
+    if (!manifestLoaded) await loadManifest();
     let playlist = playlistData[projectName];
     if (!playlist) {
         console.log('No playlist found for:', projectName);
@@ -1057,7 +646,7 @@ async function openPlaylist(projectName) {
     playlistTitle.textContent = `Carregando - ${playlist.genre}`;
     playlistTracks.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Detectando músicas...</div>';
     
-    // Update playlist with real audio file data
+    // CDN mode: playlist já pronta
     playlist = await updatePlaylistWithRealData(projectName);
     
     // Store current playlist info globally
@@ -1084,6 +673,7 @@ async function openPlaylist(projectName) {
     playlistTitle.textContent = `${playlist.genre} (${trackCount} ${trackCount === 1 ? 'música' : 'músicas'} • ${totalDuration})`;
     
     // Generate tracks HTML
+    // Generate tracks HTML (durations serão atualizadas após metadata)
     const tracksHTML = playlist.tracks.map((track, index) => `
         <div class="track-item ${index === 0 ? 'active' : ''}" data-index="${index}">
             <span class="track-number">${(index + 1).toString().padStart(2, '0')}</span>
@@ -1091,17 +681,19 @@ async function openPlaylist(projectName) {
                 <h5>${track.name}</h5>
                 <p>${track.artist}</p>
             </div>
-            <span class="track-duration">${track.duration}</span>
+            <span class="track-duration" data-duration-index="${index}">${track.duration}</span>
         </div>
     `).join('');
     
     playlistTracks.innerHTML = tracksHTML;
     
     // Load first track if available
-    if (playlist.tracks && playlist.tracks.length > 0 && playlist.folder) {
+    if (playlist.tracks && playlist.tracks.length > 0) {
         loadTrack(projectName, 0);
         updateNowPlaying();
-        showNotification(`Playlist carregada: ${playlist.tracks.length} ${playlist.tracks.length === 1 ? 'música' : 'músicas'}`);
+        showNotification(`Playlist pronta: ${playlist.tracks.length} ${playlist.tracks.length === 1 ? 'música' : 'músicas'}`);
+    // Autoplay primeira faixa ao abrir a playlist (solicitado)
+    ensurePlayback();
     } else {
         playlistTracks.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Nenhuma música encontrada nesta pasta</div>';
         showNotification('Nenhuma música encontrada na pasta');
@@ -1114,6 +706,7 @@ async function openPlaylist(projectName) {
             selectTrack(index);
         });
     });
+    ensureVolumeControl();
 }
 
 // Update Now Playing Display
@@ -1161,12 +754,8 @@ function selectTrack(index) {
     // Update now playing display
     updateNowPlaying();
     
-    // Auto play the new track
-    if (isPlaying || !audioPlayer.paused) {
-        setTimeout(() => {
-            togglePlayPause();
-        }, 100);
-    }
+    // Sempre iniciar reprodução ao selecionar (autoplay solicitado)
+    ensurePlayback();
 }
 
 // Toggle Play/Pause
@@ -1206,6 +795,7 @@ function nextTrack() {
     } else {
         selectTrack(0); // Loop to first track
     }
+    ensurePlayback();
 }
 
 // Previous Track
@@ -1215,6 +805,7 @@ function prevTrack() {
     } else {
         selectTrack(currentPlaylist.length - 1); // Loop to last track
     }
+    ensurePlayback();
 }
 
 // Close Playlist
@@ -2071,60 +1662,4 @@ function initParallaxEffects() {
 // Initialize parallax effects
 document.addEventListener('DOMContentLoaded', initParallaxEffects);
 
-// Test function to check all folders
-async function testAllFolders() {
-    if (IS_GITHUB_PAGES && !DEBUG_SCAN) {
-        console.warn('🧪 Teste pesado desativado no GitHub Pages. Adicione ?debug=1 à URL para habilitar.');
-        return;
-    }
-    console.log('🧪 Testing all playlist folders...');
-    
-    for (const [playlistName, playlist] of Object.entries(playlistData)) {
-        if (playlist.folder) {
-            console.log(`\n📁 Testing folder: ${playlist.folder}`);
-            try {
-                const files = await detectAudioFiles(playlist.folder);
-                console.log(`✅ Found ${files.length} files in ${playlist.folder}`);
-                files.slice(0, 5).forEach(file => {
-                    console.log(`  - ${file.file} (${formatDurationFromSeconds(file.duration || 0)})`);
-                });
-                if (files.length > 5) {
-                    console.log(`  ... and ${files.length - 5} more files`);
-                }
-            } catch (error) {
-                console.error(`❌ Error in ${playlist.folder}:`, error);
-            }
-        }
-    }
-}
-
-// Test single folder function
-async function testSingleFolder(folderName) {
-    if (IS_GITHUB_PAGES && !DEBUG_SCAN) {
-        console.warn('🧪 Teste desativado no GitHub Pages. Adicione ?debug=1 à URL para habilitar.');
-        return [];
-    }
-    console.log(`🧪 Testing single folder: ${folderName}`);
-    try {
-        const files = await detectAudioFiles(folderName);
-        console.log(`✅ Found ${files.length} files`);
-        files.forEach(file => {
-            console.log(`  - ${file.file} (${formatDurationFromSeconds(file.duration || 0)})`);
-        });
-        return files;
-    } catch (error) {
-        console.error(`❌ Error:`, error);
-        return [];
-    }
-}
-
-
-window.portfolio = {
-    showSection,
-    playAudio,
-    viewProject,
-    watchVideo,
-    cinematicSounds,
-    testAllFolders,
-    testSingleFolder
-};
+window.portfolio = { showSection, playAudio, viewProject, watchVideo, cinematicSounds };
