@@ -2118,7 +2118,7 @@ async function testSingleFolder(folderName) {
     }
 }
 
-// Export functions for global access
+
 window.portfolio = {
     showSection,
     playAudio,
