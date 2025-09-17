@@ -484,10 +484,36 @@ function createAudioPlayer() {
     
     audioPlayer.addEventListener('error', (e) => {
         console.error('Audio error:', e, 'src:', audioPlayer?.src);
-        showNotification('Erro ao carregar a música - pulando para próxima');
+        // Marca a faixa atual como quebrada para não tentar novamente nesta sessão
+        if (currentPlaylist[currentTrackIndex] && !currentPlaylist[currentTrackIndex]._broken) {
+            currentPlaylist[currentTrackIndex]._broken = true;
+            const items = document.querySelectorAll('.track-item');
+            const item = items[currentTrackIndex];
+            if (item) {
+                item.classList.add('broken');
+                const dur = item.querySelector('.track-duration');
+                if (dur) dur.textContent = 'ERR';
+            }
+        }
+        showNotification('Erro ao carregar – pulando');
+        // Evita loop infinito se todas quebradas
+        const hasPlayable = currentPlaylist.some(t => !t._broken && t.url);
+        if (!hasPlayable) {
+            showNotification('Nenhuma faixa reproduzível nesta playlist');
+            isPlaying = false;
+            updateNowPlaying();
+            return;
+        }
+        // Avança para próxima não quebrada
         setTimeout(() => {
-            nextTrack();
-        }, 1000);
+            let attempts = 0;
+            do {
+                currentTrackIndex = (currentTrackIndex + 1) % currentPlaylist.length;
+                attempts++;
+            } while (currentPlaylist[currentTrackIndex]._broken && attempts <= currentPlaylist.length);
+            const trackOk = loadTrack(window.currentPlaylistName, currentTrackIndex);
+            if (trackOk) ensurePlayback();
+        }, 400);
     });
     
     audioPlayer.addEventListener('loadstart', () => {

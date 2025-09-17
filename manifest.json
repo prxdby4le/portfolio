@@ -8,7 +8,7 @@
   ],
   "playlists": {
     "O Fino do Boombap": {
-      "pattern": { "basePattern": "boombap's", "count": 39, "ext": "mp3" },
+      "pattern": { "basePattern": "boombap's", "count": 36, "ext": "mp3" },
       "genre": "Boombap"
     },
     "Drum & Bass": {
