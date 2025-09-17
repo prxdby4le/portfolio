@@ -56,17 +56,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-card" id="video-portfolio">
-                    <div class="card-content">
-                        <div class="card-icon"><img src="assets/images/premierepro.png" alt="🎬"></div>
-                        <h3>Edição de Vídeo</h3>
-                        <p>Pós-produção audiovisual criativa e profissional</p>
-                        <button class="enter-btn" data-portfolio="video">
-                            <span>ENTRAR</span>
-                            <div class="btn-arrow">→</div>
-                        </button>
-                    </div>
-                </div>
+                <!-- Card de vídeo removido -->
             </div>
         </div>
     </section>
@@ -320,105 +310,7 @@
         </div>
     </section>
 
-    <!-- Video Portfolio Section -->
-    <section class="portfolio-section hidden" id="video-section">
-        <div class="portfolio-header">
-            <button class="back-btn" id="back-to-home-video">← Voltar</button>
-            <h2>Edição de Vídeo</h2>
-        </div>
-        
-        <div class="projects-grid">
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/trap_under_cover.JPG" alt="Curta Metragem Experimental">
-                </div>
-                <div class="project-info">
-                    <h3>Curta Metragem Experimental</h3>
-                    <p>Narrativa visual com técnicas cinematográficas avançadas</p>
-                    <div class="project-tags">
-                        <span>Narrativa</span>
-                        <span>Color Grading</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/plugg_cover.jpg" alt="Motion Graphics">
-                </div>
-                <div class="project-info">
-                    <h3>Motion Graphics</h3>
-                    <p>Animações gráficas e elementos visuais dinâmicos</p>
-                    <div class="project-tags">
-                        <span>After Effects</span>
-                        <span>Animation</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/hoodtrap_cover.jpg" alt="Videoclipe Musical">
-                </div>
-                <div class="project-info">
-                    <h3>Videoclipe Musical</h3>
-                    <p>Produção audiovisual sincronizada com música</p>
-                    <div class="project-tags">
-                        <span>Music Video</span>
-                        <span>Sincronização</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/drumless_cover.jpg" alt="Comercial Publicitário">
-                </div>
-                <div class="project-info">
-                    <h3>Comercial Publicitário</h3>
-                    <p>Peça publicitária com storytelling impactante</p>
-                    <div class="project-tags">
-                        <span>Publicidade</span>
-                        <span>Storytelling</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/others_cover.JPG" alt="Documentário">
-                </div>
-                <div class="project-info">
-                    <h3>Documentário</h3>
-                    <p>Narrativa documental com entrevistas e depoimentos</p>
-                    <div class="project-tags">
-                        <span>Documentary</span>
-                        <span>Entrevistas</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-image">
-                    <img src="assets/images/diversos_cover.JPG" alt="VFX Compositing">
-                </div>
-                <div class="project-info">
-                    <h3>VFX & Compositing</h3>
-                    <p>Efeitos visuais e composição de elementos digitais</p>
-                    <div class="project-tags">
-                        <span>VFX</span>
-                        <span>Compositing</span>
-                    </div>
-                    <button class="watch-btn">▶ ASSISTIR</button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Seção de vídeo removida -->
 
     <!-- About Section -->
     <section class="about-section hidden" id="about">
@@ -523,9 +415,11 @@
 
     <!-- Background Animation -->
     <canvas id="background-canvas"></canvas>
-    
 
+    <!-- Mount point React -->
+    <div id="react-root" style="max-width:900px;margin:40px auto 120px auto;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);border:1px solid rgba(78,205,196,0.2);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,0.4);"></div>
 
     <script src="script.js"></script>
+    <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

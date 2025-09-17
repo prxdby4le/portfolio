@@ -10,7 +10,7 @@ function buildCdnUrl(path) { return `${CDN_BASE}/${path.split('/').map(encodeURI
 const heroSection = document.querySelector('.hero-section');
 const musicSection = document.getElementById('music-section');
 const visualSection = document.getElementById('visual-section');
-const videoSection = document.getElementById('video-section');
+// videoSection removido
 const aboutSection = document.getElementById('about');
 const contactSection = document.getElementById('contact');
 const backgroundCanvas = document.getElementById('background-canvas');
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Open correct section on initial load if URL contains a hash (GitHub Pages friendly)
 document.addEventListener('DOMContentLoaded', function() {
     const hash = (window.location.hash || '').replace(/^#/, '');
-    const validSections = new Set(['home', 'music', 'visual', 'video', 'about', 'contact']);
+    const validSections = new Set(['home', 'music', 'visual', 'about', 'contact']);
     if (hash && validSections.has(hash)) {
         showSection(hash);
     }
@@ -114,7 +114,7 @@ function setupEventListeners() {
     // Portfolio navigation buttons
     const musicBtn = document.querySelector('[data-portfolio="music"]');
     const visualBtn = document.querySelector('[data-portfolio="visual"]');
-    const videoBtn = document.querySelector('[data-portfolio="video"]');
+    // videoBtn removido
     const backButtons = document.querySelectorAll('.back-btn');
     
     // Navigation links
@@ -123,7 +123,7 @@ function setupEventListeners() {
     // Portfolio buttons
     musicBtn.addEventListener('click', () => showSection('music'));
     visualBtn.addEventListener('click', () => showSection('visual'));
-    videoBtn.addEventListener('click', () => showSection('video'));
+    // videoBtn removido
     
     // Back buttons
     backButtons.forEach(btn => {
@@ -156,7 +156,7 @@ function showSection(section) {
     
     setTimeout(() => {
         // Hide all sections
-        const sections = [heroSection, musicSection, visualSection, videoSection, aboutSection, contactSection];
+    const sections = [heroSection, musicSection, visualSection, aboutSection, contactSection];
         sections.forEach(sec => sec.classList.add('hidden'));
         
         // Show target section with cinematic entrance
@@ -176,11 +176,7 @@ function showSection(section) {
                 currentSection = 'visual';
                 cinematicEntrancePortfolio('visual');
                 break;
-            case 'video':
-                videoSection.classList.remove('hidden');
-                currentSection = 'video';
-                cinematicEntrancePortfolio('video');
-                break;
+            // case 'video': removido
             case 'about':
                 aboutSection.classList.remove('hidden');
                 currentSection = 'about';
@@ -348,18 +344,7 @@ function setupProjectButtons() {
         });
     });
     
-    // Watch buttons for video projects
-    const watchButtons = document.querySelectorAll('.watch-btn');
-    watchButtons.forEach(btn => {
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        newBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const projectName = this.closest('.project-item').querySelector('h3').textContent;
-            watchVideo(projectName);
-        });
-    });
+    // watch buttons removidos
 }
 
 // =========== HELPERS PARA PADRÃO "Nome's (n).mp3" EM NAMESPACE PLANO ===========
@@ -863,88 +848,7 @@ function viewProject(projectName) {
     }, 500);
 }
 
-// Watch Video Function
-function watchVideo(projectName) {
-    // Create a video player modal or redirect to video page
-    showNotification(`Reproduzindo vídeo: ${projectName}`);
-    
-    // Create video modal (simplified version)
-    createVideoModal(projectName);
-}
-
-// Create Video Modal
-function createVideoModal(projectName) {
-    const modal = document.createElement('div');
-    modal.className = 'video-modal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.5s ease;
-    `;
-    
-    const videoContainer = document.createElement('div');
-    videoContainer.style.cssText = `
-        background: #1a1a1a;
-        border-radius: 15px;
-        padding: 30px;
-        max-width: 800px;
-        width: 90%;
-        text-align: center;
-        border: 1px solid rgba(78, 205, 196, 0.3);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    `;
-    
-    videoContainer.innerHTML = `
-        <h3 style="color: white; margin-bottom: 20px; font-size: 24px;">${projectName}</h3>
-        <div style="background: #333; height: 300px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-            <span style="color: #666; font-size: 18px;">🎬 Preview do Vídeo</span>
-        </div>
-        <button id="close-modal" style="
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            border: none;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-        ">Fechar</button>
-    `;
-    
-    modal.appendChild(videoContainer);
-    document.body.appendChild(modal);
-    
-    // Show modal
-    setTimeout(() => {
-        modal.style.opacity = '1';
-    }, 100);
-    
-    // Close modal functionality
-    document.getElementById('close-modal').addEventListener('click', () => {
-        modal.style.opacity = '0';
-        setTimeout(() => {
-            document.body.removeChild(modal);
-        }, 500);
-    });
-    
-    // Close on background click
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(modal);
-            }, 500);
-        }
-    });
-}
+// funções de vídeo removidas
 
 // Show Notification
 function showNotification(message) {
@@ -1017,11 +921,7 @@ function handleKeyboardNavigation(e) {
                 showSection('visual');
             }
             break;
-        case '3':
-            if (currentSection === 'home') {
-                showSection('video');
-            }
-            break;
+    // tecla '3' para vídeo removida
         case 'h':
             showSection('home');
             break;
@@ -1457,7 +1357,7 @@ document.addEventListener('DOMContentLoaded', setupSmoothScrolling);
 
 // Magnetic effect for interactive elements
 function initMagneticEffect() {
-    const magneticElements = document.querySelectorAll('.enter-btn, .play-btn, .view-btn, .watch-btn, .back-btn');
+    const magneticElements = document.querySelectorAll('.enter-btn, .play-btn, .view-btn, .back-btn');
     
     magneticElements.forEach(element => {
         element.addEventListener('mousemove', (e) => {
@@ -1690,4 +1590,4 @@ function initParallaxEffects() {
 // Initialize parallax effects
 document.addEventListener('DOMContentLoaded', initParallaxEffects);
 
-window.portfolio = { showSection, playAudio, viewProject, watchVideo, cinematicSounds };
+window.portfolio = { showSection, playAudio, viewProject, cinematicSounds };
