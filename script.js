@@ -417,7 +417,9 @@ async function loadManifest() {
                         name: (name === 'Ambient' ? 'Ambient ' + (i+1) : name + (cfg.files.length>1? ' ' + (i+1): '')),
                         artist: 'prxdby4le',
                         duration: '0:00',
-                        url: buildCdnUrl(f.replace(/\s/g, '%20'))
+                        // NÃO pré-encode espaços aqui; buildCdnUrl já aplica encodeURIComponent em cada segmento.
+                        // O replace anterior causava "%2520" (dupla codificação) e quebrava somente as faixas manuais (ex: Ambient).
+                        url: buildCdnUrl(f)
                     }))
                 };
             }
