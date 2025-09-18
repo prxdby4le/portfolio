@@ -1,0 +1,1 @@
+.ascii-text { font-family: 'JetBrains Mono', 'Fira Code', monospace; letter-spacing:2px; font-size: clamp(1.4rem,2.5vw,2rem); background:var(--fg-gradient-rainbow); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 0 6px rgba(255,255,255,0.15)); }

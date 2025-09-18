@@ -1,0 +1,4 @@
+.sm-outer { position:relative; overflow:hidden; width:100%; padding:.6rem 0; margin-top:3rem; }
+.sm-inner { display:inline-flex; white-space:nowrap; will-change:transform; }
+.sm-item { font-size:.7rem; letter-spacing:.6px; text-transform:uppercase; padding:.35rem 1.4rem; color:rgba(255,255,255,0.65); position:relative; }
+.sm-item::after { content:""; position:absolute; top:50%; right:0; width:1px; height:50%; background:linear-gradient(transparent,var(--fg-border),transparent); transform:translateY(-50%); opacity:.5; }

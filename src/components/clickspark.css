@@ -1,0 +1,4 @@
+.cs-container { position:fixed; pointer-events:none; width:0; height:0; z-index:9999; }
+.cs-spark { position:absolute; width:6px; height:6px; border-radius:50%; background:var(--fg-accent); box-shadow:0 0 6px var(--fg-accent),0 0 14px rgba(255,157,46,.5); animation:cs-move .75s cubic-bezier(.55,.06,.4,.99); transform:rotate(var(--cs-angle)) translateY(-4px); }
+.cs-spark:nth-child(odd){ background:var(--fg-pink); box-shadow:0 0 6px var(--fg-pink),0 0 14px rgba(255,98,212,.5); }
+@keyframes cs-move { 0%{ transform:rotate(var(--cs-angle)) translateY(-4px) scale(.9); opacity:1; } 70%{ opacity:1; } 100%{ transform:rotate(var(--cs-angle)) translateY(-46px) scale(.2); opacity:0; } }

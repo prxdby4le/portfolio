@@ -1,0 +1,6 @@
+.section{padding:3rem 1.4rem;max-width:1000px;margin:0 auto;} 
+.lead{line-height:1.5;opacity:.85;font-size:.9rem;max-width:760px;} 
+.grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:2rem;} 
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem 1rem 1.2rem;border-radius:18px;backdrop-filter:blur(4px);} 
+.cardTitle{margin:0 0 .6rem;font-size:1rem;color:#4ecdc4;} 
+.list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;font-size:.75rem;opacity:.8;}

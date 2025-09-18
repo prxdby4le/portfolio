@@ -1,80 +1,62 @@
-import React from 'react';
-import { useAudioPlayer } from '../context\AudioPlayerContext.jsx';
+import React, { useEffect, useRef } from 'react';
+import { useAudioPlayer } from '../context/AudioPlayerContext.jsx';
 
-export function PlaylistModal({ onClose }) {
-  const { currentPlaylistName, playlists, trackIndex, currentTrack, playPause, isPlaying, next, prev, setVolume, volume, setTrackIndex } = useAudioPlayer();
-  if(!currentPlaylistName) return null;
-  const pl = playlists[currentPlaylistName];
+export default function PlaylistModal(){
+  const { current, playlists, closePlaylist } = useAudioPlayer();
+  const ref = useRef(null);
+  const data = current ? playlists[current] : null;
+
+  useEffect(()=>{
+    if(!current) return;
+    const onKey = (e)=> { if(e.key==='Escape') closePlaylist(); };
+    window.addEventListener('keydown', onKey);
+    return ()=> window.removeEventListener('keydown', onKey);
+  },[current, closePlaylist]);
+
+  useEffect(()=>{
+    if(current && ref.current){
+      // focus first button for accessibility
+      ref.current.querySelector('button')?.focus();
+    }
+  },[current]);
+
+  if(!current) return null;
+
   return (
-    <div style={overlay}>
-      <div style={modal}>
-        <header style={header}>
-          <h3 style={{margin:0}}>{pl.genre || currentPlaylistName}</h3>
-          <button onClick={onClose} style={closeBtn}>×</button>
+    <div role="dialog" aria-modal="true" aria-label={`Playlist ${current}`} style={{ position:'fixed', inset:0, zIndex:90, display:'flex', alignItems:'center', justifyContent:'center', padding:'2rem' }}>
+      <div onClick={closePlaylist} style={{ position:'absolute', inset:0, backdropFilter:'blur(14px) saturate(140%)', background:'rgba(10,14,20,0.55)' }} />
+      <div ref={ref} style={{ position:'relative', width:'min(560px,100%)', maxHeight:'80vh', overflow:'auto', background:'var(--fg-surface)', border:'1px solid var(--fg-border)', borderRadius:20, padding:'1.4rem 1.5rem 1.7rem', boxShadow:'0 18px 46px -12px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,0.08)' }}>
+        <header style={{ display:'flex', alignItems:'center', gap:12, marginBottom:'1rem' }}>
+          <h3 style={{ margin:0, fontSize:'1.05rem', background:'var(--fg-gradient-accent)', WebkitBackgroundClip:'text', color:'transparent' }}>{current}</h3>
+          <div style={{ marginLeft:'auto' }}>
+            <button onClick={closePlaylist} style={closeBtnStyle} aria-label="Fechar playlist">✕</button>
+          </div>
         </header>
-        <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
-          <div style={nowPlaying}>
-            <div>
-              <div style={{fontSize:'.75rem',opacity:.65}}>Tocando agora</div>
-              <strong>{currentTrack?.name}</strong>
-              <div style={{fontSize:'.7rem',opacity:.6}}>{currentTrack?.artist}</div>
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:8}}>
-              <button onClick={prev} style={ctrl}>⏮</button>
-              <button onClick={playPause} style={ctrl}>{isPlaying? '⏸':'▶'}</button>
-              <button onClick={next} style={ctrl}>⏭</button>
-              <input type="range" min={0} max={100} value={Math.round(volume*100)} onChange={e=>setVolume(e.target.value/100)} />
-            </div>
-          </div>
-          <div style={{maxHeight:300,overflowY:'auto',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:6}}>
-            {pl.tracks.map((t,i)=> {
-              const active = i === trackIndex;
-              return (
-                <li
-                  key={i}
-                  onClick={()=> setTrackIndex(i)}
-                  style={{
-                    padding:'4px 0',
-                    borderBottom:'1px solid #233',
-                    cursor:'pointer',
-                    color: active ? '#4ecdc4' : '#eee',
-                    fontWeight: active ? 600 : 400
-                  }}
-                  title={t.file}
-                >
-                  {t.display}{t.duration ? ` — ${t.duration}` : ''}
-                </li>
-              );
-            })}
-          </div>
-        </div>
+        <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:10 }}>
+          {data.tracks.map((t,i)=> (
+            <li key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'0.65rem 0.75rem', background:'var(--fg-surface-alt)', border:'1px solid var(--fg-border)', borderRadius:12 }}>
+              <span style={{ fontSize:'.65rem', opacity:.6, fontWeight:600, width:26, textAlign:'right' }}>{i+1}.</span>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:'.8rem', fontWeight:500 }}>{t.title}</div>
+                <div style={{ fontSize:'.6rem', opacity:.55 }}>{formatTime(t.duration)}</div>
+              </div>
+              <button style={trackBtnStyle} aria-label={`Play ${t.title}`}>▶</button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
 }
 
-function TrackRow({ t, active, index }) {
-  return (
-    <div style={{
-      display:'flex',alignItems:'center',gap:12,padding:'6px 10px',
-      background: active? 'linear-gradient(90deg,#133136,#0a1618)':'transparent',
-      borderRadius:8,fontSize:'.8rem'
-    }}>
-      <span style={{opacity:.5,width:20}}>{String(index+1).padStart(2,'0')}</span>
-      <div style={{flex:1}}>
-        <div style={{fontWeight:600,color: active? '#4ecdc4':'#eee'}}>{t.name}</div>
-        <div style={{opacity:.55,fontSize:'.65rem'}}>{t.artist}</div>
-      </div>
-      <span style={{opacity:.6,fontSize:'.65rem'}}>{t.duration}</span>
-    </div>
-  );
+function formatTime(s){
+  const m = Math.floor(s/60); const r = s%60; return `${m}:${r.toString().padStart(2,'0')}`;
 }
 
-const overlay={position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',backdropFilter:'blur(4px)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:4000};
-const modal={width:'min(800px,92%)',background:'rgba(20,32,36,0.92)',border:'1px solid #1d3c40',borderRadius:18,padding:'1.2rem 1.4rem 1.6rem',boxShadow:'0 20px 40px -10px rgba(0,0,0,0.6)',display:'flex',flexDirection:'column',gap:'1.2rem'};
-const header={display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(255,255,255,0.07)',paddingBottom:10};
-const closeBtn={background:'none',border:'none',color:'#bbb',fontSize:28, cursor:'pointer',lineHeight:1};
-const nowPlaying={display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0.5rem 0 0.75rem',borderBottom:'1px solid rgba(255,255,255,0.06)'};
-const ctrl={background:'linear-gradient(135deg,#1c3c40,#122629)',border:'1px solid #214b50',color:'#4ecdc4',padding:'6px 10px',borderRadius:10,cursor:'pointer',fontSize:'0.85rem'};
+const closeBtnStyle = {
+  background:'var(--fg-surface-alt)', border:'1px solid var(--fg-border)', color:'#fff', fontSize:'.7rem', padding:'.45rem .6rem', borderRadius:8, cursor:'pointer'
+};
 
-export default PlaylistModal;
+const trackBtnStyle = {
+  background:'var(--fg-accent)', border:'none', color:'#fff', fontSize:'.62rem', padding:'.45rem .55rem', borderRadius:8, cursor:'pointer', boxShadow:'0 0 0 1px rgba(255,255,255,0.15)'
+};
