@@ -1,0 +1,69 @@
+{
+  "Boombap": {
+    "description": "Beats clássicos com grooves orgânicos e samples vintage.",
+    "tracks": [
+      {
+        "id": "boombap-01",
+        "title": "Street Tape 01",
+        "src": "https://cloudflare-example.com/boombap/street-tape-01.mp3",
+        "cover": "https://cloudflare-example.com/covers/boombap-01.jpg",
+        "bpm": 90,
+        "key": "Am",
+        "duration": "2:34",
+        "tags": ["boom-bap", "oldschool", "dark"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-02",
+        "title": "Golden Era",
+        "src": "https://cloudflare-example.com/boombap/golden-era.mp3",
+        "cover": "https://cloudflare-example.com/covers/boombap-02.jpg",
+        "bpm": 95,
+        "key": "Cm",
+        "duration": "3:12",
+        "tags": ["boom-bap", "jazz", "chill"],
+        "downloadable": false
+      }
+    ]
+  },
+  "dnb": {
+    "description": "Energia alta e breakbeats rápidos para mentes aceleradas.",
+    "tracks": []
+  },
+  "ambient": {
+    "description": "Texturas etéreas e atmosferas para viagens sonoras.",
+    "tracks": []
+  },
+  "drumless": {
+    "description": "Faixas sem bateria, foco em melodia e harmonia pura.",
+    "tracks": []
+  },
+  "hoodtrap": {
+    "description": "Trap com vibração de rua, pesado e autêntico.",
+    "tracks": []
+  },
+  "hyper": {
+    "description": "Hiperativo, brilhante e acelerado como luz neon.",
+    "tracks": []
+  },
+  "other": {
+    "description": "Experimentos fora da caixa e sons inclassificáveis.",
+    "tracks": []
+  },
+  "pluggnb": {
+    "description": "Vibes pluggnb melódicas com sintetizadores espaciais.",
+    "tracks": []
+  },
+  "synthwave": {
+    "description": "Retro-futurista com synths vintage e nostalgia 80s.",
+    "tracks": []
+  },
+  "trap under": {
+    "description": "Trap underground, cru e pesado direto das ruas.",
+    "tracks": []
+  },
+  "voltmix": {
+    "description": "Misturas eletrizantes e híbridas de alta voltagem.",
+    "tracks": []
+  }
+}

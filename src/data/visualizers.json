@@ -1,0 +1,28 @@
+{
+  "videos": [
+    {
+      "id": "vis-01",
+      "title": "Neon Dreams",
+      "thumbnail": "https://cloudflare-example.com/thumbnails/vis-01.jpg",
+      "src": "https://cloudflare-example.com/videos/vis-01.mp4",
+      "duration": "3:45",
+      "category": "abstract"
+    },
+    {
+      "id": "vis-02", 
+      "title": "Cyber Waves",
+      "thumbnail": "https://cloudflare-example.com/thumbnails/vis-02.jpg",
+      "src": "https://cloudflare-example.com/videos/vis-02.mp4",
+      "duration": "2:30",
+      "category": "geometric"
+    },
+    {
+      "id": "vis-03",
+      "title": "Liquid Motion",
+      "thumbnail": "https://cloudflare-example.com/thumbnails/vis-03.jpg",
+      "src": "https://cloudflare-example.com/videos/vis-03.mp4",
+      "duration": "4:15",
+      "category": "fluid"
+    }
+  ]
+}

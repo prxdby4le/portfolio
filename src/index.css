@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fruitygear Aero Design System - FL Studio/Windows Aero inspired */
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 222 23% 6%; /* #0B0F14 */
+    --foreground: 0 0% 95%;
+    
+    /* Glass surfaces */
+    --card: 222 23% 8%;
+    --card-foreground: 0 0% 95%;
+    --glass: 222 23% 6%;
+    --glass-border: 0 0% 100%;
+    
+    /* Neon accent colors */
+    --primary: 84 100% 64%; /* Lime #B7FF4A */
+    --primary-foreground: 222 23% 6%;
+    --primary-glow: 84 100% 64%;
+    
+    --secondary: 25 100% 62%; /* Orange #FF9D3D */
+    --secondary-foreground: 222 23% 6%;
+    --secondary-glow: 25 100% 62%;
+    
+    --accent: 263 100% 71%; /* Purple #A06BFF */
+    --accent-foreground: 222 23% 6%;
+    --accent-glow: 263 100% 71%;
+    
+    /* UI elements */
+    --muted: 222 20% 15%;
+    --muted-foreground: 0 0% 60%;
+    
+    --popover: 222 23% 8%;
+    --popover-foreground: 0 0% 95%;
+    
+    --border: 222 20% 20%;
+    --input: 222 20% 12%;
+    --ring: 84 100% 64%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Gradients */
+    --gradient-fruity: linear-gradient(135deg, hsl(84 100% 64%), hsl(25 100% 62%), hsl(263 100% 71%));
+    --gradient-lime: linear-gradient(135deg, hsl(84 100% 64%), hsl(84 80% 50%));
+    --gradient-orange: linear-gradient(135deg, hsl(25 100% 62%), hsl(25 80% 50%));
+    --gradient-purple: linear-gradient(135deg, hsl(263 100% 71%), hsl(263 80% 60%));
+    --gradient-dark: linear-gradient(180deg, hsl(222 23% 8%), hsl(222 23% 4%));
+    
+    /* Shadows and glows */
+    --shadow-neon-lime: 0 0 40px hsl(84 100% 64% / 0.3);
+    --shadow-neon-orange: 0 0 40px hsl(25 100% 62% / 0.3);
+    --shadow-neon-purple: 0 0 40px hsl(263 100% 71% / 0.3);
+    --shadow-glass: 0 8px 32px hsl(222 23% 0% / 0.4);
+    --shadow-inner: inset 0 1px 0 hsl(0 0% 100% / 0.1);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --radius: 0.75rem;
+    
+    /* Sidebar theming */
+    --sidebar-background: 222 23% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 84 100% 64%;
+    --sidebar-primary-foreground: 222 23% 6%;
+    --sidebar-accent: 222 20% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 222 20% 20%;
+    --sidebar-ring: 84 100% 64%;
+  }
+}
+
+/* Glass morphism utilities */
+@layer utilities {
+  .glass {
+    background: hsl(var(--glass) / 0.2);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--glass-border) / 0.1);
+    box-shadow: var(--shadow-glass), var(--shadow-inner);
+  }
+  
+  .glass-heavy {
+    background: hsl(var(--glass) / 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--glass-border) / 0.2);
+    box-shadow: var(--shadow-glass), var(--shadow-inner);
+  }
+  
+  .glow-lime {
+    box-shadow: var(--shadow-neon-lime);
+  }
+  
+  .glow-orange {
+    box-shadow: var(--shadow-neon-orange);
+  }
+  
+  .glow-purple {
+    box-shadow: var(--shadow-neon-purple);
+  }
+  
+  .text-glow-lime {
+    text-shadow: 0 0 20px hsl(84 100% 64% / 0.5);
+  }
+  
+  .text-glow-orange {
+    text-shadow: 0 0 20px hsl(25 100% 62% / 0.5);
+  }
+  
+  .text-glow-purple {
+    text-shadow: 0 0 20px hsl(263 100% 71% / 0.5);
+  }
+  
+  /* Grain texture overlay */
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* 3D tilt effect */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+  }
+  
+  .tilt-3d:hover {
+    transform: perspective(1000px) rotateX(6deg) rotateY(-6deg);
+  }
+  
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground custom-scrollbar;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
