@@ -1,0 +1,2 @@
+# Disable Jekyll so that files like _redirects or paths with underscores work
+# This file can be empty; presence is enough for GH Pages
