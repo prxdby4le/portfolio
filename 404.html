@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta http-equiv="refresh" content="0; url=/portfolio/" />
+  </head>
+  <body>
+    <script>
+      (function() {
+        var repo = '/portfolio';
+        var l = window.location;
+        // Preserve path, query and hash by moving them to hashbang
+        var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + repo + '/#' + l.pathname.replace(repo, '') + l.search + l.hash;
+        l.replace(newUrl);
+      })();
+    </script>
+  </body>
+</html>
