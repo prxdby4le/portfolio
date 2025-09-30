@@ -15,19 +15,17 @@ interface BeatsGridProps {
 
 const GENRE_ORDER = [
   "Boombap",
-  "dnb",
-  "ambient",
-  "drumless",
-  "hoodtrap",
-  "hyper",
-  "other",
-  "pluggnb",
-  "synthwave",
-  "trap under",
-  "voltmix"
+  "Drum and Bass",
+  "Trap Underground",
+  "Hyper",
+  "Plug",
+  "Rock",
+  "Fora da Caixa"
 ];
 
-const ALL_TAGS = ["dark", "chill", "fast", "boom-bap", "oldschool", "jazz", "experimental", "melodic"];
+const ALL_TAGS = [
+  "boom-bap", "sample", "energetic", "nostalgic", "experimental", "romantic", "dark", "piano", "chill", "psicodelic", "sad", "dnb", "drumbreak", "fast", "hopeful", "anxious", "chill", "vocals", "trap", "melodic", "emotional", "aggressive", "piano", "hyper", "synth", "4/4", "plug", "pluggnb", "slow", "funknb", "ritmadinha", "rock", "emotional", "indie", "emo", "jerk", "hoodtrap", "misterious", "beat switch", "Synthwave", "dance", "jersey", "winter"
+];
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
   const [playlists] = useState<Playlists>(playlistsData as Playlists);

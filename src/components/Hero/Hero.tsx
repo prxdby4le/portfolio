@@ -38,7 +38,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-lg text-muted-foreground max-w-xl mx-auto"
           >
-            Produção musical com estética fruitygear. Beats originais e visualizers hipnotizantes.
+          Produção musical e visualizers.
           </motion.p>
         </div>
       </div>

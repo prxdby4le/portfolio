@@ -1,69 +1,521 @@
 {
   "Boombap": {
-    "description": "Beats clássicos com grooves orgânicos e samples vintage.",
+    "description": "Beats de boombap groovados com samples iradas.",
     "tracks": [
       {
         "id": "boombap-01",
-        "title": "Street Tape 01",
-        "src": "https://cloudflare-example.com/boombap/street-tape-01.mp3",
-        "cover": "https://cloudflare-example.com/covers/boombap-01.jpg",
-        "bpm": 90,
-        "key": "Am",
-        "duration": "2:34",
-        "tags": ["boom-bap", "oldschool", "dark"],
+        "title": "Broken Window",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/BRUH%20Fmajor%20153bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 153,
+        "key": "F",
+        "duration": "2:30",
+        "tags": ["boom-bap", "sample", "energetic"],
         "downloadable": false
       },
       {
         "id": "boombap-02",
-        "title": "Golden Era",
-        "src": "https://cloudflare-example.com/boombap/golden-era.mp3",
-        "cover": "https://cloudflare-example.com/covers/boombap-02.jpg",
+        "title": "Coraline",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/CORALINE%20Fsharp%20major%20125bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 125,
+        "key": "F#",
+        "duration": "3:49",
+        "tags": ["boom-bap", "sample", "nostalgic"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-03",
+        "title": "Beautiful Painful",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/LOVE%20IS%20A%20BEATIULLY%20PAINFUL%20Amajor%20115bpm%20switch%20Dminor.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 115,
+        "key": "A",
+        "duration": "3:57",
+        "tags": ["boom-bap", "sample", "nostalgic"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-04",
+        "title": "Amantes",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/LOVER%20IS%20A%20DAY%20Csharp%20major%20115.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 115,
+        "key": "C#",
+        "duration": "3:37",
+        "tags": ["experimental", "sample", "romantic"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-05",
+        "title": "Antes de dormir",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/blablabla%20Cminor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 140,
+        "key": "Cm",
+        "duration": "3:28",
+        "tags": ["experimental", "sample", "dark"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-06",
+        "title": "Train Travel",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/canvazG%23minor%2070bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 70,
+        "key": "G#m",
+        "duration": "2:44",
+        "tags": ["boom-bap", "piano", "chill"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-07",
+        "title": "Devil's work",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/me%20and%20the%20devil%20ahh%20Dm%2098bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 98,
+        "key": "Dm",
+        "duration": "4:05",
+        "tags": ["boom-bap", "sample", "triplets"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-08",
+        "title": "Please/No sé",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/no%20se%20Cminor%2095bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
         "bpm": 95,
         "key": "Cm",
-        "duration": "3:12",
-        "tags": ["boom-bap", "jazz", "chill"],
+        "duration": "4:42",
+        "tags": ["boom-bap", "sample", "psicodelic"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-09",
+        "title": "Ruined",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/sei%20la%20porra%20damn%20Eminor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 140,
+        "key": "Em",
+        "duration": "2:49",
+        "tags": ["boom-bap", "experimental", "sad"],
+        "downloadable": false
+      },
+      {
+        "id": "boombap-10",
+        "title": "Sundown",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/boombap/thejoia%20Dmajor%20170bpm%20d.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/boombap.avif",
+        "bpm": 170,
+        "key": "D",
+        "duration": "3:29",
+        "tags": ["boom-bap", "experimental", "sample"],
         "downloadable": false
       }
     ]
   },
-  "dnb": {
-    "description": "Energia alta e breakbeats rápidos para mentes aceleradas.",
-    "tracks": []
+  "Drum and Bass": {
+    "description": "Mente vazia e coração acelerado, drum and bass.",
+    "tracks": [
+      {
+        "id": "dnb-01",
+        "title": "Distopia",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/EU%20AMO%20DNB%20Fmajor%20175bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 175,
+        "key": "F",
+        "duration": "2:11",
+        "tags": ["dnb", "drumbreak", "fast"],
+        "downloadable": false
+      },
+      {
+        "id": "dnb-02",
+        "title": "No pair",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/REACH%20Cminor.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 170,
+        "key": "Cm",
+        "duration": "2:46",
+        "tags": ["dnb", "drumbreak", "hopeful"],
+        "downloadable": false
+      },
+      {
+        "id": "dnb-03",
+        "title": "Perfect girl",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/gen%20F%23minor%20175bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 175,
+        "key": "F#m",
+        "duration": "2:04",
+        "tags": ["dnb", "drumbreak", "anxious"],
+        "downloadable": false
+      },
+      {
+        "id": "dnb-04",
+        "title": "Alter ego",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/pintoso%20Dmajor%20144bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 144,
+        "key": "D",
+        "duration": "2:43",
+        "tags": ["dnb", "drumbreak", "chill"],
+        "downloadable": false
+      },
+      {
+        "id": "dnb-05",
+        "title": "Different",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/vid1.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 160,
+        "key": "Cm",
+        "duration": "2:26",
+        "tags": ["dnb", "drumbreak", "vocals"],
+        "downloadable": false
+      },
+      {
+        "id": "dnb-06",
+        "title": "Come Home",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/dnb/vou%20me%20matar%20em%20novembro%20Fminor%20166bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/dnb.avif",
+        "bpm": 166,
+        "key": "Fm",
+        "duration": "2:45",
+        "tags": ["dnb", "drumbreak", "vocals"],
+        "downloadable": false
+      }
+    ]
   },
-  "ambient": {
-    "description": "Texturas etéreas e atmosferas para viagens sonoras.",
-    "tracks": []
+  "Trap Underground": {
+    "description": "Ritmos diferentes do trap normal, algo mais experimental e alternativo.",
+    "tracks": [
+      {
+        "id": "trap-01",
+        "title": "Perdido",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/asdrgjin%20G%23%20major%20160bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 160,
+        "key": "G#",
+        "duration": "2:39",
+        "tags": ["trap", "melodic", "sample"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-02",
+        "title": "Disturbin the Peace",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/disturbin%20the%20peace%20Emajor%20173bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 173,
+        "key": "E",
+        "duration": "3:48",
+        "tags": ["trap", "melodic", "emotional", "sample"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-03",
+        "title": "Bateu diferente",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/euvoudarmeucu%20Bmajor%20155bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 155,
+        "key": "B",
+        "duration": "3:11",
+        "tags": ["trap", "melodic", "hopeful"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-04",
+        "title": "Qq eu tô fazendo?",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/fool%20ter%C3%A7a%20feira%20o%20que%20caralhos%20to%20fazendo%20da%20minha%20vida%20137BPM%20Fminor.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 137,
+        "key": "Fm",
+        "duration": "3:49",
+        "tags": ["trap", "dark", "aggressive"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-05",
+        "title": "5:51 AM",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/freestyle%202025%20inst%20Asharp%20minor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 140,
+        "key": "A#m",
+        "duration": "2:09",
+        "tags": ["trap", "melodic", "hopeful"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-06",
+        "title": "Outro ano, mesma fita",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/hardway%203%20Fminor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 140,
+        "key": "Fm",
+        "duration": "3:26",
+        "tags": ["trap", "melodic", "piano"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-07",
+        "title": "Músicas de amor",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/love%20songs%20sample%20Gsharp%20major%20136%20bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 136,
+        "key": "G#",
+        "duration": "3:26",
+        "tags": ["trap", "sample", "romantic"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-08",
+        "title": "Voodoo",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/olocvo%20Dminor%20160bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 160,
+        "key": "Dm",
+        "duration": "2:24",
+        "tags": ["trap", "sample", "dark"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-09",
+        "title": "Caminho",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/passion%20%5Bbeatstars%5D_2%20Aminor%20150bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 150,
+        "key": "Am",
+        "duration": "2:49",
+        "tags": ["trap", "melodic", "sad", "piano"],
+        "downloadable": false
+      },
+      {
+        "id": "trap-10",
+        "title": "Changes",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/trap%20under/type%20link%20Bmajor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/trap.avif",
+        "bpm": 140,
+        "key": "B",
+        "duration": "2:45",
+        "tags": ["trap", "sample", "hopeful"],
+        "downloadable": false
+      }
+    ]
   },
-  "drumless": {
-    "description": "Faixas sem bateria, foco em melodia e harmonia pura.",
-    "tracks": []
+  "Hyper": {
+    "description": "Beats com estética fortemente sintetizada e diferente do resto.",
+    "tracks": [
+      {
+        "id": "hyper-01",
+        "title": "TOMORROW",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/hyper/hypermerda_2%20A%23minor%20150bpm%20%5Bbeatstars%5D.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/hyper.avif",
+        "bpm": 150,
+        "key": "A#m",
+        "duration": "2:48",
+        "tags": ["hyper", "synth", "energetic"],
+        "downloadable": false
+      },
+      {
+        "id": "hyper-02",
+        "title": "CORRENTE SANGUINEA",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/hyper/hypernoise%20Dsharp%20minor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/hyper.avif",
+        "bpm": 140,
+        "key": "D#m",
+        "duration": "3:34",
+        "tags": ["hyper", "synth", "energetic"],
+        "downloadable": false
+      },
+      {
+        "id": "hyper-03",
+        "title": "NO FACE GIRL",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/hyper/no%20face%202%20F%23minor%20140bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/hyper.avif",
+        "bpm": 140,
+        "key": "F#m",
+        "duration": "3:14",
+        "tags": ["hyper", "synth", "4/4"],
+        "downloadable": false
+      },
+      {
+        "id": "hyper-04",
+        "title": "NOWHERE TO HIDE",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/hyper/nowhere%20to%20hide%20%5Bbeatstars%5D%20140bpm%20F%23minor.wav",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/hyper.avif",
+        "bpm": 140,
+        "key": "F#m",
+        "duration": "3:00",
+        "tags": ["hyper", "synth", "energetic", "4/4"],
+        "downloadable": false
+      },
+      {
+        "id": "hyper-05",
+        "title": "NORTH",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/hyper/serjo%20Fsharp%20minor%20130bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/hyper.avif",
+        "bpm": 130,
+        "key": "F#m",
+        "duration": "3:12",
+        "tags": ["hyper", "trap", "energetic"],
+        "downloadable": false
+      }
+    ]
   },
-  "hoodtrap": {
-    "description": "Trap com vibração de rua, pesado e autêntico.",
-    "tracks": []
+  "Plug": {
+    "description": "Coisas relacionadas a plug, tipo pluggnb ou funknb.",
+    "tracks": [
+      {
+        "id": "plug-01",
+        "title": "Investimento",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/plug/c4rlinhxs%20type%20beat%20Fminor%20118%20bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/plug.avif",
+        "bpm": 118,
+        "key": "Fm",
+        "duration": "1:55",
+        "tags": ["plug", "pluggnb", "slow"],
+        "downloadable": false
+      },
+      {
+        "id": "plug-02",
+        "title": "Low Dreamy",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/plug/fuck%20n%20b%20130BPM%20a%20MAJOR.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/plug.avif",
+        "bpm": 130,
+        "key": "A",
+        "duration": "2:44",
+        "tags": ["plug", "funknb", "ritmadinha"],
+        "downloadable": false
+      },
+      {
+        "id": "plug-03",
+        "title": "Lua",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/plug/pradinha%20137%20Dminor.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/plug.avif",
+        "bpm": 137,
+        "key": "Dm",
+        "duration": "3:23",
+        "tags": ["plug", "slow", "romantic"],
+        "downloadable": false
+      }
+    ]
   },
-  "hyper": {
-    "description": "Hiperativo, brilhante e acelerado como luz neon.",
-    "tracks": []
+  "Rock": {
+    "description": "Rockzinho gostoso com guitarras e tudo que tem direito.",
+    "tracks": [
+      {
+        "id": "rock-01",
+        "title": "Remember me",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/rock/alt%20rock%20170bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/rock.avif",
+        "bpm": 170,
+        "key": "D#",
+        "duration": "2:15",
+        "tags": ["rock", "emotional", "energetic"],
+        "downloadable": false
+      },
+      {
+        "id": "rock-02",
+        "title": "True Love",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/rock/caramujo%20caracol%20type%20beat%20Csharp%20minor%2097bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/rock.avif",
+        "bpm": 97,
+        "key": "C#",
+        "duration": "3:11",
+        "tags": ["rock", "indie", "emo"],
+        "downloadable": false
+      }
+    ]
   },
-  "other": {
-    "description": "Experimentos fora da caixa e sons inclassificáveis.",
-    "tracks": []
-  },
-  "pluggnb": {
-    "description": "Vibes pluggnb melódicas com sintetizadores espaciais.",
-    "tracks": []
-  },
-  "synthwave": {
-    "description": "Retro-futurista com synths vintage e nostalgia 80s.",
-    "tracks": []
-  },
-  "trap under": {
-    "description": "Trap underground, cru e pesado direto das ruas.",
-    "tracks": []
-  },
-  "voltmix": {
-    "description": "Misturas eletrizantes e híbridas de alta voltagem.",
-    "tracks": []
+  "Fora da Caixa": {
+    "description": "Quando me deixam livre pra escolher o que eu quero fazer.",
+    "tracks": [
+      {
+        "id": "fdc-01",
+        "title": "Ano do dragão",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/ano%20do%20dragao%20type%20bety.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 114,
+        "key": "G#m",
+        "duration": "3:08",
+        "tags": ["jerk", "hoodtrap", "misterious"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-02",
+        "title": "Sou eu",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/eu%20posso%20ser%20deus%20link%20dtype%20beat_2%20Fsharp%20minor%20117bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 117,
+        "key": "F#m",
+        "duration": "3:24",
+        "tags": ["trap", "beat switch", "hopeful"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-03",
+        "title": "Uma Sexta à Noite",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/gregoriplaus%20Gsharp%20minor%20110bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 110,
+        "key": "G#m",
+        "duration": "3:42",
+        "tags": ["Synthwave", "dark", "dance"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-04",
+        "title": "D's",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/jerk%20presente%20de%20d%20194bpm%20Dsharp%20minor.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 194,
+        "key": "D#m",
+        "duration": "2:08",
+        "tags": ["jerk", "hoodtrap", "sample"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-05",
+        "title": "Apaga a Luz",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/laplaga%20apaga%20luz%20type%20beat%20Amajor%20177bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 177,
+        "key": "A",
+        "duration": "0:59",
+        "tags": ["jerk", "hoodtrap", "sample"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-06",
+        "title": "Airplane Mode",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/pradasoueu%20airplane%20likmbo%20110BPM.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 110,
+        "key": "Gm",
+        "duration": "4:40",
+        "tags": ["4/4", "jersey", "sample", "vocals"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-07",
+        "title": "Eu e você",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/pradinha%20beabadoobee%20D%20major%20156bpm.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 156,
+        "key": "D",
+        "duration": "2:43",
+      "tags": ["jersey", "trap", "sample", "romantic"],
+        "downloadable": false
+      },
+      {
+        "id": "fdc-08",
+        "title": "Cold",
+        "src": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/alt/vid3%2083BPM%20Gsharp%20major%20mp3.mp3",
+        "cover": "https://pub-3614ca84d95f46bab013d5e01081b5ea.r2.dev/covers/alt.avif",
+        "bpm": 83,
+        "key": "G#",
+        "duration": "1:44",
+        "tags": ["3/4", "winter", "dark", "synth"],
+        "downloadable": false
+      }
+    ]
   }
 }

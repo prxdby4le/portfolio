@@ -15,10 +15,10 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-fruity flex items-center justify-center shadow-lg shadow-primary/30">
-              <span className="text-background font-bold text-lg">F</span>
+              <span className="text-background font-bold text-lg">🎵</span>
             </div>
             <h1 className="text-xl font-display font-bold bg-gradient-fruity bg-clip-text text-transparent">
-              Fruitygear Studio
+              prxdby4le
             </h1>
           </div>
 

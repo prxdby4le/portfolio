@@ -46,7 +46,7 @@ export default function VisualizersGrid() {
           Visualizers
         </h2>
         <p className="text-muted-foreground">
-          Experiências visuais hipnotizantes para acompanhar os beats
+          Experiências visuais que faço utilizando as capas originais dos projetos.
         </p>
       </motion.div>
 
