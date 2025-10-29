@@ -15,7 +15,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-fruity flex items-center justify-center shadow-lg shadow-primary/30">
-              <span className="text-background font-bold text-lg">🎵</span>
+              <span className="text-background font-bold text-lg">4</span>
             </div>
             <h1 className="text-xl font-display font-bold bg-gradient-fruity bg-clip-text text-transparent">
               prxdby4le
