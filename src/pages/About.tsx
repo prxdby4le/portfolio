@@ -45,7 +45,7 @@ const About = () => {
                   >
                     <div className="absolute inset-0 bg-gradient-fruity rounded-full p-1 animate-pulse z-[100]" />
                     <Avatar className="relative w-32 h-32 md:w-40 md:h-40 border-4 border-background shadow-lg shadow-primary/50 overflow-hidden z-[100]">
-                      <AvatarImage src="/profile.png" alt="Foto de perfil" className="object-contain" />
+                      <AvatarImage src="/profile.jpg" alt="Foto de perfil" className="object-contain" />
                       <AvatarFallback className="bg-gradient-fruity text-background text-4xl font-display font-bold">
                         P
                       </AvatarFallback>
