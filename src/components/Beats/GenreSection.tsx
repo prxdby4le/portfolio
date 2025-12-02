@@ -38,7 +38,9 @@ export default function GenreSection({
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const scrollAmount = 320;
+      // Ajusta o scroll amount baseado no tamanho da tela
+      const isMobile = window.innerWidth < 640;
+      const scrollAmount = isMobile ? 240 : 320;
       scrollRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -52,14 +54,14 @@ export default function GenreSection({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="mb-12"
+        className="mb-8 sm:mb-12"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-display font-bold text-foreground mb-2">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-1 sm:mb-2">
               {genre}
             </h2>
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground pr-2">{description}</p>
           </div>
         </div>
         <div className="glass rounded-xl p-12 text-center">
@@ -77,21 +79,21 @@ export default function GenreSection({
       className="mb-12"
     >
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-display font-bold text-foreground mb-2">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-1 sm:mb-2">
             {genre}
           </h2>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground pr-2">{description}</p>
         </div>
         
         <Button
           variant="glass"
           size="sm"
           onClick={onPlayAll}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 flex-shrink-0"
         >
-          <PlayCircle className="w-4 h-4" />
-          Play All
+          <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Play All</span>
         </Button>
       </div>
 
@@ -122,11 +124,11 @@ export default function GenreSection({
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex gap-4 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory"
+          className="flex gap-3 sm:gap-4 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory"
           style={{ scrollbarWidth: 'thin' }}
         >
           {tracks.map((track, index) => (
-            <div key={track.id} className="flex-none w-72 snap-start">
+            <div key={track.id} className="flex-none w-56 sm:w-64 md:w-72 snap-start">
               <TrackCard
                 track={track}
                 isPlaying={isPlaying}

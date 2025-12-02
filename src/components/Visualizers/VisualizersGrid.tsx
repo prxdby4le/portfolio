@@ -35,17 +35,17 @@ export default function VisualizersGrid() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="mb-8 text-center"
+        className="mb-6 sm:mb-8 text-center px-2"
       >
-        <h2 className="text-3xl font-display font-bold mb-2 bg-gradient-purple bg-clip-text text-transparent">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold mb-1 sm:mb-2 bg-gradient-purple bg-clip-text text-transparent">
           Visualizers
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Experiências visuais que faço utilizando as capas originais dos projetos.
         </p>
       </motion.div>
@@ -55,12 +55,12 @@ export default function VisualizersGrid() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="glass rounded-xl p-12 text-center"
+          className="glass rounded-lg sm:rounded-xl p-8 sm:p-12 text-center"
         >
-          <p className="text-muted-foreground">Nenhum visualizer disponível no momento</p>
+          <p className="text-sm sm:text-base text-muted-foreground">Nenhum visualizer disponível no momento</p>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {visualizers.videos.map((visualizer, index) => (
             <VisualizerCard
               key={visualizer.id}

@@ -110,76 +110,92 @@ export default function AudioPlayer({
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         className={cn(
           "fixed bottom-0 left-0 right-0 z-40 glass border-t border-glass-border/20",
-          isExpanded ? "h-32" : "h-20"
+          isExpanded ? "h-32 sm:h-40" : "h-16 sm:h-20"
         )}
       >
         <audio ref={audioRef} />
         
-        <div className="container mx-auto px-4 h-full">
-          <div className="flex items-center justify-between h-20">
+        <div className="container mx-auto px-3 sm:px-4 h-full">
+          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
             {/* Track Info */}
-            <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
               {currentTrack.cover && (
                 <img
                   src={currentTrack.cover}
                   alt={currentTrack.title}
-                  className="w-12 h-12 rounded-lg object-cover"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0"
                 />
               )}
-              <div className="min-w-0">
-                <h4 className="font-semibold text-sm truncate">
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-xs sm:text-sm truncate">
                   {currentTrack.title}
                 </h4>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                   {currentTrack.bpm} BPM {currentTrack.key && `• ${currentTrack.key}`}
                 </p>
               </div>
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsShuffle(!isShuffle)}
-                className={cn(isShuffle && "text-primary")}
+                className={cn(
+                  "h-8 w-8 sm:h-10 sm:w-10",
+                  isShuffle && "text-primary"
+                )}
               >
-                <Shuffle className="w-4 h-4" />
+                <Shuffle className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
               
-              <Button variant="ghost" size="icon" onClick={onPrevious}>
-                <SkipBack className="w-4 h-4" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onPrevious}
+                className="h-8 w-8 sm:h-10 sm:w-10"
+              >
+                <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
               
               <Button
                 variant="glass"
                 size="icon"
                 onClick={onPlayPause}
-                className="w-10 h-10 rounded-full shadow-lg shadow-primary/30"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg shadow-primary/30"
               >
                 {isPlaying ? (
-                  <Pause className="w-5 h-5" />
+                  <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
-                  <Play className="w-5 h-5 ml-0.5" />
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" />
                 )}
               </Button>
               
-              <Button variant="ghost" size="icon" onClick={onNext}>
-                <SkipForward className="w-4 h-4" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onNext}
+                className="h-8 w-8 sm:h-10 sm:w-10"
+              >
+                <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
               
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsRepeat(!isRepeat)}
-                className={cn(isRepeat && "text-primary")}
+                className={cn(
+                  "h-8 w-8 sm:h-10 sm:w-10",
+                  isRepeat && "text-primary"
+                )}
               >
-                <Repeat className="w-4 h-4" />
+                <Repeat className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </div>
 
-            {/* Volume & Time */}
-            <div className="flex items-center gap-4 flex-1 justify-end">
+            {/* Volume & Time - Hidden on mobile, shown on desktop */}
+            <div className="hidden md:flex items-center gap-4 flex-1 justify-end">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>{formatTime(currentTime)}</span>
                 <div className="w-32">
@@ -218,7 +234,53 @@ export default function AudioPlayer({
                 )} />
               </Button>
             </div>
+
+            {/* Mobile: Time slider and expand button */}
+            <div className="md:hidden flex items-center gap-2 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="h-8 w-8"
+              >
+                <ChevronUp className={cn(
+                  "w-4 h-4 transition-transform",
+                  isExpanded && "rotate-180"
+                )} />
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile: Time slider in expanded view */}
+          {isExpanded && (
+            <div className="md:hidden mt-2 space-y-2">
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                <span>{formatTime(currentTime)}</span>
+                <div className="flex-1">
+                  <Slider
+                    value={[currentTime]}
+                    max={duration}
+                    step={1}
+                    onValueChange={handleSeek}
+                    className="cursor-pointer"
+                  />
+                </div>
+                <span>{formatTime(duration)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-3 h-3 text-muted-foreground" />
+                <div className="flex-1">
+                  <Slider
+                    value={[volume]}
+                    max={1}
+                    step={0.01}
+                    onValueChange={(value) => setVolume(value[0])}
+                    className="cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Expanded Queue View */}
           {isExpanded && (
@@ -226,7 +288,7 @@ export default function AudioPlayer({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex gap-2 overflow-x-auto pb-4 custom-scrollbar"
+              className="hidden md:flex gap-2 overflow-x-auto pb-4 custom-scrollbar"
             >
               {queue.slice(0, 10).map((track) => (
                 <div

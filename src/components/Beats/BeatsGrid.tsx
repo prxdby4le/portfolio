@@ -83,26 +83,26 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
       {/* Search and Filters */}
-      <div className="mb-8 space-y-4">
+      <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
         <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Buscar beats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 glass border-glass-border/20"
+            className="pl-9 sm:pl-10 text-sm sm:text-base glass border-glass-border/20 h-9 sm:h-10"
           />
         </div>
         
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2">
           {ALL_TAGS.map(tag => (
             <Badge
               key={tag}
               variant={selectedTags.includes(tag) ? "default" : "secondary"}
-              className={`cursor-pointer transition-all duration-200 ${
+              className={`cursor-pointer transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 ${
                 selectedTags.includes(tag) 
                   ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" 
                   : "hover:bg-muted"
@@ -116,7 +116,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       </div>
 
       {/* Genre Sections */}
-      <div className="space-y-12">
+      <div className="space-y-8 sm:space-y-12">
         {GENRE_ORDER.map(genre => {
           const playlist = filteredPlaylists[genre];
           if (!playlist) return null;

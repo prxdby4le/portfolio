@@ -20,7 +20,7 @@ export default function VisualizerCard({ visualizer, index, onClick }: Visualize
       className="group relative cursor-pointer"
       onClick={onClick}
     >
-      <div className="relative aspect-video rounded-xl overflow-hidden glass">
+      <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden glass">
         {/* Thumbnail */}
         <div className="absolute inset-0 bg-gradient-dark">
           {visualizer.thumbnail && (
@@ -35,28 +35,28 @@ export default function VisualizerCard({ visualizer, index, onClick }: Visualize
         
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <Button
               variant="glass"
               size="icon"
-              className="rounded-full w-14 h-14 shadow-lg hover:scale-110 transition-transform"
+              className="rounded-full w-12 h-12 sm:w-14 sm:h-14 shadow-lg hover:scale-110 transition-transform"
               onClick={(e) => {
                 e.stopPropagation();
                 onClick();
               }}
             >
-              <Play className="w-6 h-6 ml-1" />
+              <Play className="w-5 h-5 sm:w-6 sm:h-6 ml-0.5 sm:ml-1" />
             </Button>
             <Button
               variant="glass"
               size="icon"
-              className="rounded-full w-14 h-14 shadow-lg hover:scale-110 transition-transform"
+              className="rounded-full w-12 h-12 sm:w-14 sm:h-14 shadow-lg hover:scale-110 transition-transform"
               onClick={(e) => {
                 e.stopPropagation();
                 onClick();
               }}
             >
-              <Maximize2 className="w-5 h-5" />
+              <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           </div>
         </div>
@@ -70,11 +70,11 @@ export default function VisualizerCard({ visualizer, index, onClick }: Visualize
       </div>
       
       {/* Title and Info */}
-      <div className="mt-3 space-y-1">
-        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+      <div className="mt-2 sm:mt-3 space-y-0.5 sm:space-y-1">
+        <h3 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors truncate">
           {visualizer.title}
         </h3>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
           <span>{visualizer.duration}</span>
           <span>•</span>
           <span className="capitalize">{visualizer.category}</span>

@@ -47,13 +47,13 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
       transition={{ duration: 0.3, delay: index * 0.05 }}
       whileHover={{ y: -4 }}
       className={cn(
-        "group relative glass rounded-xl p-4 transition-all duration-300 cursor-pointer",
-        isActive && "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg shadow-primary/30"
+        "group relative glass rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300 cursor-pointer",
+        isActive && "ring-2 ring-primary ring-offset-1 sm:ring-offset-2 ring-offset-background shadow-lg shadow-primary/30"
       )}
       onClick={onPlay}
     >
       {/* Cover Image */}
-      <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-gradient-dark">
+      <div className="relative aspect-square rounded-md sm:rounded-lg overflow-hidden mb-3 sm:mb-4 bg-gradient-dark">
         {track.cover && (
           <img 
             src={track.cover} 
@@ -70,7 +70,7 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
             variant="glass"
             size="icon"
             className={cn(
-              "rounded-full w-14 h-14 shadow-lg",
+              "rounded-full w-12 h-12 sm:w-14 sm:h-14 shadow-lg",
               isActive && isPlaying && "bg-primary/20"
             )}
             onClick={(e) => {
@@ -79,21 +79,21 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
             }}
           >
             {isActive && isPlaying ? (
-              <Pause className="w-6 h-6" />
+              <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
             ) : (
-              <Play className="w-6 h-6 ml-1" />
+              <Play className="w-5 h-5 sm:w-6 sm:h-6 ml-0.5 sm:ml-1" />
             )}
           </Button>
         </div>
       </div>
 
       {/* Track Info */}
-      <div className="space-y-2">
-        <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
+      <div className="space-y-1.5 sm:space-y-2">
+        <h3 className="font-semibold text-xs sm:text-sm truncate group-hover:text-primary transition-colors">
           {track.title}
         </h3>
         
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground">
           <span>{track.bpm} BPM</span>
           {track.key && (
             <>
@@ -111,7 +111,7 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
             <Badge 
               key={tag} 
               variant="secondary"
-              className="text-xs px-2 py-0 h-5 bg-muted/50 hover:bg-muted"
+              className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0 h-4 sm:h-5 bg-muted/50 hover:bg-muted"
             >
               {tag}
             </Badge>
@@ -119,40 +119,40 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 pt-1.5 sm:pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-7 w-7 sm:h-8 sm:w-8"
             onClick={(e) => {
               e.stopPropagation();
               handleShare();
             }}
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-7 w-7 sm:h-8 sm:w-8"
             onClick={(e) => {
               e.stopPropagation();
               handleCopyLink();
             }}
           >
-            <Link2 className="w-4 h-4" />
+            <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
           {track.downloadable && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-7 w-7 sm:h-8 sm:w-8"
               onClick={(e) => {
                 e.stopPropagation();
                 // Download logic
               }}
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           )}
         </div>

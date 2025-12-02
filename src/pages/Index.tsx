@@ -76,7 +76,7 @@ const Index = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className={currentTrack ? "pb-24" : ""}
+        className={currentTrack ? "pb-20 sm:pb-24" : ""}
       >
         {activeTab === 'beats' ? (
           <BeatsGrid
