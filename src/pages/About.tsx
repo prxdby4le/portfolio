@@ -1,12 +1,53 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, MessageCircle } from "lucide-react";
 import Navbar from "@/components/Layout/Navbar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const About = () => {
+  const [isBeats, setIsBeats] = useState(true);
+
+  const beatsPricing = [
+    { 
+      obra: "Full prod", 
+      valor: "R$150", 
+      observacao: "Inclui produção completa, composição, arranjo, mixagem, mixagem de vocais e masterização." 
+    },
+    { 
+      obra: "Beat", 
+      valor: "R$125", 
+      observacao: "Beat feito sob medida conforme requisitos do cliente." 
+    },
+    { 
+      obra: "Mix e Master", 
+      valor: "R$125", 
+      observacao: "Mixagem e masterização de faixas já gravadas." 
+    }
+  ];
+
+  const visualizersPricing = [
+    { 
+      trabalho: "Base capa", 
+      valor: "R$75", 
+      observacao: "Capa deve já estar separada por camadas (ou arquivo PSD). Elementos do visualizer serão apenas os presentes na capa. (inclui aqui visualizers estilo TrapNation tamnbém)" 
+    },
+    { 
+      trabalho: "Composição adicional", 
+      valor: "R$130", 
+      observacao: "Capa deve já estar separada por camadas (ou arquivo PSD). Inclui composição adicional além da capa, com um loop de até 45 segundos condando uma história ou passando uma idéia." 
+    },
+    { 
+      trabalho: "Lyric video/edit", 
+      valor: "R$170", 
+      observacao: "Inclui aqui qualquer tipo de edit, seja com lyric ou sem, seja focado em lyric ou não, responsivo ao audio e legendas/lyrics personalizadas." 
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -128,6 +169,96 @@ const About = () => {
                 </motion.div>
               </CardContent>
             </Card>
+
+            {/* Pricing Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.9 }}
+              className="mt-6 sm:mt-8"
+            >
+              <Card className="glass border-glass-border/10">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl font-display font-bold text-center">
+                    Tabela de Preços
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Switch Toggle */}
+                  <div className="flex items-center justify-center gap-4">
+                    <Label 
+                      htmlFor="pricing-switch" 
+                      className={`text-sm font-medium cursor-pointer transition-colors ${
+                        isBeats ? 'text-foreground' : 'text-muted-foreground'
+                      }`}
+                    >
+                      Beats
+                    </Label>
+                    <Switch
+                      id="pricing-switch"
+                      checked={!isBeats}
+                      onCheckedChange={(checked) => setIsBeats(!checked)}
+                    />
+                    <Label 
+                      htmlFor="pricing-switch" 
+                      className={`text-sm font-medium cursor-pointer transition-colors ${
+                        !isBeats ? 'text-foreground' : 'text-muted-foreground'
+                      }`}
+                    >
+                      Visualizers
+                    </Label>
+                  </div>
+
+                  {/* Pricing Table */}
+                  <motion.div
+                    key={isBeats ? 'beats' : 'visualizers'}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="glass rounded-lg overflow-hidden">
+                      <Accordion type="single" collapsible className="w-full">
+                        <div className="divide-y divide-glass-border/20">
+                          {/* Table Header */}
+                          <div className="grid grid-cols-2 gap-4 px-4 py-3 border-b border-glass-border/20">
+                            <div className="text-left font-medium text-sm sm:text-base">
+                              {isBeats ? 'Obra' : 'Trabalho'}
+                            </div>
+                            <div className="text-right font-medium text-sm sm:text-base">
+                              Valor
+                            </div>
+                          </div>
+                          
+                          {/* Table Rows */}
+                          {(isBeats ? beatsPricing : visualizersPricing).map((item, index) => (
+                            <AccordionItem key={index} value={`item-${index}`} className="border-none">
+                              <div>
+                                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/30">
+                                  <div className="grid grid-cols-2 gap-4 w-full items-center">
+                                    <div className="text-left font-medium text-sm sm:text-base">
+                                      {isBeats ? item.obra : item.trabalho}
+                                    </div>
+                                    <div className="text-right font-semibold text-sm sm:text-base">
+                                      {item.valor}
+                                    </div>
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4">
+                                  <div className="text-xs sm:text-sm text-muted-foreground whitespace-pre-line pt-2">
+                                    {item.observacao}
+                                  </div>
+                                </AccordionContent>
+                              </div>
+                            </AccordionItem>
+                          ))}
+                        </div>
+                      </Accordion>
+                    </div>
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Additional Info Section */}
             <motion.div
