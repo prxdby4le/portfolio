@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Track, Playlists } from "@/types/data";
 import GenreSection from "./GenreSection";
+import SpotifyPlaylistSection from "./SpotifyPlaylistSection";
 import playlistsData from "@/data/playlists.json";
 
 interface BeatsGridProps {
@@ -115,8 +116,11 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
         </div>
       </div>
 
-      {/* Genre Sections */}
+      {/* Spotify Playlist Section */}
       <div className="space-y-8 sm:space-y-12">
+        <SpotifyPlaylistSection />
+        
+        {/* Genre Sections */}
         {GENRE_ORDER.map(genre => {
           const playlist = filteredPlaylists[genre];
           if (!playlist) return null;
