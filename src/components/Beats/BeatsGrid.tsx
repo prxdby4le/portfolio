@@ -25,7 +25,7 @@ const GENRE_ORDER = [
 ];
 
 const ALL_TAGS = [
-  "boom-bap", "sample", "energetic", "nostalgic", "experimental", "romantic", "dark", "piano", "chill", "psicodelic", "sad", "dnb", "drumbreak", "fast", "hopeful", "anxious", "chill", "vocals", "trap", "melodic", "emotional", "aggressive", "piano", "hyper", "synth", "4/4", "plug", "pluggnb", "slow", "funknb", "ritmadinha", "rock", "emotional", "indie", "emo", "jerk", "hoodtrap", "misterious", "beat switch", "Synthwave", "dance", "jersey", "winter"
+  "boom-bap", "sample", "energetic", "nostalgic", "experimental", "romantic", "dark", "piano", "chill", "psicodelic", "sad", "dnb", "drumbreak", "fast", "hopeful", "anxious", "vocals", "trap", "melodic", "emotional", "aggressive", "hyper", "synth", "4/4", "plug", "pluggnb", "slow", "funknb", "ritmadinha", "rock", "indie", "emo", "jerk", "hoodtrap", "misterious", "beat switch", "Synthwave", "dance", "jersey", "winter"
 ];
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
