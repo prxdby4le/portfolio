@@ -53,7 +53,8 @@ export default function VideoModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xl"
+          style={{ background: 'rgba(20, 0, 30, 0.95)' }}
           onClick={onClose}
         >
           <motion.div
@@ -64,22 +65,20 @@ export default function VideoModal({
             className="relative w-full max-w-6xl mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <Button
               variant="glass"
               size="icon"
-              className="absolute -top-12 right-0 rounded-full"
+              className="absolute -top-12 right-0 rounded-full border-2 border-y2k-pink text-y2k-pink hover:bg-y2k-pink/20"
               onClick={onClose}
             >
               <X className="w-5 h-5" />
             </Button>
             
-            {/* Navigation Buttons */}
             {onPrevious && (
               <Button
                 variant="glass"
                 size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full z-10 border-2 border-y2k-cyan text-y2k-cyan hover:bg-y2k-cyan/20"
                 onClick={onPrevious}
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -89,15 +88,14 @@ export default function VideoModal({
               <Button
                 variant="glass"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full z-10 border-2 border-y2k-pink text-y2k-pink hover:bg-y2k-pink/20"
                 onClick={onNext}
               >
                 <ChevronRight className="w-5 h-5" />
               </Button>
             )}
             
-            {/* Video Player */}
-            <div className="relative aspect-video rounded-xl overflow-hidden glass shadow-2xl">
+            <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-y2k-pink/50" style={{ boxShadow: '0 0 40px #FF00FF40, 0 0 80px #00FFFF20' }}>
               <video
                 ref={videoRef}
                 src={visualizer.src}
@@ -107,13 +105,12 @@ export default function VideoModal({
               />
             </div>
             
-            {/* Video Info */}
             <div className="mt-4 text-center">
-              <h2 className="text-2xl font-display font-bold text-foreground">
+              <h2 className="text-2xl font-display font-bold text-rainbow">
                 {visualizer.title}
               </h2>
-              <p className="text-muted-foreground mt-2">
-                {visualizer.duration} • {visualizer.category}
+              <p className="text-y2k-cyan/70 mt-2 font-bold">
+                {visualizer.duration} ✦ {visualizer.category}
               </p>
             </div>
           </motion.div>

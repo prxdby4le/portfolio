@@ -28,6 +28,8 @@ const ALL_TAGS = [
   "boom-bap", "sample", "energetic", "nostalgic", "experimental", "romantic", "dark", "piano", "chill", "psicodelic", "sad", "dnb", "drumbreak", "fast", "hopeful", "anxious", "vocals", "trap", "melodic", "emotional", "aggressive", "hyper", "synth", "4/4", "plug", "pluggnb", "slow", "funknb", "ritmadinha", "rock", "indie", "emo", "jerk", "hoodtrap", "misterious", "beat switch", "Synthwave", "dance", "jersey", "winter"
 ];
 
+const tagColors = ['#FF00FF', '#00FFFF', '#FFFF00', '#00FF00', '#FF6600', '#9933FF', '#FF0033', '#3366FF'];
+
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
   const [playlists] = useState<Playlists>(playlistsData as Playlists);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,7 +39,6 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
   useEffect(() => {
     let filtered = { ...playlists };
     
-    // Filter by search query
     if (searchQuery) {
       filtered = Object.entries(filtered).reduce((acc, [genre, playlist]) => {
         const filteredTracks = playlist.tracks.filter(track =>
@@ -56,7 +57,6 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       }, {} as Playlists);
     }
     
-    // Filter by selected tags
     if (selectedTags.length > 0) {
       filtered = Object.entries(filtered).reduce((acc, [genre, playlist]) => {
         const filteredTracks = playlist.tracks.filter(track =>
@@ -88,39 +88,44 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       {/* Search and Filters */}
       <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
         <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-y2k-pink" />
           <Input
             type="text"
-            placeholder="Buscar beats..."
+            placeholder="✧ Buscar beats... ✧"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 sm:pl-10 text-sm sm:text-base glass border-glass-border/20 h-9 sm:h-10"
+            className="pl-9 sm:pl-10 text-sm sm:text-base glass h-9 sm:h-10 border-2 border-y2k-pink/30 focus:border-y2k-cyan placeholder:text-y2k-pink/40 font-bold"
           />
         </div>
         
         <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2">
-          {ALL_TAGS.map(tag => (
-            <Badge
-              key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "secondary"}
-              className={`cursor-pointer transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 ${
-                selectedTags.includes(tag) 
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" 
-                  : "hover:bg-muted"
-              }`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </Badge>
-          ))}
+          {ALL_TAGS.map((tag, i) => {
+            const color = tagColors[i % tagColors.length];
+            const isSelected = selectedTags.includes(tag);
+            return (
+              <Badge
+                key={tag}
+                variant={isSelected ? "default" : "secondary"}
+                className="cursor-pointer transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 font-bold border hover:scale-105"
+                style={{
+                  borderColor: isSelected ? color : `${color}30`,
+                  color: isSelected ? '#000' : color,
+                  background: isSelected ? color : `${color}10`,
+                  boxShadow: isSelected ? `0 0 15px ${color}60` : 'none',
+                }}
+                onClick={() => toggleTag(tag)}
+              >
+                {isSelected ? `★ ${tag}` : tag}
+              </Badge>
+            );
+          })}
         </div>
       </div>
 
-      {/* Spotify Playlist Section */}
+      {/* Content */}
       <div className="space-y-8 sm:space-y-12">
         <SpotifyPlaylistSection />
         
-        {/* Genre Sections */}
         {GENRE_ORDER.map(genre => {
           const playlist = filteredPlaylists[genre];
           if (!playlist) return null;

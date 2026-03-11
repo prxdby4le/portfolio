@@ -5,6 +5,7 @@ import Hero from "@/components/Hero/Hero";
 import BeatsGrid from "@/components/Beats/BeatsGrid";
 import VisualizersGrid from "@/components/Visualizers/VisualizersGrid";
 import AudioPlayer from "@/components/Player/AudioPlayer";
+import Stickers, { INDEX_STICKERS } from "@/components/Stickers/Stickers";
 import { motion } from "framer-motion";
 
 const Index = () => {
@@ -20,8 +21,7 @@ const Index = () => {
     } else {
       setCurrentTrack(track);
       setIsPlaying(true);
-      // Set queue to all tracks in the same genre
-      const newQueue = [track]; // In a real app, get all tracks from the same genre
+      const newQueue = [track];
       setQueue(newQueue);
       setCurrentIndex(0);
     }
@@ -64,10 +64,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="fixed inset-0 grain opacity-50 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+      {/* Psychedelic Background Layers */}
+      <div className="fixed inset-0 grain opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 bg-psychedelic pointer-events-none" />
+      <div className="fixed inset-0 stars-bg opacity-40 pointer-events-none" />
+      <div className="fixed inset-0 checkerboard pointer-events-none opacity-30" />
       
+      {/* Animated color orbs */}
+      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-y2k-pink/10 rounded-full blur-[100px] animate-float pointer-events-none" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-y2k-cyan/10 rounded-full blur-[100px] animate-float pointer-events-none" style={{ animationDelay: '1.5s' }} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-y2k-yellow/5 rounded-full blur-[80px] animate-spin-slow pointer-events-none" />
+      
+      {/* Notebook stickers */}
+      <Stickers stickers={INDEX_STICKERS} />
+
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
       
       <Hero />

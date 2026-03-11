@@ -109,11 +109,23 @@ export default function AudioPlayer({
         exit={{ y: 100 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 glass border-t border-glass-border/20",
+          "fixed bottom-0 left-0 right-0 z-40 glass-heavy border-t-2 border-y2k-pink/50",
           isExpanded ? "h-32 sm:h-40" : "h-16 sm:h-20"
         )}
+        style={{ 
+          background: 'linear-gradient(90deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1), rgba(255,0,255,0.1))',
+          backgroundSize: '200% 100%',
+        }}
       >
         <audio ref={audioRef} />
+        
+        {/* Rainbow progress bar at top */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-muted/30">
+          <div 
+            className="h-full bg-gradient-to-r from-y2k-pink via-y2k-cyan to-y2k-yellow transition-all duration-300"
+            style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+          />
+        </div>
         
         <div className="container mx-auto px-3 sm:px-4 h-full">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
@@ -123,15 +135,23 @@ export default function AudioPlayer({
                 <img
                   src={currentTrack.cover}
                   alt={currentTrack.title}
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0"
+                  className={cn(
+                    "w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0 border-2 border-y2k-pink/50",
+                    isPlaying && "animate-spin-slow"
+                  )}
+                  style={{ 
+                    boxShadow: '0 0 15px #FF00FF60',
+                    borderRadius: isPlaying ? '50%' : '0.5rem',
+                    transition: 'border-radius 0.5s ease',
+                  }}
                 />
               )}
               <div className="min-w-0 flex-1">
-                <h4 className="font-semibold text-xs sm:text-sm truncate">
-                  {currentTrack.title}
+                <h4 className="font-bold text-xs sm:text-sm truncate text-y2k-pink">
+                  ♫ {currentTrack.title}
                 </h4>
-                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                  {currentTrack.bpm} BPM {currentTrack.key && `• ${currentTrack.key}`}
+                <p className="text-[10px] sm:text-xs text-y2k-cyan/70 truncate font-bold">
+                  {currentTrack.bpm} BPM {currentTrack.key && `✦ ${currentTrack.key}`}
                 </p>
               </div>
             </div>
@@ -144,7 +164,7 @@ export default function AudioPlayer({
                 onClick={() => setIsShuffle(!isShuffle)}
                 className={cn(
                   "h-8 w-8 sm:h-10 sm:w-10",
-                  isShuffle && "text-primary"
+                  isShuffle ? "text-y2k-yellow" : "text-y2k-cyan/50 hover:text-y2k-cyan"
                 )}
               >
                 <Shuffle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -154,7 +174,7 @@ export default function AudioPlayer({
                 variant="ghost" 
                 size="icon" 
                 onClick={onPrevious}
-                className="h-8 w-8 sm:h-10 sm:w-10"
+                className="h-8 w-8 sm:h-10 sm:w-10 text-y2k-cyan hover:text-y2k-pink"
               >
                 <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
@@ -163,12 +183,13 @@ export default function AudioPlayer({
                 variant="glass"
                 size="icon"
                 onClick={onPlayPause}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg shadow-primary/30"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-y2k-pink"
+                style={{ boxShadow: '0 0 20px #FF00FF60, 0 0 40px #00FFFF30' }}
               >
                 {isPlaying ? (
-                  <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-y2k-pink" />
                 ) : (
-                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" />
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5 text-y2k-cyan" />
                 )}
               </Button>
               
@@ -176,7 +197,7 @@ export default function AudioPlayer({
                 variant="ghost" 
                 size="icon" 
                 onClick={onNext}
-                className="h-8 w-8 sm:h-10 sm:w-10"
+                className="h-8 w-8 sm:h-10 sm:w-10 text-y2k-cyan hover:text-y2k-pink"
               >
                 <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
@@ -187,16 +208,16 @@ export default function AudioPlayer({
                 onClick={() => setIsRepeat(!isRepeat)}
                 className={cn(
                   "h-8 w-8 sm:h-10 sm:w-10",
-                  isRepeat && "text-primary"
+                  isRepeat ? "text-y2k-yellow" : "text-y2k-cyan/50 hover:text-y2k-cyan"
                 )}
               >
                 <Repeat className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </div>
 
-            {/* Volume & Time - Hidden on mobile, shown on desktop */}
+            {/* Volume & Time - Desktop */}
             <div className="hidden md:flex items-center gap-4 flex-1 justify-end">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs text-y2k-cyan font-bold">
                 <span>{formatTime(currentTime)}</span>
                 <div className="w-32">
                   <Slider
@@ -211,7 +232,7 @@ export default function AudioPlayer({
               </div>
               
               <div className="flex items-center gap-2">
-                <Volume2 className="w-4 h-4 text-muted-foreground" />
+                <Volume2 className="w-4 h-4 text-y2k-pink" />
                 <div className="w-20">
                   <Slider
                     value={[volume]}
@@ -227,6 +248,7 @@ export default function AudioPlayer({
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsExpanded(!isExpanded)}
+                className="text-y2k-cyan hover:text-y2k-pink"
               >
                 <ChevronUp className={cn(
                   "w-4 h-4 transition-transform",
@@ -235,13 +257,13 @@ export default function AudioPlayer({
               </Button>
             </div>
 
-            {/* Mobile: Time slider and expand button */}
+            {/* Mobile controls */}
             <div className="md:hidden flex items-center gap-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="h-8 w-8"
+                className="h-8 w-8 text-y2k-cyan"
               >
                 <ChevronUp className={cn(
                   "w-4 h-4 transition-transform",
@@ -251,10 +273,10 @@ export default function AudioPlayer({
             </div>
           </div>
 
-          {/* Mobile: Time slider in expanded view */}
+          {/* Mobile expanded */}
           {isExpanded && (
             <div className="md:hidden mt-2 space-y-2">
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-2 text-[10px] text-y2k-cyan font-bold">
                 <span>{formatTime(currentTime)}</span>
                 <div className="flex-1">
                   <Slider
@@ -268,7 +290,7 @@ export default function AudioPlayer({
                 <span>{formatTime(duration)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Volume2 className="w-3 h-3 text-muted-foreground" />
+                <Volume2 className="w-3 h-3 text-y2k-pink" />
                 <div className="flex-1">
                   <Slider
                     value={[volume]}
@@ -282,7 +304,7 @@ export default function AudioPlayer({
             </div>
           )}
 
-          {/* Expanded Queue View */}
+          {/* Expanded Queue */}
           {isExpanded && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -294,16 +316,18 @@ export default function AudioPlayer({
                 <div
                   key={track.id}
                   className={cn(
-                    "flex-none px-3 py-1 rounded-full glass text-xs",
-                    track.id === currentTrack.id && "ring-1 ring-primary text-primary"
+                    "flex-none px-3 py-1 rounded-full glass text-xs font-bold border",
+                    track.id === currentTrack.id 
+                      ? "border-y2k-pink text-y2k-pink" 
+                      : "border-y2k-cyan/30 text-y2k-cyan/70"
                   )}
                 >
                   {track.title}
                 </div>
               ))}
               {queue.length > 10 && (
-                <div className="flex-none px-3 py-1 text-xs text-muted-foreground">
-                  +{queue.length - 10} mais
+                <div className="flex-none px-3 py-1 text-xs text-y2k-yellow font-bold">
+                  +{queue.length - 10} mais ★
                 </div>
               )}
             </motion.div>

@@ -16,7 +16,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Snowfall color="#ffffff" />
+        <Snowfall color="#FF00FF" snowflakeCount={80} />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/sobre" element={<About />} />
