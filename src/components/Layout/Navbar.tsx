@@ -4,12 +4,13 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 
 interface NavbarProps {
-  activeTab: 'beats' | 'visualizers';
-  onTabChange: (tab: 'beats' | 'visualizers') => void;
+  activeTab?: 'beats' | 'visualizers';
+  onTabChange?: (tab: 'beats' | 'visualizers') => void;
 }
 
 export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const isAboutPage = location.pathname === '/sobre';
 
   return (
@@ -28,7 +29,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
 
           {/* Navigation */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {!isAboutPage && (
+            {isHomePage && activeTab && onTabChange && (
               <div className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 glass rounded-lg">
                 <Button
                   variant="tab"

@@ -8,6 +8,7 @@ import { Play, Pause, ArrowLeft, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { usePlayer } from "@/contexts/PlayerContext";
 import AeroBubbles, { INDEX_BUBBLES } from "@/components/Aero/AeroBubbles";
+import Navbar from "@/components/Layout/Navbar";
 
 export default function TrackDetail() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +51,8 @@ export default function TrackDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex justify-center items-center">
+      <div className="min-h-screen bg-background flex justify-center items-center pt-20">
+        <Navbar />
         <Loader2 className="w-12 h-12 text-aero-sky animate-spin" />
       </div>
     );
@@ -58,7 +60,8 @@ export default function TrackDetail() {
 
   if (error || !track) {
     return (
-      <div className="min-h-screen bg-background flex flex-col justify-center items-center text-center p-4">
+      <div className="min-h-screen bg-background flex flex-col justify-center items-center text-center p-4 pt-20">
+        <Navbar />
         <h2 className="text-2xl font-bold mb-4 text-gradient-sky">Beat não encontrado</h2>
         <Button onClick={() => navigate(-1)} variant="aero">Voltar</Button>
       </div>
@@ -66,7 +69,9 @@ export default function TrackDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-32">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-32 pt-20">
+      <Navbar />
+      
       {/* Frutiger Aero Background */}
       <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
       <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/10 rounded-full blur-[120px] animate-float pointer-events-none" />
