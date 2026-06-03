@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Upload, Music, Image as ImageIcon, Loader2, Trash2 } from "lucide-react";
+import { LogOut, Upload, Music, Image as ImageIcon, Loader2, Trash2, Pencil, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [customTag, setCustomTag] = useState("");
   const [description, setDescription] = useState("");
   const [timelineFile, setTimelineFile] = useState<File | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -101,13 +102,49 @@ export default function Dashboard() {
     }
   };
 
+  const handleEdit = (track: any) => {
+    setEditingId(track.id);
+    setTitle(track.title);
+    setGenre(track.genre);
+    setBpm(track.bpm?.toString() || "");
+    setTrackKey(track.track_key || "");
+    setDescription(track.description || "");
+    setSelectedTags(track.tags || []);
+    setAudioFile(null);
+    setCoverFile(null);
+    setTimelineFile(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setTitle("");
+    setGenre("");
+    setBpm("");
+    setTrackKey("");
+    setAudioFile(null);
+    setCoverFile(null);
+    setTimelineFile(null);
+    setSelectedTags([]);
+    setDescription("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!audioFile || !coverFile || !title || !genre || !bpm) {
+    if (!title || !genre || !bpm) {
       toast({
         title: "Campos incompletos",
-        description: "Por favor, preencha todos os campos obrigatórios e envie a música e a capa.",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!editingId && (!audioFile || !coverFile)) {
+      toast({
+        title: "Arquivos ausentes",
+        description: "Por favor, envie a música e a capa.",
         variant: "destructive",
       });
       return;
@@ -116,25 +153,47 @@ export default function Dashboard() {
     setLoading(true);
 
     try {
-      // 1. Upload Audio
-      const audioExt = audioFile.name.split('.').pop();
-      const audioFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${audioExt}`;
-      const { error: audioError, data: audioData } = await supabase.storage
-        .from("music")
-        .upload(audioFileName, audioFile);
+      let audioUrl = editingId ? allTracks?.find(t => t.id === editingId)?.audio_url : null;
+      let coverUrl = editingId ? allTracks?.find(t => t.id === editingId)?.cover_url : null;
+      let timelineUrl = editingId ? allTracks?.find(t => t.id === editingId)?.timeline_image_url : null;
 
-      if (audioError) throw audioError;
+      const getFileName = (url: string) => url.split('/').pop();
+
+      // 1. Upload Audio
+      if (audioFile) {
+        const audioExt = audioFile.name.split('.').pop();
+        const audioFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${audioExt}`;
+        const { error: audioError } = await supabase.storage
+          .from("music")
+          .upload(audioFileName, audioFile);
+
+        if (audioError) throw audioError;
+        
+        if (editingId && audioUrl) {
+          const oldName = getFileName(audioUrl);
+          if (oldName) await supabase.storage.from("music").remove([oldName]);
+        }
+        audioUrl = supabase.storage.from("music").getPublicUrl(audioFileName).data.publicUrl;
+      }
 
       // 2. Upload Cover
-      const coverExt = coverFile.name.split('.').pop();
-      const coverFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${coverExt}`;
-      const { error: coverError, data: coverData } = await supabase.storage
-        .from("covers")
-        .upload(coverFileName, coverFile);
+      if (coverFile) {
+        const coverExt = coverFile.name.split('.').pop();
+        const coverFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${coverExt}`;
+        const { error: coverError } = await supabase.storage
+          .from("covers")
+          .upload(coverFileName, coverFile);
 
-      if (coverError) throw coverError;
+        if (coverError) throw coverError;
 
-      let timelineUrl = null;
+        if (editingId && coverUrl) {
+          const oldName = getFileName(coverUrl);
+          if (oldName) await supabase.storage.from("covers").remove([oldName]);
+        }
+        coverUrl = supabase.storage.from("covers").getPublicUrl(coverFileName).data.publicUrl;
+      }
+
+      // 3. Upload Timeline
       if (timelineFile) {
         const timelineExt = timelineFile.name.split('.').pop();
         const timelineFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${timelineExt}`;
@@ -143,45 +202,44 @@ export default function Dashboard() {
           .upload(timelineFileName, timelineFile);
 
         if (timelineError) throw timelineError;
+
+        if (editingId && timelineUrl) {
+          const oldName = getFileName(timelineUrl);
+          if (oldName) await supabase.storage.from("timelines").remove([oldName]);
+        }
         timelineUrl = supabase.storage.from("timelines").getPublicUrl(timelineFileName).data.publicUrl;
       }
 
-      // 3. Get Public URLs
-      const audioUrl = supabase.storage.from("music").getPublicUrl(audioFileName).data.publicUrl;
-      const coverUrl = supabase.storage.from("covers").getPublicUrl(coverFileName).data.publicUrl;
+      const trackData = {
+        title,
+        genre,
+        bpm: parseInt(bpm, 10),
+        track_key: trackKey || null,
+        cover_url: coverUrl,
+        audio_url: audioUrl,
+        tags: selectedTags,
+        description: description || null,
+        timeline_image_url: timelineUrl,
+      };
 
-      // 4. Insert into Database
-      const { error: dbError } = await supabase.from("tracks").insert([
-        {
-          title,
-          genre,
-          bpm: parseInt(bpm, 10),
-          track_key: trackKey || null,
-          cover_url: coverUrl,
-          audio_url: audioUrl,
-          tags: selectedTags,
-          description: description || null,
-          timeline_image_url: timelineUrl,
-        }
-      ]);
-
-      if (dbError) throw dbError;
-
-      toast({
-        title: "Sucesso!",
-        description: "Música adicionada com sucesso ao portfólio.",
-      });
+      if (editingId) {
+        const { error: dbError } = await supabase.from("tracks").update(trackData).eq("id", editingId);
+        if (dbError) throw dbError;
+        toast({
+          title: "Sucesso!",
+          description: "Música atualizada com sucesso.",
+        });
+      } else {
+        const { error: dbError } = await supabase.from("tracks").insert([trackData]);
+        if (dbError) throw dbError;
+        toast({
+          title: "Sucesso!",
+          description: "Música adicionada com sucesso ao portfólio.",
+        });
+      }
 
       // Reset form
-      setTitle("");
-      setGenre("");
-      setBpm("");
-      setTrackKey("");
-      setAudioFile(null);
-      setCoverFile(null);
-      setTimelineFile(null);
-      setSelectedTags([]);
-      setDescription("");
+      cancelEdit();
 
       refetchTracks();
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
@@ -218,8 +276,17 @@ export default function Dashboard() {
           {/* Upload Form */}
           <div className="aero-card p-6">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-foreground">
-              <Upload className="text-aero-sky w-5 h-5" />
-              Nova Música
+              {editingId ? (
+                <>
+                  <Pencil className="text-aero-sky w-5 h-5" />
+                  Editar Música
+                </>
+              ) : (
+                <>
+                  <Upload className="text-aero-sky w-5 h-5" />
+                  Nova Música
+                </>
+              )}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -262,13 +329,13 @@ export default function Dashboard() {
                     accept="audio/*"
                     onChange={e => setAudioFile(e.target.files?.[0] || null)}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    required
+                    required={!editingId}
                   />
                   <div className="flex items-center gap-3 p-3 glass border-dashed rounded-lg">
                     <Music className="text-aero-sky" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {audioFile ? audioFile.name : "Selecionar arquivo de áudio (.mp3, .wav)"}
+                        {audioFile ? audioFile.name : (editingId ? "Manter áudio atual ou selecionar novo" : "Selecionar arquivo de áudio (.mp3, .wav)")}
                       </p>
                     </div>
                   </div>
@@ -280,13 +347,13 @@ export default function Dashboard() {
                     accept="image/*"
                     onChange={e => setCoverFile(e.target.files?.[0] || null)}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    required
+                    required={!editingId}
                   />
                   <div className="flex items-center gap-3 p-3 glass border-dashed rounded-lg">
                     <ImageIcon className="text-aero-green" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {coverFile ? coverFile.name : "Selecionar capa da música (.jpg, .png)"}
+                        {coverFile ? coverFile.name : (editingId ? "Manter capa atual ou selecionar nova" : "Selecionar capa da música (.jpg, .png)")}
                       </p>
                     </div>
                   </div>
@@ -303,7 +370,7 @@ export default function Dashboard() {
                     <ImageIcon className="text-muted-foreground" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate text-muted-foreground">
-                        {timelineFile ? timelineFile.name : "Imagem da Timeline (Opcional)"}
+                        {timelineFile ? timelineFile.name : (editingId ? "Manter imagem atual ou selecionar nova" : "Imagem da Timeline (Opcional)")}
                       </p>
                     </div>
                   </div>
@@ -357,9 +424,17 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <Button type="submit" variant="aero" className="w-full mt-6" disabled={loading}>
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Fazer Upload"}
-              </Button>
+              <div className="flex gap-4 mt-6">
+                <Button type="submit" variant="aero" className="flex-1" disabled={loading}>
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (editingId ? "Salvar Alterações" : "Fazer Upload")}
+                </Button>
+                {editingId && (
+                  <Button type="button" variant="outline" className="flex-1 bg-white/5 border-white/10 hover:bg-white/10" onClick={cancelEdit} disabled={loading}>
+                    <X className="w-4 h-4 mr-2" />
+                    Cancelar
+                  </Button>
+                )}
+              </div>
             </form>
           </div>
 
@@ -386,14 +461,24 @@ export default function Dashboard() {
                         <p className="font-bold text-sm truncate">{track.title}</p>
                         <p className="text-xs text-muted-foreground truncate">{track.genre} • {track.bpm} BPM</p>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
-                        onClick={() => handleDelete(track.id, track.audio_url, track.cover_url, track.timeline_image_url)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex gap-1 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-aero-sky hover:bg-aero-sky/10"
+                          onClick={() => handleEdit(track)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDelete(track.id, track.audio_url, track.cover_url, track.timeline_image_url)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
