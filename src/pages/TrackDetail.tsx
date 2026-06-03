@@ -71,7 +71,7 @@ export default function TrackDetail() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-32 pt-20">
       <Navbar />
-      
+
       {/* Frutiger Aero Background */}
       <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
       <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/10 rounded-full blur-[120px] animate-float pointer-events-none" />
@@ -79,8 +79,8 @@ export default function TrackDetail() {
       <AeroBubbles bubbles={INDEX_BUBBLES} />
 
       <div className="container mx-auto px-4 py-8 relative z-10 max-w-5xl">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate(-1)}
           className="mb-6 hover:bg-white/20 glass"
         >
@@ -93,9 +93,9 @@ export default function TrackDetail() {
           <div className="md:col-span-1 space-y-6">
             <div className="aero-card p-4 glass-heavy">
               <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg group">
-                <img 
-                  src={track.cover} 
-                  alt={track.title} 
+                <img
+                  src={track.cover}
+                  alt={track.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -117,7 +117,7 @@ export default function TrackDetail() {
               <div className="mt-6 text-center">
                 <h1 className="text-3xl font-display font-bold text-foreground mb-2">{track.title}</h1>
                 <p className="text-lg font-semibold text-aero-sky mb-4">{track.genre}</p>
-                
+
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
                   {track.tags.map(tag => (
                     <Badge key={tag} className="bg-aero-sky text-white border-none shadow-sm">{tag}</Badge>
@@ -149,8 +149,8 @@ export default function TrackDetail() {
                   Timeline do Projeto
                 </h2>
                 <div className="rounded-xl overflow-hidden border border-white/50 shadow-md">
-                  <img 
-                    src={track.timeline_image} 
+                  <img
+                    src={track.timeline_image}
                     alt={`Timeline do beat ${track.title}`}
                     className="w-full h-auto object-contain"
                   />
