@@ -15,31 +15,26 @@ import { Track } from "@/types/data";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface AudioPlayerProps {
-  currentTrack: Track | null;
-  isPlaying: boolean;
-  queue: Track[];
-  onPlayPause: () => void;
-  onNext: () => void;
-  onPrevious: () => void;
-  onTrackEnd: () => void;
-}
+import { usePlayer } from "@/contexts/PlayerContext";
 
-export default function AudioPlayer({
-  currentTrack,
-  isPlaying,
-  queue,
-  onPlayPause,
-  onNext,
-  onPrevious,
-  onTrackEnd,
-}: AudioPlayerProps) {
+export default function AudioPlayer() {
+  const { 
+    currentTrack, 
+    isPlaying, 
+    queue, 
+    handlePlayPause, 
+    handleNext, 
+    handlePrevious, 
+    handleTrackEnd,
+    isRepeat,
+    isShuffle,
+    toggleRepeat,
+    toggleShuffle
+  } = usePlayer();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
-  const [isRepeat, setIsRepeat] = useState(false);
-  const [isShuffle, setIsShuffle] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
@@ -51,19 +46,25 @@ export default function AudioPlayer({
 
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
-    audio.addEventListener("ended", onTrackEnd);
+    audio.addEventListener("ended", handleTrackEnd);
 
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
-      audio.removeEventListener("ended", onTrackEnd);
+      audio.removeEventListener("ended", handleTrackEnd);
     };
-  }, [onTrackEnd]);
+  }, [handleTrackEnd]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.loop = isRepeat;
+    }
+  }, [isRepeat]);
 
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.play();
+        audioRef.current.play().catch((e) => console.log("Playback interrupted:", e));
       } else {
         audioRef.current.pause();
       }
@@ -75,9 +76,10 @@ export default function AudioPlayer({
       audioRef.current.src = currentTrack.src;
       audioRef.current.load();
       if (isPlaying) {
-        audioRef.current.play();
+        audioRef.current.play().catch((e) => console.log("Playback interrupted:", e));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrack]);
 
   useEffect(() => {
@@ -85,6 +87,35 @@ export default function AudioPlayer({
       audioRef.current.volume = volume;
     }
   }, [volume]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "BUTTON" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        handlePlayPause();
+      } else if (e.key.toLowerCase() === "a") {
+        handlePrevious();
+      } else if (e.key.toLowerCase() === "d") {
+        handleNext();
+      } else if (e.key.toLowerCase() === "l") {
+        toggleRepeat();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handlePlayPause, handlePrevious, handleNext, toggleRepeat]);
 
   const handleSeek = (value: number[]) => {
     if (audioRef.current) {
@@ -116,10 +147,19 @@ export default function AudioPlayer({
         <audio ref={audioRef} />
         
         {/* Progress bar at top */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-muted/30">
-          <div 
-            className="h-full bg-gradient-to-r from-aero-sky to-aero-green transition-all duration-300"
-            style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+        <div className="absolute -top-2 left-0 right-0 h-4 group z-50 flex items-center">
+          <Slider
+            value={[currentTime]}
+            max={duration || 100}
+            step={1}
+            onValueChange={handleSeek}
+            className={cn(
+              "cursor-pointer w-full",
+              "[&>:first-child]:h-1 [&>:first-child]:rounded-none [&>:first-child]:bg-muted/30",
+              "[&>:first-child>span]:bg-gradient-to-r [&>:first-child>span]:from-aero-sky [&>:first-child>span]:to-aero-green",
+              "[&_[role=slider]]:opacity-0 group-hover:[&_[role=slider]]:opacity-100 [&_[role=slider]]:transition-opacity",
+              "[&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:border-aero-sky [&_[role=slider]]:focus-visible:ring-0"
+            )}
           />
         </div>
         
@@ -157,7 +197,7 @@ export default function AudioPlayer({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsShuffle(!isShuffle)}
+                onClick={toggleShuffle}
                 className={cn(
                   "h-8 w-8 sm:h-10 sm:w-10",
                   isShuffle ? "text-aero-amber" : "text-muted-foreground hover:text-foreground"
@@ -169,7 +209,7 @@ export default function AudioPlayer({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={onPrevious}
+                onClick={handlePrevious}
                 className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground"
               >
                 <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -178,7 +218,7 @@ export default function AudioPlayer({
               <Button
                 variant="glass"
                 size="icon"
-                onClick={onPlayPause}
+                onClick={handlePlayPause}
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20"
                 style={{ boxShadow: '0 2px 12px rgba(14,165,233,0.2)' }}
               >
@@ -192,7 +232,7 @@ export default function AudioPlayer({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={onNext}
+                onClick={handleNext}
                 className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground"
               >
                 <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -201,7 +241,7 @@ export default function AudioPlayer({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsRepeat(!isRepeat)}
+                onClick={toggleRepeat}
                 className={cn(
                   "h-8 w-8 sm:h-10 sm:w-10",
                   isRepeat ? "text-aero-amber" : "text-muted-foreground hover:text-foreground"
@@ -214,17 +254,7 @@ export default function AudioPlayer({
             {/* Volume & Time - Desktop */}
             <div className="hidden md:flex items-center gap-4 flex-1 justify-end">
               <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                <span>{formatTime(currentTime)}</span>
-                <div className="w-32">
-                  <Slider
-                    value={[currentTime]}
-                    max={duration}
-                    step={1}
-                    onValueChange={handleSeek}
-                    className="cursor-pointer"
-                  />
-                </div>
-                <span>{formatTime(duration)}</span>
+                <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
               </div>
               
               <div className="flex items-center gap-2">
@@ -272,17 +302,8 @@ export default function AudioPlayer({
           {/* Mobile expanded */}
           {isExpanded && (
             <div className="md:hidden mt-2 space-y-2">
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium px-1">
                 <span>{formatTime(currentTime)}</span>
-                <div className="flex-1">
-                  <Slider
-                    value={[currentTime]}
-                    max={duration}
-                    step={1}
-                    onValueChange={handleSeek}
-                    className="cursor-pointer"
-                  />
-                </div>
                 <span>{formatTime(duration)}</span>
               </div>
               <div className="flex items-center gap-2">

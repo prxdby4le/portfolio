@@ -15,20 +15,7 @@ import AudioPlayer from "./components/Player/AudioPlayer";
 
 const queryClient = new QueryClient();
 
-const GlobalPlayer = () => {
-  const { currentTrack, isPlaying, queue, handlePlayPause, handleNext, handlePrevious } = usePlayer();
-  return (
-    <AudioPlayer
-      currentTrack={currentTrack}
-      isPlaying={isPlaying}
-      queue={queue}
-      onPlayPause={handlePlayPause}
-      onNext={handleNext}
-      onPrevious={handlePrevious}
-      onTrackEnd={handleNext}
-    />
-  );
-};
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -54,7 +41,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <GlobalPlayer />
+          <AudioPlayer />
         </BrowserRouter>
       </PlayerProvider>
     </TooltipProvider>
