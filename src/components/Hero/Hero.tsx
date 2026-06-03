@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import Stickers, { HERO_STICKERS } from "@/components/Stickers/Stickers";
+import AeroBubbles, { HERO_BUBBLES } from "@/components/Aero/AeroBubbles";
+import heroBg from "@/assets/hero-bg.png";
 
 export default function Hero() {
   return (
@@ -9,30 +10,19 @@ export default function Hero() {
       transition={{ duration: 0.5 }}
       className="relative pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden"
     >
-      {/* Notebook stickers */}
-      <Stickers stickers={HERO_STICKERS} />
-      <div className="absolute inset-0 bg-gradient-dark opacity-50" />
-      
-      {/* Psychedelic orbs */}
-      <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 bg-y2k-pink/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-10 sm:right-20 w-48 h-48 sm:w-96 sm:h-96 bg-y2k-cyan/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-64 sm:h-64 bg-y2k-yellow/20 rounded-full blur-3xl animate-spin-slow" />
-      
-      {/* Marquee strip */}
-      <div className="relative z-10 overflow-hidden py-2 border-y-2 border-y2k-pink/50 mb-4 bg-y2k-pink/5">
-        <div className="animate-marquee whitespace-nowrap text-xs sm:text-sm font-bold">
-          <span className="text-y2k-pink mx-4">★ BEATS</span>
-          <span className="text-y2k-cyan mx-4">★ VISUALIZERS</span>
-          <span className="text-y2k-yellow mx-4">★ PRODUÇÃO MUSICAL</span>
-          <span className="text-y2k-lime mx-4">★ CRIATIVIDADE</span>
-          <span className="text-y2k-orange mx-4">★ PSICODÉLICO</span>
-          <span className="text-y2k-purple mx-4">★ BEATS</span>
-          <span className="text-y2k-pink mx-4">★ VISUALIZERS</span>
-          <span className="text-y2k-cyan mx-4">★ PRODUÇÃO MUSICAL</span>
-          <span className="text-y2k-yellow mx-4">★ CRIATIVIDADE</span>
-          <span className="text-y2k-lime mx-4">★ PSICODÉLICO</span>
-        </div>
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0 opacity-10">
+        <img src={heroBg} alt="Background" className="w-full h-full object-cover mix-blend-overlay" />
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px]" />
       </div>
+
+      {/* Aero decorative bubbles */}
+      <AeroBubbles bubbles={HERO_BUBBLES} />
+
+      {/* Soft atmospheric orbs */}
+      <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 bg-aero-sky/8 rounded-full blur-3xl animate-soft-pulse z-0" />
+      <div className="absolute bottom-0 right-10 sm:right-20 w-48 h-48 sm:w-96 sm:h-96 bg-aero-green/6 rounded-full blur-3xl animate-soft-pulse z-0" style={{ animationDelay: '1.5s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-64 sm:h-64 bg-aero-violet/4 rounded-full blur-3xl animate-float z-0" />
       
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
@@ -42,10 +32,10 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-4xl sm:text-6xl md:text-8xl font-display font-bold mb-4 sm:mb-6"
           >
-            <span className="text-rainbow animate-text-shadow-pop block">
+            <span className="text-gradient-sky block">
               Beats &
             </span>
-            <span className="text-rainbow animate-text-shadow-pop block" style={{ animationDelay: '0.5s' }}>
+            <span className="text-gradient-sky block">
               Visualizers
             </span>
           </motion.h2>
@@ -54,27 +44,19 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-sm sm:text-base md:text-lg text-y2k-cyan max-w-xl mx-auto px-2 text-glow-cyan font-bold"
+            className="text-sm sm:text-base md:text-lg text-aero-sky max-w-xl mx-auto px-2 font-medium"
           >
-            ~*~ Produção musical e visualizers ~*~
+            Produção musical e visualizers criativos
           </motion.p>
 
-          {/* Decorative stars */}
+          {/* Subtle decorative line */}
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex justify-center gap-3 mt-4"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex justify-center mt-6"
           >
-            {['✦', '✧', '★', '✧', '✦'].map((star, i) => (
-              <span 
-                key={i} 
-                className="text-xl sm:text-2xl animate-star-twinkle animate-color-cycle"
-                style={{ animationDelay: `${i * 0.3}s` }}
-              >
-                {star}
-              </span>
-            ))}
+            <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-aero-sky/40 to-transparent rounded-full" />
           </motion.div>
         </div>
       </div>

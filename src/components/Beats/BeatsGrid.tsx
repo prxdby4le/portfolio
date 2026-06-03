@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Track, Playlists } from "@/types/data";
 import GenreSection from "./GenreSection";
 import SpotifyPlaylistSection from "./SpotifyPlaylistSection";
-import playlistsData from "@/data/playlists.json";
+import { useTracks } from "@/hooks/useTracks";
 
 interface BeatsGridProps {
   onPlayTrack: (track: Track) => void;
@@ -24,20 +25,24 @@ const GENRE_ORDER = [
   "Fora da Caixa"
 ];
 
-const ALL_TAGS = [
-  "boom-bap", "sample", "energetic", "nostalgic", "experimental", "romantic", "dark", "piano", "chill", "psicodelic", "sad", "dnb", "drumbreak", "fast", "hopeful", "anxious", "vocals", "trap", "melodic", "emotional", "aggressive", "hyper", "synth", "4/4", "plug", "pluggnb", "slow", "funknb", "ritmadinha", "rock", "indie", "emo", "jerk", "hoodtrap", "misterious", "beat switch", "Synthwave", "dance", "jersey", "winter"
-];
-
-const tagColors = ['#FF00FF', '#00FFFF', '#FFFF00', '#00FF00', '#FF6600', '#9933FF', '#FF0033', '#3366FF'];
+const tagColors = ['#0EA5E9', '#22C55E', '#8B5CF6', '#14B8A6', '#F59E0B', '#F43F5E', '#F97316', '#6366F1'];
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
-  const [playlists] = useState<Playlists>(playlistsData as Playlists);
+  const { data: playlistsData, isLoading, error } = useTracks();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [filteredPlaylists, setFilteredPlaylists] = useState<Playlists>(playlists);
+  const [filteredPlaylists, setFilteredPlaylists] = useState<Playlists>({});
 
   useEffect(() => {
-    let filtered = { ...playlists };
+    // Start with all genres from GENRE_ORDER
+    const basePlaylists: Playlists = {};
+    GENRE_ORDER.forEach(genre => {
+      basePlaylists[genre] = playlistsData?.[genre] || {
+        description: `Explore as melhores batidas de ${genre}.`,
+        tracks: []
+      };
+    });
+
+    let filtered = { ...basePlaylists };
     
     if (searchQuery) {
       filtered = Object.entries(filtered).reduce((acc, [genre, playlist]) => {
@@ -46,6 +51,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
           track.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
         );
         
+        // Show genre if it matches the search term, OR if it has matching tracks
         if (filteredTracks.length > 0 || genre.toLowerCase().includes(searchQuery.toLowerCase())) {
           acc[genre] = {
             ...playlist,
@@ -57,68 +63,38 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       }, {} as Playlists);
     }
     
-    if (selectedTags.length > 0) {
-      filtered = Object.entries(filtered).reduce((acc, [genre, playlist]) => {
-        const filteredTracks = playlist.tracks.filter(track =>
-          selectedTags.some(tag => track.tags.includes(tag))
-        );
-        
-        if (filteredTracks.length > 0) {
-          acc[genre] = {
-            ...playlist,
-            tracks: filteredTracks
-          };
-        }
-        
-        return acc;
-      }, {} as Playlists);
-    }
-    
     setFilteredPlaylists(filtered);
-  }, [searchQuery, selectedTags, playlists]);
+  }, [searchQuery, playlistsData]);
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-3 sm:px-4 py-12 sm:py-24 flex justify-center items-center">
+        <Loader2 className="w-8 h-8 sm:w-12 sm:h-12 text-aero-sky animate-spin" />
+      </div>
     );
-  };
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-3 sm:px-4 py-12 text-center text-destructive">
+        <p>Erro ao carregar as músicas. Tente novamente mais tarde.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
       {/* Search and Filters */}
       <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
         <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-y2k-pink" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-aero-sky" />
           <Input
             type="text"
-            placeholder="✧ Buscar beats... ✧"
+            placeholder="Buscar beats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 sm:pl-10 text-sm sm:text-base glass h-9 sm:h-10 border-2 border-y2k-pink/30 focus:border-y2k-cyan placeholder:text-y2k-pink/40 font-bold"
+            className="pl-9 sm:pl-10 text-sm sm:text-base glass h-9 sm:h-10 border border-aero-sky/20 focus:border-aero-sky placeholder:text-muted-foreground/50 font-medium"
           />
-        </div>
-        
-        <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2">
-          {ALL_TAGS.map((tag, i) => {
-            const color = tagColors[i % tagColors.length];
-            const isSelected = selectedTags.includes(tag);
-            return (
-              <Badge
-                key={tag}
-                variant={isSelected ? "default" : "secondary"}
-                className="cursor-pointer transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 font-bold border hover:scale-105"
-                style={{
-                  borderColor: isSelected ? color : `${color}30`,
-                  color: isSelected ? '#000' : color,
-                  background: isSelected ? color : `${color}10`,
-                  boxShadow: isSelected ? `0 0 15px ${color}60` : 'none',
-                }}
-                onClick={() => toggleTag(tag)}
-              >
-                {isSelected ? `★ ${tag}` : tag}
-              </Badge>
-            );
-          })}
         </div>
       </div>
 

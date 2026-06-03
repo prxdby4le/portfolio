@@ -8,6 +8,8 @@ export interface Track {
   duration: string;
   tags: string[];
   downloadable?: boolean;
+  description?: string;
+  timeline_image?: string;
 }
 
 export interface Playlist {

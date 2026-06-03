@@ -20,11 +20,11 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         glass:
-          "bg-white/5 backdrop-blur-lg border border-white/10 text-foreground hover:bg-white/10 hover:border-white/20 hover:shadow-lg active:scale-[0.98]",
-        neon:
-          "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-md hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300",
+          "bg-white/55 backdrop-blur-lg border border-white/40 text-foreground hover:bg-white/70 hover:border-white/50 hover:shadow-lg active:scale-[0.98]",
+        aero:
+          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground shadow-md hover:shadow-lg hover:shadow-primary/20 hover:translate-y-[-1px] active:scale-[0.98] transition-all duration-300 border border-primary/60",
         tab:
-          "bg-transparent text-muted-foreground hover:text-foreground data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-md data-[state=active]:shadow-primary/20 data-[state=active]:border-primary/30",
+          "bg-transparent text-muted-foreground hover:text-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -4,79 +4,26 @@ import Navbar from "@/components/Layout/Navbar";
 import Hero from "@/components/Hero/Hero";
 import BeatsGrid from "@/components/Beats/BeatsGrid";
 import VisualizersGrid from "@/components/Visualizers/VisualizersGrid";
-import AudioPlayer from "@/components/Player/AudioPlayer";
-import Stickers, { INDEX_STICKERS } from "@/components/Stickers/Stickers";
+import AeroBubbles, { INDEX_BUBBLES } from "@/components/Aero/AeroBubbles";
 import { motion } from "framer-motion";
+import { usePlayer } from "@/contexts/PlayerContext";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'beats' | 'visualizers'>('beats');
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [queue, setQueue] = useState<Track[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handlePlayTrack = (track: Track) => {
-    if (currentTrack?.id === track.id) {
-      setIsPlaying(!isPlaying);
-    } else {
-      setCurrentTrack(track);
-      setIsPlaying(true);
-      const newQueue = [track];
-      setQueue(newQueue);
-      setCurrentIndex(0);
-    }
-  };
-
-  const handlePlayAllGenre = (tracks: Track[]) => {
-    if (tracks.length > 0) {
-      setQueue(tracks);
-      setCurrentTrack(tracks[0]);
-      setCurrentIndex(0);
-      setIsPlaying(true);
-    }
-  };
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleNext = () => {
-    if (queue.length > 0) {
-      const nextIndex = (currentIndex + 1) % queue.length;
-      setCurrentTrack(queue[nextIndex]);
-      setCurrentIndex(nextIndex);
-      setIsPlaying(true);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (queue.length > 0) {
-      const prevIndex = currentIndex === 0 ? queue.length - 1 : currentIndex - 1;
-      setCurrentTrack(queue[prevIndex]);
-      setCurrentIndex(prevIndex);
-      setIsPlaying(true);
-    }
-  };
-
-  const handleTrackEnd = () => {
-    handleNext();
-  };
+  const { currentTrack, isPlaying, handlePlayTrack, handlePlayAllGenre } = usePlayer();
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Psychedelic Background Layers */}
-      <div className="fixed inset-0 grain opacity-30 pointer-events-none" />
-      <div className="fixed inset-0 bg-psychedelic pointer-events-none" />
-      <div className="fixed inset-0 stars-bg opacity-40 pointer-events-none" />
-      <div className="fixed inset-0 checkerboard pointer-events-none opacity-30" />
+      {/* Frutiger Aero Background */}
+      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none -z-10" />
       
-      {/* Animated color orbs */}
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-y2k-pink/10 rounded-full blur-[100px] animate-float pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-y2k-cyan/10 rounded-full blur-[100px] animate-float pointer-events-none" style={{ animationDelay: '1.5s' }} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-y2k-yellow/5 rounded-full blur-[80px] animate-spin-slow pointer-events-none" />
+      {/* Soft atmospheric orbs */}
+      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/5 rounded-full blur-[120px] animate-float pointer-events-none -z-10" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-aero-green/4 rounded-full blur-[120px] animate-float pointer-events-none -z-10" style={{ animationDelay: '2s' }} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-aero-violet/3 rounded-full blur-[100px] animate-soft-pulse pointer-events-none -z-10" />
       
-      {/* Notebook stickers */}
-      <Stickers stickers={INDEX_STICKERS} />
+      {/* Decorative bubbles */}
+      <AeroBubbles bubbles={INDEX_BUBBLES} />
 
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
       
@@ -99,16 +46,6 @@ const Index = () => {
           <VisualizersGrid />
         )}
       </motion.main>
-
-      <AudioPlayer
-        currentTrack={currentTrack}
-        isPlaying={isPlaying}
-        queue={queue}
-        onPlayPause={handlePlayPause}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        onTrackEnd={handleTrackEnd}
-      />
     </div>
   );
 };

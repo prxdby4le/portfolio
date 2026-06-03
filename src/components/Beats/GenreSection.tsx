@@ -26,13 +26,13 @@ const genreEmojis: Record<string, string> = {
 };
 
 const genreColors: Record<string, string> = {
-  "Boombap": "#FF00FF",
-  "Drum and Bass": "#00FFFF",
-  "Trap Underground": "#FF0033",
-  "Hyper": "#FFFF00",
-  "Plug": "#00FF00",
-  "Rock": "#FF6600",
-  "Fora da Caixa": "#9933FF",
+  "Boombap": "#0EA5E9",
+  "Drum and Bass": "#22C55E",
+  "Trap Underground": "#F43F5E",
+  "Hyper": "#F59E0B",
+  "Plug": "#14B8A6",
+  "Rock": "#F97316",
+  "Fora da Caixa": "#8B5CF6",
 };
 
 export default function GenreSection({
@@ -48,8 +48,8 @@ export default function GenreSection({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const color = genreColors[genre] || "#FF00FF";
-  const emoji = genreEmojis[genre] || "✧";
+  const color = genreColors[genre] || "#0EA5E9";
+  const emoji = genreEmojis[genre] || "●";
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -73,21 +73,22 @@ export default function GenreSection({
   if (tracks.length === 0) {
     return (
       <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5 }}
         className="mb-8 sm:mb-12"
       >
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2" style={{ color }}>
-              {emoji} {genre}
+            <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2">
+              <span className="text-gradient-sky">{genre}</span>
             </h2>
-            <p className="text-xs sm:text-sm text-y2k-cyan/60 pr-2 font-bold">{description}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground pr-2 font-medium">{description}</p>
           </div>
         </div>
-        <div className="y2k-card p-12 text-center">
-          <p className="text-y2k-pink font-bold animate-blink">Em breve... ★</p>
+        <div className="aero-card p-12 text-center">
+          <p className="text-muted-foreground font-medium">Em breve...</p>
         </div>
       </motion.section>
     );
@@ -95,28 +96,26 @@ export default function GenreSection({
 
   return (
     <motion.section 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
       className="mb-12"
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex-1 min-w-0">
-          <h2 
-            className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2"
-            style={{ color, textShadow: `0 0 15px ${color}80` }}
-          >
-            {emoji} {genre}
+          <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2">
+            <span className="text-gradient-sky">{genre}</span>
           </h2>
-          <p className="text-xs sm:text-sm text-y2k-cyan/60 pr-2 font-bold">{description}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground pr-2 font-medium">{description}</p>
         </div>
         
         <Button
           variant="glass"
           size="sm"
           onClick={onPlayAll}
-          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 flex-shrink-0 y2k-btn rounded-lg"
-          style={{ background: `linear-gradient(135deg, ${color}, ${color}80)`, borderColor: color }}
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 flex-shrink-0 aero-btn rounded-lg"
+          style={{ background: `linear-gradient(180deg, ${color}E6, ${color})`, borderColor: `${color}80` }}
         >
           <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="hidden sm:inline">Play All</span>
@@ -128,22 +127,20 @@ export default function GenreSection({
           <Button
             variant="glass"
             size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity border-2 border-y2k-pink bg-black/50"
-            style={{ boxShadow: `0 0 15px ${color}` }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity glass"
             onClick={() => scroll('left')}
           >
-            <ChevronLeft className="w-5 h-5 text-y2k-pink" />
+            <ChevronLeft className="w-5 h-5 text-foreground" />
           </Button>
         )}
         {canScrollRight && (
           <Button
             variant="glass"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity border-2 border-y2k-cyan bg-black/50"
-            style={{ boxShadow: `0 0 15px ${color}` }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity glass"
             onClick={() => scroll('right')}
           >
-            <ChevronRight className="w-5 h-5 text-y2k-cyan" />
+            <ChevronRight className="w-5 h-5 text-foreground" />
           </Button>
         )}
 

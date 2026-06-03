@@ -42,10 +42,10 @@ export default function VisualizersGrid() {
         transition={{ duration: 0.5 }}
         className="mb-6 sm:mb-8 text-center px-2"
       >
-        <h2 className="text-2xl sm:text-3xl font-display font-bold mb-1 sm:mb-2 text-y2k-cyan text-glow-cyan">
-          ✧ Visualizers ✧
+        <h2 className="text-2xl sm:text-3xl font-display font-bold mb-1 sm:mb-2 text-aero-green">
+          Visualizers
         </h2>
-        <p className="text-sm sm:text-base text-y2k-pink/70 font-bold">
+        <p className="text-sm sm:text-base text-muted-foreground font-medium">
           Experiências visuais que faço utilizando as capas originais dos projetos.
         </p>
       </motion.div>
@@ -55,9 +55,9 @@ export default function VisualizersGrid() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="y2k-card p-8 sm:p-12 text-center"
+          className="aero-card p-8 sm:p-12 text-center"
         >
-          <p className="text-sm sm:text-base text-y2k-pink font-bold animate-blink">Nenhum visualizer disponível no momento ★</p>
+          <p className="text-sm sm:text-base text-muted-foreground font-medium">Nenhum visualizer disponível no momento</p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import Stickers, { NOTFOUND_STICKERS } from "@/components/Stickers/Stickers";
+import AeroBubbles, { NOTFOUND_BUBBLES } from "@/components/Aero/AeroBubbles";
 
 const NotFound = () => {
   const location = useLocation();
@@ -11,27 +11,26 @@ const NotFound = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
-      <div className="fixed inset-0 bg-psychedelic pointer-events-none" />
-      <div className="fixed inset-0 stars-bg opacity-40 pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
       
-      {/* Notebook stickers */}
-      <Stickers stickers={NOTFOUND_STICKERS} />
+      {/* Decorative bubbles */}
+      <AeroBubbles bubbles={NOTFOUND_BUBBLES} />
 
       <div className="text-center relative z-10">
-        <h1 className="mb-4 text-6xl sm:text-8xl font-bold text-rainbow animate-text-shadow-pop">
+        <h1 className="mb-4 text-6xl sm:text-8xl font-bold text-gradient-sky">
           404
         </h1>
-        <p className="mb-4 text-xl text-y2k-cyan font-bold text-glow-cyan">
-          ★ Oops! Página não encontrada ★
+        <p className="mb-4 text-xl text-aero-sky font-semibold">
+          Oops! Página não encontrada
         </p>
-        <p className="mb-6 text-y2k-pink/70 animate-blink font-bold">
-          ~*~ essa página não existe ~*~
+        <p className="mb-6 text-muted-foreground font-medium">
+          Essa página não existe
         </p>
         <Link 
           to="/" 
-          className="y2k-btn inline-block px-6 py-3 rounded-xl font-bold text-white no-underline"
+          className="aero-btn inline-block px-6 py-3 rounded-xl font-semibold text-white no-underline"
         >
-          ✦ Voltar para Home ✦
+          Voltar para Home
         </Link>
       </div>
     </div>
