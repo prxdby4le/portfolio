@@ -10,6 +10,7 @@ import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import TrackDetail from "./pages/TrackDetail";
+import PostDetail from "./pages/PostDetail";
 import { PlayerProvider, usePlayer } from "./contexts/PlayerContext";
 import AudioPlayer from "./components/Player/AudioPlayer";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/sobre" element={<About />} />
             <Route path="/track/:id" element={<TrackDetail />} />
+            <Route path="/post/:id" element={<PostDetail />} />
             
             <Route path="/admin/login" element={<Login />} />
             <Route 

@@ -21,15 +21,10 @@ export interface Playlists {
   [genre: string]: Playlist;
 }
 
-export interface Visualizer {
+export interface Post {
   id: string;
   title: string;
-  thumbnail: string;
-  src: string;
-  duration: string;
-  category: string;
-}
-
-export interface VisualizersData {
-  videos: Visualizer[];
+  created_at: string;
+  content: string; // Markdown text
+  images?: string[]; // Array of image URLs
 }

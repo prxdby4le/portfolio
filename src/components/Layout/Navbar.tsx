@@ -1,14 +1,15 @@
-import { Music, Eye, User } from "lucide-react";
+import { Music, MonitorPlay, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface NavbarProps {
-  activeTab?: 'beats' | 'visualizers';
-  onTabChange?: (tab: 'beats' | 'visualizers') => void;
+  activeTab?: 'beats' | 'posts';
+  onTabChange?: (tab: 'beats' | 'posts') => void;
 }
 
-export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
+export default function Navbar({ activeTab = 'beats', onTabChange }: NavbarProps) {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isAboutPage = location.pathname === '/sobre';
@@ -49,17 +50,17 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
                 <Button
                   variant="tab"
                   size="sm"
-                  data-state={activeTab === 'visualizers' ? 'active' : 'inactive'}
-                  onClick={() => onTabChange('visualizers')}
+                  data-state={activeTab === 'posts' ? 'active' : 'inactive'}
+                  onClick={() => onTabChange('posts')}
                   className={cn(
                     "flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 font-semibold",
-                    activeTab === 'visualizers' 
+                    activeTab === 'posts' 
                       ? "text-aero-green bg-aero-green/10" 
                       : "text-muted-foreground hover:text-aero-green"
                   )}
                 >
-                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Visualizers</span>
+                  <MonitorPlay className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Posts</span>
                 </Button>
               </div>
             )}

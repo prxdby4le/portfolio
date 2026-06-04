@@ -36,7 +36,7 @@ export default function Hero() {
               Beats &
             </span>
             <span className="text-gradient-sky block">
-              Visualizers
+              Updates
             </span>
           </motion.h2>
           
@@ -46,7 +46,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-sm sm:text-base md:text-lg text-aero-sky max-w-xl mx-auto px-2 font-medium"
           >
-            Produção musical e visualizers criativos
+            Produção musical e novidades
           </motion.p>
 
           {/* Subtle decorative line */}

@@ -6,13 +6,11 @@ import Navbar from "@/components/Layout/Navbar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AeroBubbles, { ABOUT_BUBBLES } from "@/components/Aero/AeroBubbles";
 
 const About = () => {
-  const [isBeats, setIsBeats] = useState(true);
 
   const beatsPricing = [
     { 
@@ -29,24 +27,6 @@ const About = () => {
       obra: "Mix e Master", 
       valor: "R$125", 
       observacao: "Mixagem e masterização de faixas já gravadas." 
-    }
-  ];
-
-  const visualizersPricing = [
-    { 
-      trabalho: "Base capa", 
-      valor: "R$75", 
-      observacao: "Capa deve já estar separada por camadas (ou arquivo PSD). Elementos do visualizer serão apenas os presentes na capa. (inclui aqui visualizers estilo TrapNation tamnbém)" 
-    },
-    { 
-      trabalho: "Composição adicional", 
-      valor: "R$130", 
-      observacao: "Capa deve já estar separada por camadas (ou arquivo PSD). Inclui composição adicional além da capa, com um loop de até 45 segundos condando uma história ou passando uma idéia." 
-    },
-    { 
-      trabalho: "Lyric video/edit", 
-      valor: "R$170", 
-      observacao: "Inclui aqui qualquer tipo de edit, seja com lyric ou sem, seja focado em lyric ou não, responsivo ao audio e legendas/lyrics personalizadas." 
     }
   ];
 
@@ -116,7 +96,7 @@ const About = () => {
                       </span>
                     </h1>
                     <p className="text-aero-sky text-sm sm:text-base md:text-lg px-2 font-medium">
-                      Produtor Musical & Criador de Visualizers
+                      Produtor Musical
                     </p>
                   </div>
 
@@ -185,38 +165,11 @@ const About = () => {
                     Tabela de Preços
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Switch Toggle */}
-                  <div className="flex items-center justify-center gap-4">
-                    <Label 
-                      htmlFor="pricing-switch" 
-                      className={`text-sm font-semibold cursor-pointer transition-colors ${
-                        isBeats ? 'text-aero-sky' : 'text-muted-foreground'
-                      }`}
-                    >
-                      Beats
-                    </Label>
-                    <Switch
-                      id="pricing-switch"
-                      checked={!isBeats}
-                      onCheckedChange={(checked) => setIsBeats(!checked)}
-                    />
-                    <Label 
-                      htmlFor="pricing-switch" 
-                      className={`text-sm font-semibold cursor-pointer transition-colors ${
-                        !isBeats ? 'text-aero-green' : 'text-muted-foreground'
-                      }`}
-                    >
-                      Visualizers
-                    </Label>
-                  </div>
-
+                <CardContent className="space-y-6 pt-6">
                   {/* Pricing Table */}
                   <motion.div
-                    key={isBeats ? 'beats' : 'visualizers'}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
                     transition={{ duration: 0.3 }}
                   >
                     <div className="glass rounded-lg overflow-hidden border border-white/30">
@@ -224,20 +177,20 @@ const About = () => {
                         <div className="divide-y divide-border/50">
                           <div className="grid grid-cols-2 gap-4 px-4 py-3 border-b border-aero-sky/15 bg-aero-sky/5">
                             <div className="text-left font-semibold text-sm sm:text-base text-aero-sky">
-                              {isBeats ? 'Obra' : 'Trabalho'}
+                              Obra
                             </div>
                             <div className="text-right font-semibold text-sm sm:text-base text-aero-green">
                               Valor
                             </div>
                           </div>
                           
-                          {(isBeats ? beatsPricing : visualizersPricing).map((item, index) => (
+                          {beatsPricing.map((item, index) => (
                             <AccordionItem key={index} value={`item-${index}`} className="border-none">
                               <div>
                                 <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-aero-sky/5">
                                   <div className="grid grid-cols-2 gap-4 w-full items-center">
                                     <div className="text-left font-semibold text-sm sm:text-base">
-                                      {isBeats ? item.obra : item.trabalho}
+                                      {item.obra}
                                     </div>
                                     <div className="text-right font-semibold text-sm sm:text-base text-aero-amber">
                                       {item.valor}
@@ -267,21 +220,12 @@ const About = () => {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
             >
-              <Card className="aero-card text-center p-4 sm:p-6 group">
+              <Card className="aero-card text-center p-4 sm:p-6 group col-span-1 md:col-span-2">
                 <div className="text-2xl sm:text-3xl font-display font-bold text-aero-sky mb-1 sm:mb-2 group-hover:scale-105 transition-transform">
                   ♫ Beats
                 </div>
                 <p className="text-muted-foreground text-xs sm:text-sm font-medium">
                   Produção musical
-                </p>
-              </Card>
-              
-              <Card className="aero-card text-center p-4 sm:p-6 group">
-                <div className="text-2xl sm:text-3xl font-display font-bold text-aero-green mb-1 sm:mb-2 group-hover:scale-105 transition-transform">
-                  ◆ Visualizers
-                </div>
-                <p className="text-muted-foreground text-xs sm:text-sm font-medium">
-                  Arte visual
                 </p>
               </Card>
             </motion.div>

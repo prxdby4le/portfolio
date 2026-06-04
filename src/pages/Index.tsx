@@ -3,13 +3,13 @@ import { Track } from "@/types/data";
 import Navbar from "@/components/Layout/Navbar";
 import Hero from "@/components/Hero/Hero";
 import BeatsGrid from "@/components/Beats/BeatsGrid";
-import VisualizersGrid from "@/components/Visualizers/VisualizersGrid";
+import PostsList from "@/components/Posts/PostsList";
 import AeroBubbles, { INDEX_BUBBLES } from "@/components/Aero/AeroBubbles";
 import { motion } from "framer-motion";
 import { usePlayer } from "@/contexts/PlayerContext";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<'beats' | 'visualizers'>('beats');
+  const [activeTab, setActiveTab] = useState<'beats' | 'posts'>('beats');
   const { currentTrack, isPlaying, handlePlayTrack, handlePlayAllGenre } = usePlayer();
 
   return (
@@ -43,7 +43,9 @@ const Index = () => {
             isPlaying={isPlaying}
           />
         ) : (
-          <VisualizersGrid />
+          <div className="mt-8">
+            <PostsList />
+          </div>
         )}
       </motion.main>
     </div>
