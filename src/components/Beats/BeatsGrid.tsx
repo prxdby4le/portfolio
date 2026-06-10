@@ -25,7 +25,7 @@ const GENRE_ORDER = [
   "Fora da Caixa"
 ];
 
-const tagColors = ['#0EA5E9', '#22C55E', '#8B5CF6', '#14B8A6', '#F59E0B', '#F43F5E', '#F97316', '#6366F1'];
+const tagColors = ['#FF0066', '#CC0052', '#FF3385', '#990040', '#E6005C', '#FF1A75', '#FF4D94', '#B30047'];
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
   const { data: playlistsData, isLoading, error } = useTracks();

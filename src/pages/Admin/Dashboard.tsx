@@ -32,10 +32,10 @@ export default function Dashboard() {
 
         <Tabs defaultValue="tracks" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8 glass-heavy rounded-xl h-12 p-1">
-            <TabsTrigger value="tracks" className="rounded-lg data-[state=active]:bg-aero-sky data-[state=active]:text-white">
+            <TabsTrigger value="tracks" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
               Gerenciar Músicas
             </TabsTrigger>
-            <TabsTrigger value="posts" className="rounded-lg data-[state=active]:bg-aero-sky data-[state=active]:text-white">
+            <TabsTrigger value="posts" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
               Gerenciar Posts
             </TabsTrigger>
           </TabsList>

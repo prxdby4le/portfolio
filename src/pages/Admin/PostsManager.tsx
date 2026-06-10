@@ -194,7 +194,7 @@ export default function PostsManager() {
               value={content}
               onChange={e => setContent(e.target.value)}
               required
-              className="w-full min-h-[200px] p-3 rounded-md glass border-white/40 focus:border-aero-sky text-sm placeholder:text-muted-foreground/60 resize-y"
+              className="w-full min-h-[200px] p-3 rounded-md glass border-primary/15 focus:border-primary text-sm placeholder:text-muted-foreground/60 resize-y"
               placeholder="# Grande Atualização!&#10;&#10;Aqui estão as novidades..."
             />
           </div>
@@ -233,7 +233,7 @@ export default function PostsManager() {
               {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (editingId ? "Salvar Alterações" : "Publicar Post")}
             </Button>
             {editingId && (
-              <Button type="button" variant="outline" className="flex-1 bg-white/5 border-white/10 hover:bg-white/10" onClick={cancelEdit} disabled={loading}>
+              <Button type="button" variant="outline" className="flex-1 bg-black border-primary/15 hover:bg-primary/10 text-white" onClick={cancelEdit} disabled={loading}>
                 <X className="w-4 h-4 mr-2" />
                 Cancelar
               </Button>
@@ -259,11 +259,11 @@ export default function PostsManager() {
           ) : (
             <div className="space-y-4">
               {allPosts?.map((post) => (
-                <div key={post.id} className="flex items-start gap-4 p-3 glass rounded-xl border border-white/20">
+                <div key={post.id} className="flex items-start gap-4 p-3 glass rounded-xl border border-primary/10">
                   {post.images && post.images.length > 0 ? (
                      <img src={post.images[0]} alt="Post thumbnail" className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-black border border-primary/15 flex items-center justify-center flex-shrink-0 text-white">
                       <FileText className="w-5 h-5 text-muted-foreground" />
                     </div>
                   )}

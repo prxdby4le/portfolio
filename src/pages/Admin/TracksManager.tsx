@@ -361,7 +361,7 @@ export default function TracksManager() {
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="w-full min-h-[120px] p-3 rounded-md glass border-white/40 focus:border-aero-sky text-sm placeholder:text-muted-foreground/60 resize-y"
+                  className="w-full min-h-[120px] p-3 rounded-md glass border-primary/15 focus:border-primary text-sm placeholder:text-muted-foreground/60 resize-y"
                   placeholder="Conte a história do beat...&#10;&#10;# Equipamentos&#10;- FL Studio&#10;- Serum"
                 />
               </div>
@@ -375,7 +375,7 @@ export default function TracksManager() {
                       onClick={() => handleTagToggle(tag)}
                       className={`text-xs px-2 py-1 rounded-full cursor-pointer font-medium border transition-colors ${selectedTags.includes(tag)
                           ? 'bg-aero-sky text-white border-aero-sky'
-                          : 'glass hover:bg-white/70'
+                          : 'glass hover:bg-primary/10'
                         }`}
                     >
                       {tag}
@@ -408,7 +408,7 @@ export default function TracksManager() {
                   {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (editingId ? "Salvar Alterações" : "Fazer Upload")}
                 </Button>
                 {editingId && (
-                  <Button type="button" variant="outline" className="flex-1 bg-white/5 border-white/10 hover:bg-white/10" onClick={cancelEdit} disabled={loading}>
+                  <Button type="button" variant="outline" className="flex-1 bg-black border-primary/15 hover:bg-primary/10 text-white" onClick={cancelEdit} disabled={loading}>
                     <X className="w-4 h-4 mr-2" />
                     Cancelar
                   </Button>
@@ -434,7 +434,7 @@ export default function TracksManager() {
               ) : (
                 <div className="space-y-4">
                   {allTracks?.map((track) => (
-                    <div key={track.id} className="flex items-center gap-4 p-3 glass rounded-xl border border-white/20">
+                    <div key={track.id} className="flex items-center gap-4 p-3 glass rounded-xl border border-primary/10">
                       <img src={track.cover_url} alt={track.title} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm truncate">{track.title}</p>

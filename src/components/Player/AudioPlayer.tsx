@@ -156,7 +156,7 @@ export default function AudioPlayer() {
             className={cn(
               "cursor-pointer w-full",
               "[&>:first-child]:h-1 [&>:first-child]:rounded-none [&>:first-child]:bg-muted/30",
-              "[&>:first-child>span]:bg-gradient-to-r [&>:first-child>span]:from-aero-sky [&>:first-child>span]:to-aero-green",
+              "[&>:first-child>span]:bg-gradient-to-r [&>:first-child>span]:from-primary [&>:first-child>span]:to-primary",
               "[&_[role=slider]]:opacity-0 group-hover:[&_[role=slider]]:opacity-100 [&_[role=slider]]:transition-opacity",
               "[&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:border-aero-sky [&_[role=slider]]:focus-visible:ring-0"
             )}
@@ -176,7 +176,7 @@ export default function AudioPlayer() {
                     isPlaying && "animate-spin-slow"
                   )}
                   style={{ 
-                    boxShadow: '0 4px 12px rgba(14,165,233,0.15)',
+                    boxShadow: '0 4px 12px rgba(255,0,102,0.15)',
                     borderRadius: isPlaying ? '50%' : '0.5rem',
                     transition: 'border-radius 0.5s ease',
                   }}
@@ -219,8 +219,8 @@ export default function AudioPlayer() {
                 variant="glass"
                 size="icon"
                 onClick={handlePlayPause}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20"
-                style={{ boxShadow: '0 2px 12px rgba(14,165,233,0.2)' }}
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-primary/30 bg-black hover:bg-primary/20 text-white"
+                style={{ boxShadow: '0 2px 12px rgba(255,0,102,0.2)' }}
               >
                 {isPlaying ? (
                   <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />

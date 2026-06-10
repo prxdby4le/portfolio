@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function SpotifyPlaylistSection() {
   const playlistId = "4KvJJ8syMbCHDoGLTz1MAY";
-  const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator`;
+  const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`;
 
   return (
     <motion.section 
@@ -33,7 +33,7 @@ export default function SpotifyPlaylistSection() {
         </Button>
       </div>
 
-      <div className="aero-card overflow-hidden" style={{ borderColor: 'rgba(29, 185, 84, 0.2)' }}>
+      <div className="aero-card overflow-hidden" style={{ borderColor: 'rgba(255, 0, 102, 0.15)' }}>
         <iframe
           src={embedUrl}
           width="100%"

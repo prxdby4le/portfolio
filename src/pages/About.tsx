@@ -60,7 +60,7 @@ const About = () => {
                   alt="Foto de capa" 
                   className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-aero-sky/10 to-aero-green/10 mix-blend-overlay rounded-t-lg" />
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-secondary/10 mix-blend-overlay rounded-t-lg" />
                 
                 {/* Profile Photo */}
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-[100]">
@@ -70,10 +70,10 @@ const About = () => {
                     transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
                     className="relative z-[100]"
                   >
-                    <div className="absolute -inset-1 bg-gradient-to-r from-aero-sky via-aero-green to-aero-sky rounded-full animate-spin-slow opacity-50" />
-                    <Avatar className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 border-4 border-white shadow-lg overflow-hidden z-[100]" style={{ boxShadow: '0 8px 32px rgba(14,165,233,0.2)' }}>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full animate-spin-slow opacity-50" />
+                    <Avatar className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 border-4 border-white shadow-lg overflow-hidden z-[100]" style={{ boxShadow: '0 8px 32px rgba(255,0,102,0.2)' }}>
                       <AvatarImage src="/profile.jpg" alt="Foto de perfil" className="object-contain" />
-                      <AvatarFallback className="bg-gradient-to-br from-aero-sky to-aero-green text-white text-2xl sm:text-4xl font-display font-bold">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl sm:text-4xl font-display font-bold">
                         P
                       </AvatarFallback>
                     </Avatar>

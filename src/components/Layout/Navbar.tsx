@@ -20,7 +20,7 @@ export default function Navbar({ activeTab = 'beats', onTabChange }: NavbarProps
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-aero-sky to-aero-green flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow duration-300">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow duration-300">
               <span className="text-white font-bold text-base sm:text-lg">4</span>
             </div>
             <h1 className="text-lg sm:text-xl font-display font-bold text-gradient-sky">

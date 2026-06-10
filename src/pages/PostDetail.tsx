@@ -63,7 +63,7 @@ export default function PostDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6 hover:bg-white/20 glass"
+          className="mb-6 hover:bg-primary/10 glass"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar

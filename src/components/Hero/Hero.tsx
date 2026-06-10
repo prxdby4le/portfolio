@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import AeroBubbles, { HERO_BUBBLES } from "@/components/Aero/AeroBubbles";
-import heroBg from "@/assets/hero-bg.png";
 
 export default function Hero() {
   return (
@@ -10,11 +9,8 @@ export default function Hero() {
       transition={{ duration: 0.5 }}
       className="relative pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden"
     >
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <img src={heroBg} alt="Background" className="w-full h-full object-cover mix-blend-overlay" />
-        <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px]" />
-      </div>
+      {/* Background Gradient */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/20 via-background to-background" />
 
       {/* Aero decorative bubbles */}
       <AeroBubbles bubbles={HERO_BUBBLES} />

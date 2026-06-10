@@ -50,7 +50,7 @@ export default function Login() {
 
       <div className="w-full max-w-md aero-card p-8 relative z-10 glass-heavy">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-aero-sky to-aero-green flex items-center justify-center shadow-lg mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-display font-bold text-gradient-sky text-center">

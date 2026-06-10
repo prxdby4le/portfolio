@@ -42,9 +42,9 @@ export default function AeroBubbles({ bubbles }: AeroBubblesProps) {
           <div
             className="w-full h-full rounded-full animate-bubble-float"
             style={{
-              background: `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6), ${b.color ?? 'rgba(14,165,233,0.12)'}, transparent)`,
-              border: '1px solid rgba(255,255,255,0.3)',
-              boxShadow: 'inset 0 -4px 12px rgba(14,165,233,0.06)',
+              background: `radial-gradient(circle at 35% 30%, rgba(255,0,102,0.1), ${b.color ?? 'rgba(255,0,102,0.04)'}, transparent)`,
+              border: '1px solid rgba(255,0,102,0.06)',
+              boxShadow: 'inset 0 -4px 12px rgba(255,0,102,0.03)',
               animationDelay: `${(b.delay ?? 0) + i * 0.5}s`,
               animationDuration: `${5 + i * 0.8}s`,
             }}
@@ -56,33 +56,33 @@ export default function AeroBubbles({ bubbles }: AeroBubblesProps) {
 }
 
 export const HERO_BUBBLES: BubbleItem[] = [
-  { top: '10%',  left: '5%',   size: '80px',  delay: 0.2, color: 'rgba(14,165,233,0.1)',  opacity: 0.5 },
-  { top: '15%',  right: '8%',  size: '60px',  delay: 0.4, color: 'rgba(34,197,94,0.08)',   opacity: 0.4 },
-  { bottom: '20%', left: '12%', size: '50px', delay: 0.6, color: 'rgba(14,165,233,0.08)', opacity: 0.35 },
-  { top: '30%',  right: '15%', size: '40px',  delay: 0.3, color: 'rgba(139,92,246,0.08)', opacity: 0.3 },
-  { bottom: '15%', right: '6%', size: '70px', delay: 0.5, color: 'rgba(34,197,94,0.1)',   opacity: 0.4 },
+  { top: '10%',  left: '5%',   size: '80px',  delay: 0.2, color: 'rgba(255,0,102,0.06)',  opacity: 0.5 },
+  { top: '15%',  right: '8%',  size: '60px',  delay: 0.4, color: 'rgba(255,0,102,0.04)',   opacity: 0.4 },
+  { bottom: '20%', left: '12%', size: '50px', delay: 0.6, color: 'rgba(255,0,102,0.05)', opacity: 0.35 },
+  { top: '30%',  right: '15%', size: '40px',  delay: 0.3, color: 'rgba(255,0,102,0.03)', opacity: 0.3 },
+  { bottom: '15%', right: '6%', size: '70px', delay: 0.5, color: 'rgba(255,0,102,0.06)',   opacity: 0.4 },
 ];
 
 export const INDEX_BUBBLES: BubbleItem[] = [
-  { top: '8%',   left: '3%',    size: '100px', delay: 0.3, color: 'rgba(14,165,233,0.08)',  opacity: 0.4 },
-  { top: '15%',  right: '5%',   size: '70px',  delay: 0.5, color: 'rgba(34,197,94,0.06)',   opacity: 0.35 },
-  { top: '35%',  left: '2%',    size: '55px',  delay: 0.7, color: 'rgba(139,92,246,0.06)',  opacity: 0.3 },
-  { top: '50%',  right: '4%',   size: '85px',  delay: 0.4, color: 'rgba(14,165,233,0.07)',  opacity: 0.35 },
-  { top: '65%',  left: '5%',    size: '45px',  delay: 0.8, color: 'rgba(34,197,94,0.08)',   opacity: 0.3 },
-  { top: '80%',  right: '6%',   size: '65px',  delay: 0.6, color: 'rgba(14,165,233,0.06)',  opacity: 0.3 },
+  { top: '8%',   left: '3%',    size: '100px', delay: 0.3, color: 'rgba(255,0,102,0.05)',  opacity: 0.4 },
+  { top: '15%',  right: '5%',   size: '70px',  delay: 0.5, color: 'rgba(255,0,102,0.04)',   opacity: 0.35 },
+  { top: '35%',  left: '2%',    size: '55px',  delay: 0.7, color: 'rgba(255,0,102,0.03)',  opacity: 0.3 },
+  { top: '50%',  right: '4%',   size: '85px',  delay: 0.4, color: 'rgba(255,0,102,0.04)',  opacity: 0.35 },
+  { top: '65%',  left: '5%',    size: '45px',  delay: 0.8, color: 'rgba(255,0,102,0.05)',   opacity: 0.3 },
+  { top: '80%',  right: '6%',   size: '65px',  delay: 0.6, color: 'rgba(255,0,102,0.03)',  opacity: 0.3 },
 ];
 
 export const ABOUT_BUBBLES: BubbleItem[] = [
-  { top: '10%',  left: '4%',   size: '90px',  delay: 0.2, color: 'rgba(14,165,233,0.08)',  opacity: 0.4 },
-  { top: '12%',  right: '5%',  size: '60px',  delay: 0.4, color: 'rgba(34,197,94,0.06)',   opacity: 0.35 },
-  { top: '40%',  left: '3%',   size: '50px',  delay: 0.6, color: 'rgba(139,92,246,0.06)',  opacity: 0.3 },
-  { top: '55%',  right: '4%',  size: '75px',  delay: 0.5, color: 'rgba(14,165,233,0.07)',  opacity: 0.35 },
-  { top: '75%',  left: '6%',   size: '55px',  delay: 0.7, color: 'rgba(34,197,94,0.08)',   opacity: 0.3 },
+  { top: '10%',  left: '4%',   size: '90px',  delay: 0.2, color: 'rgba(255,0,102,0.05)',  opacity: 0.4 },
+  { top: '12%',  right: '5%',  size: '60px',  delay: 0.4, color: 'rgba(255,0,102,0.04)',   opacity: 0.35 },
+  { top: '40%',  left: '3%',   size: '50px',  delay: 0.6, color: 'rgba(255,0,102,0.03)',  opacity: 0.3 },
+  { top: '55%',  right: '4%',  size: '75px',  delay: 0.5, color: 'rgba(255,0,102,0.04)',  opacity: 0.35 },
+  { top: '75%',  left: '6%',   size: '55px',  delay: 0.7, color: 'rgba(255,0,102,0.05)',   opacity: 0.3 },
 ];
 
 export const NOTFOUND_BUBBLES: BubbleItem[] = [
-  { top: '15%',  left: '8%',   size: '80px',  delay: 0.2, color: 'rgba(14,165,233,0.1)',  opacity: 0.4 },
-  { top: '20%',  right: '10%', size: '60px',  delay: 0.4, color: 'rgba(139,92,246,0.08)', opacity: 0.35 },
-  { top: '60%',  left: '12%',  size: '50px',  delay: 0.6, color: 'rgba(14,165,233,0.08)', opacity: 0.3 },
-  { bottom: '20%', right: '8%', size: '70px', delay: 0.5, color: 'rgba(34,197,94,0.06)',  opacity: 0.3 },
+  { top: '15%',  left: '8%',   size: '80px',  delay: 0.2, color: 'rgba(255,0,102,0.06)',  opacity: 0.4 },
+  { top: '20%',  right: '10%', size: '60px',  delay: 0.4, color: 'rgba(255,0,102,0.04)', opacity: 0.35 },
+  { top: '60%',  left: '12%',  size: '50px',  delay: 0.6, color: 'rgba(255,0,102,0.05)', opacity: 0.3 },
+  { bottom: '20%', right: '8%', size: '70px', delay: 0.5, color: 'rgba(255,0,102,0.03)',  opacity: 0.3 },
 ];

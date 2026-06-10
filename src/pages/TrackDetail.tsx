@@ -82,7 +82,7 @@ export default function TrackDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6 hover:bg-white/20 glass"
+          className="mb-6 hover:bg-primary/10 glass"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar
@@ -102,7 +102,7 @@ export default function TrackDetail() {
                   <Button
                     variant="glass"
                     size="icon"
-                    className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-xl"
+                    className="w-16 h-16 rounded-full bg-black border border-primary/30 shadow-xl text-white"
                     onClick={() => handlePlayTrack(track)}
                   >
                     {isThisPlaying ? (
@@ -124,7 +124,7 @@ export default function TrackDetail() {
                   ))}
                 </div>
 
-                <div className="flex justify-center gap-6 text-sm font-medium text-muted-foreground bg-white/40 p-3 rounded-lg border border-white/50">
+                <div className="flex justify-center gap-6 text-sm font-medium text-white bg-black p-3 rounded-lg border border-primary/15">
                   <div className="text-center">
                     <span className="block text-xs uppercase opacity-70">BPM</span>
                     <span className="text-foreground text-base">{track.bpm}</span>

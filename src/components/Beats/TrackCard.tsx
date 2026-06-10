@@ -51,7 +51,7 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
     }
   };
 
-  const aeroColors = ['#0EA5E9', '#22C55E', '#8B5CF6', '#14B8A6', '#F59E0B', '#F43F5E'];
+  const aeroColors = ['#FF0066', '#CC0052', '#FF3385', '#990040', '#E6005C', '#FF1A75'];
   const cardColor = aeroColors[index % aeroColors.length];
 
   return (
@@ -88,7 +88,7 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
             variant="glass"
             size="icon"
             className={cn(
-              "rounded-full w-12 h-12 sm:w-14 sm:h-14 border border-white/40 shadow-lg bg-white/20 backdrop-blur-md",
+              "rounded-full w-12 h-12 sm:w-14 sm:h-14 border border-primary/30 shadow-lg bg-black text-white",
               isActive && isPlaying && "bg-primary/20 animate-soft-pulse"
             )}
             onClick={(e) => {
@@ -129,7 +129,7 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
             <Badge 
               key={tag} 
               variant="outline"
-              className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0 h-4 sm:h-5 font-medium bg-white/40 backdrop-blur-sm border-white/40 text-foreground/70"
+              className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0 h-4 sm:h-5 font-medium bg-black border-primary/20 text-white"
             >
               {tag}
             </Badge>

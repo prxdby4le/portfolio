@@ -26,13 +26,13 @@ const genreEmojis: Record<string, string> = {
 };
 
 const genreColors: Record<string, string> = {
-  "Boombap": "#0EA5E9",
-  "Drum and Bass": "#22C55E",
-  "Trap Underground": "#F43F5E",
-  "Hyper": "#F59E0B",
-  "Plug": "#14B8A6",
-  "Rock": "#F97316",
-  "Fora da Caixa": "#8B5CF6",
+  "Boombap": "#FF0066",
+  "Drum and Bass": "#E6005C",
+  "Trap Underground": "#CC0052",
+  "Hyper": "#FF3385",
+  "Plug": "#FF1A75",
+  "Rock": "#990040",
+  "Fora da Caixa": "#FF4D94",
 };
 
 export default function GenreSection({
