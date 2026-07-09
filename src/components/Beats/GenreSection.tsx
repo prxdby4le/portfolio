@@ -23,6 +23,8 @@ const genreEmojis: Record<string, string> = {
   "Plug": "🔌",
   "Rock": "🎸",
   "Fora da Caixa": "🌀",
+  "Favoritos": "⭐",
+  "Uploads Recentes": "🆕",
 };
 
 const genreColors: Record<string, string> = {
@@ -33,6 +35,8 @@ const genreColors: Record<string, string> = {
   "Plug": "#FF1A75",
   "Rock": "#990040",
   "Fora da Caixa": "#FF4D94",
+  "Favoritos": "#FF1A75",
+  "Uploads Recentes": "#E6005C",
 };
 
 export default function GenreSection({

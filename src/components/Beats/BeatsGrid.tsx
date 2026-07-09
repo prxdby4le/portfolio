@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { Track, Playlists } from "@/types/data";
 import GenreSection from "./GenreSection";
 import SpotifyPlaylistSection from "./SpotifyPlaylistSection";
+import FeaturedTrack from "./FeaturedTrack";
 import { useTracks } from "@/hooks/useTracks";
+import { useGenres } from "@/hooks/useGenres";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { DEFAULT_GENRES } from "@/lib/genres";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/siteSettings";
 
 interface BeatsGridProps {
   onPlayTrack: (track: Track) => void;
@@ -15,56 +18,110 @@ interface BeatsGridProps {
   isPlaying: boolean;
 }
 
-const GENRE_ORDER = [
-  "Boombap",
-  "Drum and Bass",
-  "Trap Underground",
-  "Hyper",
-  "Plug",
-  "Rock",
-  "Fora da Caixa"
-];
-
-const tagColors = ['#FF0066', '#CC0052', '#FF3385', '#990040', '#E6005C', '#FF1A75', '#FF4D94', '#B30047'];
+const RECENT_UPLOADS_LIMIT = 10;
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
-  const { data: playlistsData, isLoading, error } = useTracks();
+  const { data, isLoading, error } = useTracks();
+  const { data: genreOrder } = useGenres();
+  const { data: settingsData } = useSiteSettings();
+  const settings = settingsData ?? DEFAULT_SITE_SETTINGS;
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredPlaylists, setFilteredPlaylists] = useState<Playlists>({});
 
-  useEffect(() => {
-    // Start with all genres from GENRE_ORDER
+  const query = searchQuery.trim().toLowerCase();
+
+  const matchesSearch = (track: Track) =>
+    !query ||
+    track.title.toLowerCase().includes(query) ||
+    track.tags.some(tag => tag.toLowerCase().includes(query));
+
+  const allTracks = data?.allTracks ?? [];
+
+  // Uploads Recentes: últimas músicas enviadas (admin pode ocultar via show_in_recent)
+  const recentTracks = useMemo(() => {
+    return [...allTracks]
+      .filter(t => t.show_in_recent !== false)
+      .sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""))
+      .slice(0, RECENT_UPLOADS_LIMIT);
+  }, [allTracks]);
+
+  // Favoritos: seleção manual do admin, na ordem definida por favorite_order
+  const favoriteTracks = useMemo(() => {
+    return allTracks
+      .filter(t => t.favorite_order !== null && t.favorite_order !== undefined)
+      .sort((a, b) => (a.favorite_order ?? 0) - (b.favorite_order ?? 0));
+  }, [allTracks]);
+
+  // Faixa em destaque definida no admin (aba Layout)
+  const featuredTrack = useMemo(() => {
+    if (!settings.featured_enabled || !settings.featured_track_id) return null;
+    return allTracks.find(t => t.id === settings.featured_track_id) ?? null;
+  }, [allTracks, settings.featured_enabled, settings.featured_track_id]);
+
+  // Ordem dos gêneros vinda do banco, com gêneros extras (fora da tabela) no final
+  const orderedGenres = useMemo(() => {
+    const base = genreOrder ?? DEFAULT_GENRES;
+    const extras = Object.keys(data?.playlists ?? {}).filter(g => !base.includes(g));
+    return [...base, ...extras];
+  }, [genreOrder, data]);
+
+  const filteredPlaylists = useMemo(() => {
     const basePlaylists: Playlists = {};
-    GENRE_ORDER.forEach(genre => {
-      basePlaylists[genre] = playlistsData?.[genre] || {
+    orderedGenres.forEach(genre => {
+      basePlaylists[genre] = data?.playlists?.[genre] || {
         description: `Explore as melhores batidas de ${genre}.`,
         tracks: []
       };
     });
 
-    let filtered = { ...basePlaylists };
-    
-    if (searchQuery) {
-      filtered = Object.entries(filtered).reduce((acc, [genre, playlist]) => {
-        const filteredTracks = playlist.tracks.filter(track =>
-          track.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          track.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-        );
-        
-        // Show genre if it matches the search term, OR if it has matching tracks
-        if (filteredTracks.length > 0 || genre.toLowerCase().includes(searchQuery.toLowerCase())) {
-          acc[genre] = {
-            ...playlist,
-            tracks: filteredTracks
-          };
-        }
-        
-        return acc;
-      }, {} as Playlists);
-    }
-    
-    setFilteredPlaylists(filtered);
-  }, [searchQuery, playlistsData]);
+    if (!query) return basePlaylists;
+
+    return Object.entries(basePlaylists).reduce((acc, [genre, playlist]) => {
+      const filteredTracks = playlist.tracks.filter(matchesSearch);
+
+      // Show genre if it matches the search term, OR if it has matching tracks
+      if (filteredTracks.length > 0 || genre.toLowerCase().includes(query)) {
+        acc[genre] = {
+          ...playlist,
+          tracks: filteredTracks
+        };
+      }
+
+      return acc;
+    }, {} as Playlists);
+  }, [orderedGenres, data, query]);
+
+  const filteredRecent = recentTracks.filter(matchesSearch);
+  const filteredFavorites = favoriteTracks.filter(matchesSearch);
+
+  const favoritesSection = settings.show_favorites && filteredFavorites.length > 0 && (
+    <GenreSection
+      key="favoritos"
+      genre="Favoritos"
+      description="Seleção especial dos meus beats favoritos."
+      tracks={filteredFavorites}
+      currentTrack={currentTrack}
+      isPlaying={isPlaying}
+      onPlayTrack={onPlayTrack}
+      onPlayAll={() => onPlayAllGenre(filteredFavorites)}
+    />
+  );
+
+  const recentSection = settings.show_recent && filteredRecent.length > 0 && (
+    <GenreSection
+      key="recentes"
+      genre="Uploads Recentes"
+      description="As últimas batidas que chegaram no estúdio."
+      tracks={filteredRecent}
+      currentTrack={currentTrack}
+      isPlaying={isPlaying}
+      onPlayTrack={onPlayTrack}
+      onPlayAll={() => onPlayAllGenre(filteredRecent)}
+    />
+  );
+
+  const orderedSpecialSections = settings.favorites_first
+    ? [favoritesSection, recentSection]
+    : [recentSection, favoritesSection];
 
   if (isLoading) {
     return (
@@ -100,12 +157,24 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
 
       {/* Content */}
       <div className="space-y-8 sm:space-y-12">
-        <SpotifyPlaylistSection />
-        
-        {GENRE_ORDER.map(genre => {
+        {featuredTrack && !query && (
+          <FeaturedTrack
+            track={featuredTrack}
+            message={settings.featured_message}
+            isPlaying={isPlaying}
+            isActive={currentTrack?.id === featuredTrack.id}
+            onPlay={() => onPlayTrack(featuredTrack)}
+          />
+        )}
+
+        {settings.show_spotify && <SpotifyPlaylistSection />}
+
+        {orderedSpecialSections}
+
+        {Object.keys(filteredPlaylists).map(genre => {
           const playlist = filteredPlaylists[genre];
           if (!playlist) return null;
-          
+
           return (
             <GenreSection
               key={genre}

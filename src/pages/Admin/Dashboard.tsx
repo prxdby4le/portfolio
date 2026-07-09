@@ -5,6 +5,8 @@ import { LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TracksManager from "./TracksManager";
 import PostsManager from "./PostsManager";
+import PlaylistsManager from "./PlaylistsManager";
+import SiteSettingsManager from "./SiteSettingsManager";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -31,19 +33,33 @@ export default function Dashboard() {
         </header>
 
         <Tabs defaultValue="tracks" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 glass-heavy rounded-xl h-12 p-1">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1 mb-8 glass-heavy rounded-xl h-auto sm:h-12 p-1">
             <TabsTrigger value="tracks" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-              Gerenciar Músicas
+              Músicas
+            </TabsTrigger>
+            <TabsTrigger value="playlists" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+              Playlists
+            </TabsTrigger>
+            <TabsTrigger value="layout" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+              Layout
             </TabsTrigger>
             <TabsTrigger value="posts" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-              Gerenciar Posts
+              Posts
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="tracks">
             <TracksManager />
           </TabsContent>
-          
+
+          <TabsContent value="playlists">
+            <PlaylistsManager />
+          </TabsContent>
+
+          <TabsContent value="layout">
+            <SiteSettingsManager />
+          </TabsContent>
+
           <TabsContent value="posts">
             <PostsManager />
           </TabsContent>

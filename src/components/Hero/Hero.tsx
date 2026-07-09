@@ -1,7 +1,12 @@
 import { motion } from "framer-motion";
 import AeroBubbles, { HERO_BUBBLES } from "@/components/Aero/AeroBubbles";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/siteSettings";
 
 export default function Hero() {
+  const { data: settings } = useSiteSettings();
+  const s = settings ?? DEFAULT_SITE_SETTINGS;
+
   return (
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
@@ -29,20 +34,20 @@ export default function Hero() {
             className="text-4xl sm:text-6xl md:text-8xl font-display font-bold mb-4 sm:mb-6"
           >
             <span className="text-gradient-sky block">
-              Beats &
+              {s.hero_title_line1}
             </span>
             <span className="text-gradient-sky block">
-              Updates
+              {s.hero_title_line2}
             </span>
           </motion.h2>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-sm sm:text-base md:text-lg text-aero-sky max-w-xl mx-auto px-2 font-medium"
           >
-            Produção musical e novidades
+            {s.hero_subtitle}
           </motion.p>
 
           {/* Subtle decorative line */}
