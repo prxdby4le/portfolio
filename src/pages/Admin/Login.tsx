@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Lock } from "lucide-react";
-import AeroBubbles, { INDEX_BUBBLES } from "@/components/Aero/AeroBubbles";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -37,18 +36,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative flex items-center justify-center p-4">
-      {/* Frutiger Aero Background */}
-      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
-      
-      {/* Soft atmospheric orbs */}
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/10 rounded-full blur-[120px] animate-float pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-aero-green/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
-      
-      {/* Decorative bubbles */}
-      <AeroBubbles bubbles={INDEX_BUBBLES} />
-
-      <div className="w-full max-w-md aero-card p-8 relative z-10 glass-heavy">
+    <div className="min-h-[100dvh] bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md plate p-8 relative z-10">
         <div className="flex flex-col items-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg mb-4">
             <Lock className="w-8 h-8 text-white" />

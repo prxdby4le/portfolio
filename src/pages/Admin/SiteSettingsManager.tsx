@@ -123,7 +123,7 @@ export default function SiteSettingsManager() {
                 <SelectContent>
                   {(tracks ?? []).map((t) => (
                     <SelectItem key={t.id} value={t.id}>
-                      {t.title} — {t.genre}
+                      {t.title} - {t.genre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -154,7 +154,7 @@ export default function SiteSettingsManager() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold mb-1">Título — linha 1</label>
+              <label className="block text-sm font-semibold mb-1">Título - linha 1</label>
               <Input
                 value={settings.hero_title_line1}
                 onChange={(e) => set("hero_title_line1", e.target.value)}
@@ -163,7 +163,7 @@ export default function SiteSettingsManager() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-1">Título — linha 2</label>
+              <label className="block text-sm font-semibold mb-1">Título - linha 2</label>
               <Input
                 value={settings.hero_title_line2}
                 onChange={(e) => set("hero_title_line2", e.target.value)}

@@ -1,6 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import AeroBubbles, { NOTFOUND_BUBBLES } from "@/components/Aero/AeroBubbles";
 
 const NotFound = () => {
   const location = useLocation();
@@ -10,12 +9,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
-      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
-      
-      {/* Decorative bubbles */}
-      <AeroBubbles bubbles={NOTFOUND_BUBBLES} />
-
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background">
       <div className="text-center relative z-10">
         <h1 className="mb-4 text-6xl sm:text-8xl font-bold text-gradient-sky">
           404

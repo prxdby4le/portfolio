@@ -5,26 +5,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  // No shadows and no glows: this is a two-ink press, elevation is carried by
+  // value and hairlines, not by drop shadow. Press feedback is a 1px push.
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium tracking-tight transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-40 active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]",
+          "bg-primary text-primary-foreground font-semibold hover:bg-ink-lift",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/85",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-border bg-transparent hover:border-ink hover:text-ink",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:shadow-md hover:shadow-secondary/25",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-ink-dim/80",
+        ghost: "text-muted-foreground hover:bg-ink/10 hover:text-ink",
         link: "text-primary underline-offset-4 hover:underline",
         glass:
-          "bg-black border border-primary/15 text-white hover:bg-black/80 hover:border-primary/25 hover:shadow-lg active:scale-[0.98]",
+          "bg-paper-raised border border-border text-foreground hover:border-ink hover:text-ink",
         aero:
-          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground shadow-md hover:shadow-lg hover:shadow-primary/20 hover:translate-y-[-1px] active:scale-[0.98] transition-all duration-300 border border-primary/60",
+          "bg-primary text-primary-foreground font-semibold border border-primary hover:bg-ink-lift hover:border-ink-lift",
+        // Tabs read as a printed index: the active one is marked by an ink
+        // rule underneath, not by a tinted pill.
         tab:
-          "bg-transparent text-muted-foreground hover:text-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm",
+          "relative bg-transparent text-muted-foreground hover:text-foreground data-[state=active]:text-ink after:absolute after:inset-x-0 after:-bottom-px after:h-px after:bg-transparent data-[state=active]:after:bg-ink",
       },
       size: {
         default: "h-9 px-4 py-2",

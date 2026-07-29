@@ -1,10 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Play, Pause, Download, Share2, Link2, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Play, Pause, Download, Share2, Link2 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 
 interface TrackCardProps {
@@ -15,21 +13,30 @@ interface TrackCardProps {
   index: number;
 }
 
+/**
+ * No card container. The cover plate is the object, the metadata sits under it
+ * on a hairline, the way a contact sheet is captioned.
+ *
+ * State language of the whole catalogue: a cover is printed in two inks until
+ * it is the one you are playing or pointing at, then it comes back to colour.
+ */
 export default function TrackCard({ track, isPlaying, isActive, onPlay, index }: TrackCardProps) {
   const navigate = useNavigate();
+  const reduce = useReducedMotion();
+  const live = isActive && isPlaying;
 
   const handleCopyLink = () => {
     const url = `${window.location.origin}/track/${track.id}`;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(url);
       toast({
-        title: "Link copiado!",
-        description: "O link da faixa foi copiado para a área de transferência.",
+        title: "Link copiado",
+        description: "O link da faixa está na área de transferência.",
       });
     } else {
       toast({
-        title: "Link não copiado",
-        description: "Ação bloqueada pelo navegador (área de transferência indisponível).",
+        title: "Não foi possível copiar",
+        description: "O navegador bloqueou o acesso à área de transferência.",
         variant: "destructive",
       });
     }
@@ -43,137 +50,125 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
           text: `Confira: ${track.title}`,
           url: `${window.location.origin}/track/${track.id}`,
         });
-      } catch (err) {
-        console.log('Share cancelled');
+      } catch {
+        /* user dismissed the sheet */
       }
     } else {
       handleCopyLink();
     }
   };
 
-  const aeroColors = ['#FF0066', '#CC0052', '#FF3385', '#990040', '#E6005C', '#FF1A75'];
-  const cardColor = aeroColors[index % aeroColors.length];
-
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
-      className={cn(
-        "group relative aero-card p-3 sm:p-4 cursor-pointer",
-        isActive && "ring-2 ring-primary ring-offset-2 ring-offset-background"
-      )}
-      style={{
-        borderColor: isActive ? cardColor : undefined,
-        boxShadow: isActive ? `0 8px 32px ${cardColor}20` : undefined,
-      }}
-      onClick={() => navigate(`/track/${track.id}`)}
+    <motion.article
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.45, delay: Math.min(index, 6) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+      className="group"
     >
-      {/* Cover Image */}
-      <div className="relative aspect-square rounded-lg overflow-hidden mb-3 sm:mb-4 border border-white/30 group-hover:border-primary/30 transition-colors">
+      {/* ------------------------------------------------------------- plate */}
+      <div
+        className={cn(
+          "relative aspect-square cursor-pointer overflow-hidden border bg-paper-sunk transition-colors",
+          isActive ? "border-ink" : "border-border group-hover:border-ink/50"
+        )}
+        onClick={() => navigate(`/track/${track.id}`)}
+      >
         {track.cover && (
-          <img 
-            src={track.cover} 
-            alt={track.title}
-            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+          <img
+            src={track.cover}
+            alt={`Capa de ${track.title}`}
             loading="lazy"
+            data-live={isActive ? "true" : "false"}
+            className="dither dither-release h-full w-full object-cover"
           />
         )}
-        <div className={cn(
-          "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center",
-          isActive && "opacity-100"
-        )}>
-          <Button
-            variant="glass"
-            size="icon"
-            className={cn(
-              "rounded-full w-12 h-12 sm:w-14 sm:h-14 border border-primary/30 shadow-lg bg-black text-white",
-              isActive && isPlaying && "bg-primary/20 animate-soft-pulse"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              onPlay();
-            }}
-          >
-            {isActive && isPlaying ? (
-              <Pause className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            ) : (
-              <Play className="w-5 h-5 sm:w-6 sm:h-6 ml-0.5 sm:ml-1 text-white" />
-            )}
-          </Button>
-        </div>
+
+        <button
+          type="button"
+          aria-label={live ? `Pausar ${track.title}` : `Tocar ${track.title}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPlay();
+          }}
+          className={cn(
+            "play-dot absolute bottom-3 right-3 grid h-11 w-11 place-items-center transition-opacity",
+            // Always reachable on touch; fades in on pointer devices.
+            isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 max-[1024px]:opacity-100"
+          )}
+        >
+          {live ? (
+            <Pause className="h-4 w-4" strokeWidth={2} />
+          ) : (
+            <Play className="ml-0.5 h-4 w-4" strokeWidth={2} />
+          )}
+        </button>
+
+        {/* Playhead. Only rendered while audio is actually running, so the
+            motion means something. */}
+        {live && (
+          <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden bg-ink-deep">
+            <div className="h-full w-1/3 animate-rule-scan bg-ink" />
+          </div>
+        )}
       </div>
 
-      {/* Track Info */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <h3 className="font-semibold text-xs sm:text-sm truncate group-hover:text-primary transition-colors">
+      {/* ---------------------------------------------------------- caption */}
+      <div className="mt-2.5 border-t border-border pt-2.5">
+        <h3
+          className={cn(
+            "cursor-pointer truncate text-sm font-medium tracking-tight transition-colors",
+            isActive ? "text-ink" : "text-foreground group-hover:text-ink"
+          )}
+          onClick={() => navigate(`/track/${track.id}`)}
+        >
           {track.title}
         </h3>
-        
-        <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground font-medium">
-          <span>{track.bpm} BPM</span>
-          {track.key && (
-            <>
-              <span className="text-aero-sky">·</span>
-              <span>{track.key}</span>
-            </>
-          )}
-          <span className="text-aero-sky">·</span>
-          <span>{track.duration}</span>
+
+        {/* No duration here: useTracks hardcodes "3:00" for every row, so
+            printing it would put the same fake number on every plate. It comes
+            back when the real length is read off the audio. */}
+        <div className="font-mono-data mt-1.5 flex items-center gap-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+          <span>{track.bpm} bpm</span>
+          {track.key && <span>{track.key}</span>}
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1">
-          {track.tags.slice(0, 3).map((tag) => (
-            <Badge 
-              key={tag} 
-              variant="outline"
-              className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0 h-4 sm:h-5 font-medium bg-black border-primary/20 text-white"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
+        {track.tags.length > 0 && (
+          <p className="mt-1.5 truncate text-[11px] lowercase text-muted-foreground">
+            {track.tags.slice(0, 3).join("  ")}
+          </p>
+        )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-1 pt-1.5 sm:pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleShare();
-            }}
+        <div className="mt-2 flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Compartilhar faixa"
+            onClick={handleShare}
+            className="grid h-7 w-7 place-items-center text-muted-foreground transition-colors hover:text-ink"
           >
-            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopyLink();
-            }}
+            <Share2 className="h-3.5 w-3.5" strokeWidth={1.75} />
+          </button>
+          <button
+            type="button"
+            aria-label="Copiar link da faixa"
+            onClick={handleCopyLink}
+            className="grid h-7 w-7 place-items-center text-muted-foreground transition-colors hover:text-ink"
           >
-            <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
-          </Button>
+            <Link2 className="h-3.5 w-3.5" strokeWidth={1.75} />
+          </button>
           {track.downloadable && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+            <a
+              href={track.src}
+              download
+              aria-label={`Baixar ${track.title}`}
+              onClick={(e) => e.stopPropagation()}
+              className="grid h-7 w-7 place-items-center text-muted-foreground transition-colors hover:text-ink"
             >
-              <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-            </Button>
+              <Download className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </a>
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }

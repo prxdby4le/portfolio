@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import AeroBubbles, { ABOUT_BUBBLES } from "@/components/Aero/AeroBubbles";
 
 const About = () => {
 
@@ -31,16 +30,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Frutiger Aero Background */}
-      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
-      
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/5 rounded-full blur-[120px] animate-float pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-aero-green/4 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
-      
-      {/* Decorative bubbles */}
-      <AeroBubbles bubbles={ABOUT_BUBBLES} />
-
+    <div className="min-h-[100dvh] bg-background">
       <Navbar activeTab="beats" onTabChange={() => {}} />
       
       <motion.main 
@@ -70,8 +60,7 @@ const About = () => {
                     transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
                     className="relative z-[100]"
                   >
-                    <div className="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full animate-spin-slow opacity-50" />
-                    <Avatar className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 border-4 border-white shadow-lg overflow-hidden z-[100]" style={{ boxShadow: '0 8px 32px rgba(255,0,102,0.2)' }}>
+                    <Avatar className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 border-2 border-ink overflow-hidden z-[100]">
                       <AvatarImage src="/profile.jpg" alt="Foto de perfil" className="object-contain" />
                       <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl sm:text-4xl font-display font-bold">
                         P

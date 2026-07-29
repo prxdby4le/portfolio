@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { Search, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 import { Track, Playlists } from "@/types/data";
 import GenreSection from "./GenreSection";
 import SpotifyPlaylistSection from "./SpotifyPlaylistSection";
@@ -19,6 +18,19 @@ interface BeatsGridProps {
 }
 
 const RECENT_UPLOADS_LIMIT = 10;
+
+/** Matches the shape of a TrackCard so the layout does not jump when data lands. */
+function PlateSkeleton() {
+  return (
+    <div aria-hidden="true">
+      <div className="aspect-square animate-soft-pulse border border-border bg-paper-raised" />
+      <div className="mt-2.5 border-t border-border pt-2.5">
+        <div className="h-3.5 w-3/4 animate-soft-pulse bg-paper-raised" />
+        <div className="mt-2 h-2.5 w-1/2 animate-soft-pulse bg-paper-raised" />
+      </div>
+    </div>
+  );
+}
 
 export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, isPlaying }: BeatsGridProps) {
   const { data, isLoading, error } = useTracks();
@@ -93,6 +105,8 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
   const filteredRecent = recentTracks.filter(matchesSearch);
   const filteredFavorites = favoriteTracks.filter(matchesSearch);
 
+  // The first special section opens out into a full plate wall; everything
+  // after it stays a rail. One deliberate rhythm break, not eight identical rows.
   const favoritesSection = settings.show_favorites && filteredFavorites.length > 0 && (
     <GenreSection
       key="favoritos"
@@ -103,6 +117,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       isPlaying={isPlaying}
       onPlayTrack={onPlayTrack}
       onPlayAll={() => onPlayAllGenre(filteredFavorites)}
+      layout={settings.favorites_first ? 'grid' : 'rail'}
     />
   );
 
@@ -116,6 +131,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
       isPlaying={isPlaying}
       onPlayTrack={onPlayTrack}
       onPlayAll={() => onPlayAllGenre(filteredRecent)}
+      layout={settings.favorites_first ? 'rail' : 'grid'}
     />
   );
 
@@ -123,72 +139,105 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
     ? [favoritesSection, recentSection]
     : [recentSection, favoritesSection];
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-3 sm:px-4 py-12 sm:py-24 flex justify-center items-center">
-        <Loader2 className="w-8 h-8 sm:w-12 sm:h-12 text-aero-sky animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-3 sm:px-4 py-12 text-center text-destructive">
-        <p>Erro ao carregar as músicas. Tente novamente mais tarde.</p>
-      </div>
-    );
-  }
+  const hasAnyResult =
+    filteredFavorites.length > 0 ||
+    filteredRecent.length > 0 ||
+    Object.values(filteredPlaylists).some(p => p.tracks.length > 0);
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-      {/* Search and Filters */}
-      <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-        <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-aero-sky" />
-          <Input
-            type="text"
-            placeholder="Buscar beats..."
+    <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 sm:py-14">
+      {/* ------------------------------------------------------------ search */}
+      <div className="mb-12 max-w-md">
+        <label htmlFor="busca-beats" className="sr-only">
+          Buscar beats por título ou tag
+        </label>
+        <div className="flex items-center gap-3 border-b border-border py-2.5 transition-colors focus-within:border-ink">
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+          <input
+            id="busca-beats"
+            type="search"
+            placeholder="Buscar por título ou tag"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 sm:pl-10 text-sm sm:text-base glass h-9 sm:h-10 border border-aero-sky/20 focus:border-aero-sky placeholder:text-muted-foreground/50 font-medium"
+            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              aria-label="Limpar busca"
+              className="shrink-0 text-muted-foreground transition-colors hover:text-ink"
+            >
+              <X className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="space-y-8 sm:space-y-12">
-        {featuredTrack && !query && (
-          <FeaturedTrack
-            track={featuredTrack}
-            message={settings.featured_message}
-            isPlaying={isPlaying}
-            isActive={currentTrack?.id === featuredTrack.id}
-            onPlay={() => onPlayTrack(featuredTrack)}
-          />
-        )}
-
-        {settings.show_spotify && <SpotifyPlaylistSection />}
-
-        {orderedSpecialSections}
-
-        {Object.keys(filteredPlaylists).map(genre => {
-          const playlist = filteredPlaylists[genre];
-          if (!playlist) return null;
-
-          return (
-            <GenreSection
-              key={genre}
-              genre={genre}
-              description={playlist.description}
-              tracks={playlist.tracks}
-              currentTrack={currentTrack}
+      {/* ----------------------------------------------------------- content */}
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <PlateSkeleton key={i} />
+          ))}
+        </div>
+      ) : error ? (
+        <div className="border border-destructive/40 bg-paper-raised px-6 py-10">
+          <p className="text-sm font-medium text-foreground">
+            Não foi possível carregar as faixas.
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Verifique a conexão e recarregue a página.
+          </p>
+        </div>
+      ) : query && !hasAnyResult ? (
+        <div className="border border-dashed border-border bg-paper-sunk px-6 py-16 text-center">
+          <p className="text-sm font-medium text-foreground">
+            Nenhuma faixa para "{searchQuery.trim()}".
+          </p>
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="ink-ghost mt-5 inline-flex h-9 items-center px-4 text-xs font-medium"
+          >
+            Limpar busca
+          </button>
+        </div>
+      ) : (
+        <>
+          {featuredTrack && !query && (
+            <FeaturedTrack
+              track={featuredTrack}
+              message={settings.featured_message}
               isPlaying={isPlaying}
-              onPlayTrack={onPlayTrack}
-              onPlayAll={() => onPlayAllGenre(playlist.tracks)}
+              isActive={currentTrack?.id === featuredTrack.id}
+              onPlay={() => onPlayTrack(featuredTrack)}
             />
-          );
-        })}
-      </div>
+          )}
+
+          {settings.show_spotify && <SpotifyPlaylistSection />}
+
+          {orderedSpecialSections}
+
+          {Object.keys(filteredPlaylists).map(genre => {
+            const playlist = filteredPlaylists[genre];
+            if (!playlist) return null;
+
+            return (
+              <GenreSection
+                key={genre}
+                genre={genre}
+                description={playlist.description}
+                tracks={playlist.tracks}
+                currentTrack={currentTrack}
+                isPlaying={isPlaying}
+                onPlayTrack={onPlayTrack}
+                onPlayAll={() => onPlayAllGenre(playlist.tracks)}
+              />
+            );
+          })}
+        </>
+      )}
     </div>
   );
 }

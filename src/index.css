@@ -2,220 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Duotone Dithering Design System — Black + #FF0066 */
+/* =============================================================================
+   DUOTONE PRESS
+   -----------------------------------------------------------------------------
+   Two inks, one hue. Every color on this site is either PAPER (the dark ink)
+   or INK (#FF0066). Hierarchy comes from value, never from a second hue.
+
+   If you find yourself wanting a new color, you want a new *value* of one of
+   these two. Add it to the scale below instead of inventing a token.
+   ============================================================================= */
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 92%;
-    
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 92%;
-    --glass: 0 0% 4%;
-    --glass-border: 340 100% 50%;
-    
-    --primary: 340 100% 50%; /* #FF0066 */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 340 100% 50%;
-    
-    --secondary: 340 80% 35%; /* #A10042 */
-    --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 340 80% 35%;
-    
-    --accent: 340 60% 20%; /* #520023 */
-    --accent-foreground: 0 0% 92%;
-    --accent-glow: 340 60% 20%;
-    
-    --muted: 0 0% 8%;
-    --muted-foreground: 0 0% 55%;
-    
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 92%;
-    
-    --border: 0 0% 12%;
-    --input: 0 0% 6%;
-    --ring: 340 100% 50%;
-    
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --gradient-sky: linear-gradient(135deg, #FF0066, #CC0052, #990040);
-    --gradient-ocean: linear-gradient(135deg, #FF0066, #A10042);
-    --gradient-aurora: linear-gradient(135deg, #FF0066, #FF3385, #CC0052);
-    --gradient-cloud: linear-gradient(180deg, #0A0A0A, #0F0F0F, #0A0A0A);
-    --gradient-nature: linear-gradient(135deg, #FF0066, #FF3385);
-    
-    --shadow-aero: 0 8px 32px rgba(255, 0, 102, 0.06), 0 2px 8px rgba(0, 0, 0, 0.4);
-    --shadow-glass: 0 8px 32px rgba(255, 0, 102, 0.08);
-    --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(255, 0, 102, 0.12), 0 0 40px rgba(255, 0, 102, 0.04);
-    --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    
-    --radius: 0.75rem;
-    
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 92%;
-    --sidebar-primary: 340 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 14%;
-    --sidebar-accent-foreground: 0 0% 92%;
-    --sidebar-border: 0 0% 16%;
-    --sidebar-ring: 340 100% 50%;
-  }
-}
+    /* --- PAPER: the dark ink. Never pure #000, always carries the 340 cast. -- */
+    --paper:        340 14% 5%;
+    --paper-raised: 340 12% 8%;
+    --paper-sunk:   340 18% 3%;
+    --rule:         340 10% 15%;
 
-@layer utilities {
-  .glass {
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    border: 1px solid rgba(255, 0, 102, 0.1);
-    box-shadow: var(--shadow-glass), var(--shadow-inner);
-  }
-  
-  .glass-heavy {
-    background: rgba(10, 10, 10, 0.97);
-    backdrop-filter: blur(24px) saturate(130%);
-    -webkit-backdrop-filter: blur(24px) saturate(130%);
-    border: 1px solid rgba(255, 0, 102, 0.15);
-    box-shadow: var(--shadow-aero), var(--shadow-inner);
-  }
-  
-  .glow-sky {
-    box-shadow: 0 0 20px rgba(255, 0, 102, 0.2), 0 0 40px rgba(255, 0, 102, 0.08);
-  }
-  
-  .glow-green {
-    box-shadow: 0 0 20px rgba(255, 0, 102, 0.15), 0 0 40px rgba(255, 0, 102, 0.06);
-  }
-  
-  .glow-violet {
-    box-shadow: 0 0 20px rgba(255, 0, 102, 0.25), 0 0 40px rgba(255, 0, 102, 0.1);
-  }
+    /* --- INK: the color ink. --------------------------------------------- */
+    --ink:        340 100% 50%;   /* #FF0066, the brand */
+    --ink-lift:   340 100% 64%;   /* hover / active only */
+    --ink-dim:    340 70% 36%;
+    --ink-deep:   340 58% 16%;
 
-  .text-glow-sky {
-    text-shadow: 0 0 12px rgba(255, 0, 102, 0.4), 0 0 24px rgba(255, 0, 102, 0.15);
-  }
-  
-  .text-glow-green {
-    text-shadow: 0 0 12px rgba(255, 0, 102, 0.3), 0 0 24px rgba(255, 0, 102, 0.1);
-  }
+    /* --- TYPE: paper-white down to whisper. ------------------------------ */
+    --type-hi:  340 15% 96%;
+    --type-mid: 340  7% 58%;
+    --type-low: 340  7% 36%;
 
-  .text-gradient-sky {
-    background: linear-gradient(135deg, #FF0066, #FF3385);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    /* --- Radius lock (Section 4.4): printed matter has square edges. ------
+       ONE rule, no exceptions: every surface and control is 0.
+       The single circle on this site is the play affordance (.play-dot),
+       because a round play button is a function, not a decoration.         */
+    --radius: 0rem;
 
-  .text-gradient-dark {
-    background: linear-gradient(135deg, #CC0052, #990040);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    /* =========================================================================
+       shadcn / radix semantic mapping.
+       48 files under components/ui read these names. Do not rename them,
+       just point them at the duotone scale above.
+       ====================================================================== */
+    --background: var(--paper);
+    --foreground: var(--type-hi);
 
-  .text-gradient-aurora {
-    background: linear-gradient(135deg, #FF0066, #FF3385, #CC0052);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    --card:            var(--paper-raised);
+    --card-foreground: var(--type-hi);
 
-  .aero-card {
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    border: 1px solid rgba(255, 0, 102, 0.08);
-    border-radius: 1rem;
-    box-shadow: var(--shadow-aero), var(--shadow-inner);
-    transition: all 0.3s ease;
-  }
+    --popover:            var(--paper-raised);
+    --popover-foreground: var(--type-hi);
 
-  .aero-card:hover {
-    border-color: rgba(255, 0, 102, 0.2);
-    box-shadow: 
-      0 12px 40px rgba(255, 0, 102, 0.1),
-      0 4px 16px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    transform: translateY(-3px);
-  }
+    --primary:            var(--ink);
+    --primary-foreground: var(--paper);
 
-  .aero-btn {
-    background: linear-gradient(180deg, rgba(255, 0, 102, 0.9), rgba(255, 0, 102, 1));
-    color: white;
-    font-weight: 600;
-    border: 1px solid rgba(255, 0, 102, 0.6);
-    box-shadow: 
-      0 2px 8px rgba(255, 0, 102, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    transition: all 0.2s ease;
-  }
+    --secondary:            var(--ink-dim);
+    --secondary-foreground: var(--type-hi);
 
-  .aero-btn:hover {
-    background: linear-gradient(180deg, rgba(255, 0, 102, 1), rgba(204, 0, 82, 1));
-    box-shadow: 
-      0 4px 16px rgba(255, 0, 102, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-  }
+    --accent:            var(--ink-deep);
+    --accent-foreground: var(--type-hi);
 
-  .bubble {
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 0, 102, 0.12), rgba(255, 0, 102, 0.04), transparent);
-    border: 1px solid rgba(255, 0, 102, 0.08);
-    box-shadow: inset 0 -4px 8px rgba(255, 0, 102, 0.04);
-  }
-  
-  .grain::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1;
-  }
+    --muted:            var(--paper-raised);
+    --muted-foreground: var(--type-mid);
 
-  .dither-overlay::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='%23FF0066' opacity='0.03'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23FF0066' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  .tilt-3d {
-    transform-style: preserve-3d;
-    transform: perspective(1000px);
-  }
-  
-  .tilt-3d:hover {
-    transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: hsl(0 0% 8%);
-    border-radius: 4px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #FF0066, #CC0052);
-    border-radius: 4px;
-    border: 2px solid hsl(0 0% 8%);
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #FF3385, #FF0066);
+    --border: var(--rule);
+    --input:  var(--rule);
+    --ring:   var(--ink);
+
+    --destructive:            0 70% 46%;
+    --destructive-foreground: var(--type-hi);
+
+    --sidebar-background:       var(--paper-sunk);
+    --sidebar-foreground:       var(--type-hi);
+    --sidebar-primary:          var(--ink);
+    --sidebar-primary-foreground: var(--paper);
+    --sidebar-accent:           var(--paper-raised);
+    --sidebar-accent-foreground: var(--type-hi);
+    --sidebar-border:           var(--rule);
+    --sidebar-ring:             var(--ink);
+
+    /* Legacy alias: .glass surfaces still read this. */
+    --glass: var(--paper-raised);
   }
 }
 
@@ -225,20 +90,245 @@
   }
 
   body {
-    @apply bg-background text-foreground custom-scrollbar;
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Space Grotesk Variable', 'Segoe UI', system-ui, sans-serif;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Display type is set tight and heavy. Hierarchy by weight and value,
+     never by raw scale alone (Section 9.B). */
+  h1, h2, h3 {
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Every number on this site is data (BPM, key, duration, counts) and
+     lines up in a column somewhere. Tabular by default. */
+  :where(time, [data-numeric]) {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
   }
 
   ::selection {
-    background: rgba(255, 0, 102, 0.3);
-    color: inherit;
+    background: hsl(var(--ink));
+    color: hsl(var(--paper));
   }
-  
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ink));
+    outline-offset: 2px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    * {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+@layer utilities {
+
+  /* ==========================================================================
+     SURFACES
+     No glass, no blur, no elevation theatre. A surface is a value change plus
+     a hairline. Cards exist only where elevation carries real hierarchy
+     (Section 4.4).
+     ========================================================================== */
+
+  .plate {
+    background: hsl(var(--paper-raised));
+    border: 1px solid hsl(var(--rule));
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+
+  .plate:hover {
+    border-color: hsl(var(--ink) / 0.45);
+  }
+
+  .plate-flush {
+    background: hsl(var(--paper-sunk));
+    border: 1px solid hsl(var(--rule));
+  }
+
+  /* ==========================================================================
+     PRESS TEXTURE
+     Grain lives on ONE fixed, pointer-events-none layer for the whole page.
+     Never on a scrolling container: continuous GPU repaints kill mobile FPS
+     (Section 6.E).
+     ========================================================================== */
+
+  .press-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    /* Low. The covers carry their own dither; this layer only stops large
+       flat fields of paper from looking like a solid fill. */
+    opacity: 0.14;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+  }
+
+  /* Ordered 4x4 Bayer halftone. Used on large flat ink fields so they read as
+     printed rather than as a filled div. */
+  .halftone {
+    background-image:
+      radial-gradient(hsl(var(--ink) / 0.55) 0.6px, transparent 0.7px),
+      radial-gradient(hsl(var(--ink) / 0.55) 0.6px, transparent 0.7px);
+    background-size: 4px 4px, 4px 4px;
+    background-position: 0 0, 2px 2px;
+  }
+
+  .halftone-fade {
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+    mask-image: linear-gradient(to bottom, black, transparent);
+  }
+
+  /* ==========================================================================
+     DITHERED COVER PLATE
+     The catalogue is printed in two inks. A cover sits dithered until it is
+     the track you are playing (or pointing at), then it comes back to color.
+     That state change is the whole interaction language of the grid.
+     Filter defs live in components/Duotone/DitherDefs.tsx.
+     ========================================================================== */
+
+  .dither {
+    filter: url(#duotone-dither);
+    transition: filter 300ms ease, opacity 300ms ease;
+  }
+
+  .dither-soft {
+    filter: url(#duotone-soft);
+    transition: filter 300ms ease;
+  }
+
+  .group:hover .dither-release,
+  .dither-release[data-live="true"] {
+    filter: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dither, .dither-soft { transition: none; }
+  }
+
+  /* ==========================================================================
+     TYPE HELPERS
+     ========================================================================== */
+
+  .font-mono-data {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 1;
+  }
+
+  .masthead {
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+    text-wrap: balance;
+  }
+
+  /* ==========================================================================
+     CONTROLS
+     ========================================================================== */
+
+  .ink-btn {
+    background: hsl(var(--ink));
+    color: hsl(var(--paper));
+    font-weight: 600;
+    border: 1px solid hsl(var(--ink));
+    transition: background-color 180ms ease, transform 120ms ease;
+  }
+
+  .ink-btn:hover { background: hsl(var(--ink-lift)); border-color: hsl(var(--ink-lift)); }
+  .ink-btn:active { transform: translateY(1px); }
+
+  .ink-ghost {
+    background: transparent;
+    color: hsl(var(--type-hi));
+    border: 1px solid hsl(var(--rule));
+    transition: border-color 180ms ease, color 180ms ease, transform 120ms ease;
+  }
+
+  .ink-ghost:hover { border-color: hsl(var(--ink)); color: hsl(var(--ink)); }
+  .ink-ghost:active { transform: translateY(1px); }
+
+  /* The one circle on the site. */
+  .play-dot {
+    border-radius: 9999px;
+    background: hsl(var(--ink));
+    color: hsl(var(--paper));
+    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), background-color 160ms ease;
+  }
+
+  .play-dot:hover { background: hsl(var(--ink-lift)); transform: scale(1.06); }
+  .play-dot:active { transform: scale(0.96); }
+
+  /* ==========================================================================
+     SCROLLBAR
+     ========================================================================== */
+
+  .custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: hsl(var(--paper-sunk)); }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--ink-deep));
+    border: 3px solid hsl(var(--paper-sunk));
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(var(--ink-dim)); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ==========================================================================
+     LEGACY ALIASES
+     -----------------------------------------------------------------------
+     Pages not yet touched by the redesign (admin panel, TrackDetail,
+     PostCard, AudioPlayer, About) still reference the old Aero class names.
+     These map them onto the duotone system so nothing renders unstyled.
+
+     TECHNICAL DEBT, ON PURPOSE. Delete each alias as its consumers get
+     rewritten. Do not add new usages.
+     ========================================================================== */
+
+  .glass,
+  .glass-heavy,
+  .aero-card {
+    background: hsl(var(--paper-raised));
+    border: 1px solid hsl(var(--rule));
+    transition: border-color 200ms ease;
+  }
+
+  .aero-card:hover { border-color: hsl(var(--ink) / 0.45); }
+
+  .aero-btn {
+    background: hsl(var(--ink));
+    color: hsl(var(--paper));
+    font-weight: 600;
+    border: 1px solid hsl(var(--ink));
+    transition: background-color 180ms ease;
+  }
+
+  .aero-btn:hover { background: hsl(var(--ink-lift)); }
+
+  /* Gradient text and neon glows are gone (Section 9.A). The accent is a
+     solid ink, and it is the same ink everywhere. */
+  .text-gradient-sky,
+  .text-gradient-dark,
+  .text-gradient-aurora { color: hsl(var(--ink)); }
+
+  .glow-sky, .glow-green, .glow-violet,
+  .text-glow-sky, .text-glow-green,
+  .bubble, .tilt-3d, .dither-overlay, .grain { /* retired */ }
 }

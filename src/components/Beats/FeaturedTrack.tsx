@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Play, Pause, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Play, Pause } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
 import { cn } from "@/lib/utils";
 
@@ -13,98 +12,86 @@ interface FeaturedTrackProps {
   onPlay: () => void;
 }
 
-export default function FeaturedTrack({ track, message, isPlaying, isActive, onPlay }: FeaturedTrackProps) {
+/**
+ * The one editorial block on the page. Deliberately not shaped like a genre
+ * row: bigger plate, prose beside it, ink field behind. It only appears when
+ * the admin turns it on, so it stays a real feature and not furniture.
+ */
+export default function FeaturedTrack({
+  track,
+  message,
+  isPlaying,
+  isActive,
+  onPlay,
+}: FeaturedTrackProps) {
   const navigate = useNavigate();
+  const reduce = useReducedMotion();
+  const live = isActive && isPlaying;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mb-8 sm:mb-12"
+      initial={reduce ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative mb-14 border border-border bg-paper-raised"
     >
-      <div className="flex items-center gap-2 mb-4 sm:mb-6">
-        <Sparkles className="w-5 h-5 text-aero-sky" />
-        <h2 className="text-xl sm:text-2xl font-display font-bold">
-          <span className="text-gradient-sky">Em Destaque</span>
-        </h2>
-      </div>
+      <div className="halftone halftone-fade pointer-events-none absolute inset-0 opacity-25" />
 
-      <div className="aero-card p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-5 sm:gap-8 overflow-hidden">
-        {/* Capa + play */}
+      <div className="relative grid gap-8 p-6 sm:p-8 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-10 lg:p-10">
         <div
-          className="relative group flex-shrink-0 w-40 h-40 sm:w-48 sm:h-48 rounded-xl overflow-hidden border border-white/30 cursor-pointer"
+          className="relative aspect-square cursor-pointer overflow-hidden border border-border bg-paper-sunk"
           onClick={() => navigate(`/track/${track.id}`)}
         >
           {track.cover && (
             <img
               src={track.cover}
-              alt={track.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              alt={`Capa de ${track.title}`}
+              loading="lazy"
+              data-live={isActive ? "true" : "false"}
+              className="dither-soft dither-release h-full w-full object-cover"
             />
           )}
-          <div
-            className={cn(
-              "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-center justify-center transition-opacity duration-300",
-              isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-            )}
-          >
-            <Button
-              variant="glass"
-              size="icon"
-              className={cn(
-                "rounded-full w-14 h-14 border border-primary/30 shadow-lg bg-black text-white",
-                isActive && isPlaying && "bg-primary/20 animate-soft-pulse"
-              )}
-              onClick={(e) => {
-                e.stopPropagation();
-                onPlay();
-              }}
-            >
-              {isActive && isPlaying ? (
-                <Pause className="w-6 h-6 text-white" />
-              ) : (
-                <Play className="w-6 h-6 ml-1 text-white" />
-              )}
-            </Button>
-          </div>
         </div>
 
-        {/* Mensagem ao lado */}
-        <div className="flex-1 min-w-0 text-center sm:text-left">
+        <div className="flex min-w-0 flex-col justify-center">
+          <h2 className="font-mono-data text-[11px] uppercase tracking-[0.2em] text-ink">
+            Em destaque
+          </h2>
+
           <h3
-            className="text-2xl sm:text-3xl font-display font-bold mb-1 cursor-pointer hover:text-primary transition-colors"
+            className="mt-3 cursor-pointer font-display text-3xl font-bold leading-[1.05] tracking-tight text-foreground transition-colors hover:text-ink sm:text-4xl lg:text-5xl"
             onClick={() => navigate(`/track/${track.id}`)}
           >
             {track.title}
           </h3>
-          <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm text-muted-foreground font-medium mb-3">
+
+          <div className="font-mono-data mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs uppercase tracking-wider text-muted-foreground">
             <span>{track.genre}</span>
-            <span className="text-aero-sky">·</span>
-            <span>{track.bpm} BPM</span>
-            {track.key && (
-              <>
-                <span className="text-aero-sky">·</span>
-                <span>{track.key}</span>
-              </>
-            )}
+            <span>{track.bpm} bpm</span>
+            {track.key && <span>{track.key}</span>}
           </div>
 
           {message && (
-            <p className="text-sm sm:text-base text-foreground/90 font-medium whitespace-pre-line max-w-xl">
+            <p className="mt-5 max-w-[58ch] whitespace-pre-line text-sm leading-relaxed text-muted-foreground sm:text-base">
               {message}
             </p>
           )}
 
-          <Button
-            variant="aero"
-            size="sm"
-            className="mt-4 inline-flex items-center gap-2"
-            onClick={onPlay}
-          >
-            {isActive && isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {isActive && isPlaying ? "Pausar" : "Ouvir agora"}
-          </Button>
+          <div className="mt-7">
+            <button
+              type="button"
+              onClick={onPlay}
+              className={cn("ink-btn inline-flex h-11 items-center gap-2.5 px-5 text-sm")}
+            >
+              {live ? (
+                <Pause className="h-4 w-4" strokeWidth={1.75} />
+              ) : (
+                <Play className="h-4 w-4" strokeWidth={1.75} />
+              )}
+              {live ? "Pausar" : "Ouvir agora"}
+            </button>
+          </div>
         </div>
       </div>
     </motion.section>

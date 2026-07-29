@@ -1,90 +1,84 @@
-import { Music, MonitorPlay, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   activeTab?: 'beats' | 'posts';
   onTabChange?: (tab: 'beats' | 'posts') => void;
 }
 
+/**
+ * Solid, not frosted. A blurred bar over a two-ink page just muddies the
+ * paper. Separation comes from a hairline. 72px tall, one line, always.
+ */
 export default function Navbar({ activeTab = 'beats', onTabChange }: NavbarProps) {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isAboutPage = location.pathname === '/sobre';
 
+  const tabClass = (active: boolean) =>
+    cn(
+      "relative h-10 px-1 text-sm font-medium tracking-tight transition-colors",
+      "after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:transition-colors",
+      active
+        ? "text-ink after:bg-ink"
+        : "text-muted-foreground hover:text-foreground after:bg-transparent"
+    );
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-heavy border-b border-white/20">
-      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
+    <>
+      <a
+        href="#catalogo"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-paper"
+      >
+        Pular para o conteúdo
+      </a>
+
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-border bg-paper">
+        <div className="mx-auto flex h-[72px] w-full max-w-[1400px] items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6">
+          <Link to="/" className="group flex shrink-0 items-center gap-2.5">
             <img
               src="/logo.svg"
-              alt="prxdby4le"
-              className="w-8 h-8 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300"
+              alt=""
+              aria-hidden="true"
+              className="h-7 w-7 transition-opacity group-hover:opacity-80"
             />
-            <h1 className="text-lg sm:text-xl font-display font-bold text-gradient-sky">
+            <span className="font-display text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-ink">
               prxdby4le
-            </h1>
+            </span>
           </Link>
 
-          {/* Navigation */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {isHomePage && activeTab && onTabChange && (
-              <div className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 glass rounded-lg">
-                <Button
-                  variant="tab"
-                  size="sm"
-                  data-state={activeTab === 'beats' ? 'active' : 'inactive'}
+          <div className="flex items-center gap-4 sm:gap-6">
+            {isHomePage && onTabChange && (
+              <div className="flex items-center gap-4 sm:gap-5">
+                <button
+                  type="button"
                   onClick={() => onTabChange('beats')}
-                  className={cn(
-                    "flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 font-semibold",
-                    activeTab === 'beats' 
-                      ? "text-aero-sky bg-aero-sky/10" 
-                      : "text-muted-foreground hover:text-aero-sky"
-                  )}
+                  aria-current={activeTab === 'beats' ? 'true' : undefined}
+                  className={tabClass(activeTab === 'beats')}
                 >
-                  <Music className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Beats</span>
-                </Button>
-                <Button
-                  variant="tab"
-                  size="sm"
-                  data-state={activeTab === 'posts' ? 'active' : 'inactive'}
+                  Beats
+                </button>
+                <button
+                  type="button"
                   onClick={() => onTabChange('posts')}
-                  className={cn(
-                    "flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 font-semibold",
-                    activeTab === 'posts' 
-                      ? "text-aero-green bg-aero-green/10" 
-                      : "text-muted-foreground hover:text-aero-green"
-                  )}
+                  aria-current={activeTab === 'posts' ? 'true' : undefined}
+                  className={tabClass(activeTab === 'posts')}
                 >
-                  <MonitorPlay className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Posts</span>
-                </Button>
+                  Posts
+                </button>
               </div>
             )}
-            
-            <Link to="/sobre">
-              <Button
-                variant="tab"
-                size="sm"
-                className={cn(
-                  "flex items-center gap-1 sm:gap-2 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-3 font-semibold border border-aero-sky/20 hover:border-aero-sky/40",
-                  isAboutPage 
-                    ? "text-aero-sky bg-aero-sky/10" 
-                    : "text-muted-foreground hover:text-aero-sky"
-                )}
-              >
-                <User className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Sobre</span>
-              </Button>
+
+            <Link
+              to="/sobre"
+              aria-current={isAboutPage ? 'page' : undefined}
+              className={tabClass(isAboutPage)}
+            >
+              Sobre
             </Link>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

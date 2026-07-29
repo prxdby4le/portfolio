@@ -1,5 +1,4 @@
 import { ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 export default function SpotifyPlaylistSection() {
@@ -13,27 +12,29 @@ export default function SpotifyPlaylistSection() {
       transition={{ duration: 0.5 }}
       className="mb-8 sm:mb-12"
     >
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2">
-            <span className="text-gradient-sky">Trabalhos Publicados</span>
+      {/* Same header shape as GenreSection: ink rule, name, one line of body. */}
+      <div className="mb-6 flex items-end justify-between gap-6 border-t border-ink/30 pt-4">
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Trabalhos Publicados
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground pr-2 font-medium">
+          <p className="mt-1 max-w-[52ch] text-sm text-muted-foreground">
             Minha playlist do Spotify com todos os trabalhos publicados
           </p>
         </div>
-        
-        <Button 
-          variant="aero" 
-          onClick={() => window.open(`https://open.spotify.com/playlist/${playlistId}`, '_blank')}
-          className="flex items-center gap-2 text-sm sm:text-base px-3 sm:px-4 flex-shrink-0"
+
+        <a
+          href={`https://open.spotify.com/playlist/${playlistId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ink-ghost inline-flex h-9 shrink-0 items-center gap-2 px-3 text-xs font-medium"
         >
-          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
+          <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.75} />
           <span className="hidden sm:inline">Abrir no Spotify</span>
-        </Button>
+        </a>
       </div>
 
-      <div className="aero-card overflow-hidden" style={{ borderColor: 'rgba(255, 0, 102, 0.15)' }}>
+      <div className="overflow-hidden border border-border">
         <iframe
           src={embedUrl}
           width="100%"

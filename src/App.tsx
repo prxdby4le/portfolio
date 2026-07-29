@@ -13,6 +13,7 @@ import TrackDetail from "./pages/TrackDetail";
 import PostDetail from "./pages/PostDetail";
 import { PlayerProvider, usePlayer } from "./contexts/PlayerContext";
 import AudioPlayer from "./components/Player/AudioPlayer";
+import DitherDefs from "./components/Duotone/DitherDefs";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      {/* url(#duotone-*) targets. Must be in the document before anything
+          referencing them paints. */}
+      <DitherDefs />
+      {/* One grain layer for the whole site. Fixed and pointer-events-none so
+          it never repaints with scroll. */}
+      <div className="press-grain" aria-hidden="true" />
       <Toaster />
       <Sonner />
       <PlayerProvider>

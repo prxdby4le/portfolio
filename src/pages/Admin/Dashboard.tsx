@@ -17,11 +17,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative p-4 sm:p-8">
-      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
-
+    <div className="min-h-[100dvh] bg-background p-4 sm:p-8">
       <div className="max-w-4xl mx-auto relative z-10">
-        <header className="flex items-center justify-between mb-8 glass-heavy p-4 rounded-2xl">
+        <header className="flex items-center justify-between mb-8 plate p-4">
           <div>
             <h1 className="text-2xl font-display font-bold text-gradient-sky">Painel de Administração</h1>
             <p className="text-sm text-muted-foreground font-medium">Gerencie suas músicas e posts.</p>

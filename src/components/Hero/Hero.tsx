@@ -1,66 +1,130 @@
-import { motion } from "framer-motion";
-import AeroBubbles, { HERO_BUBBLES } from "@/components/Aero/AeroBubbles";
+import { motion, useReducedMotion } from "framer-motion";
+import { Play, Pause, ArrowDown } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useTracks } from "@/hooks/useTracks";
+import { usePlayer } from "@/contexts/PlayerContext";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/siteSettings";
+import { cn } from "@/lib/utils";
 
+/**
+ * Masthead. Asymmetric split: type on the left, the newest cover printed as a
+ * duotone plate on the right. The plate is the hero's real visual, and it is
+ * live data rather than decoration: it is the record you would hear if you
+ * pressed the primary button.
+ */
 export default function Hero() {
   const { data: settings } = useSiteSettings();
+  const { data: tracksData } = useTracks();
+  const { currentTrack, isPlaying, handlePlayTrack } = usePlayer();
+  const reduce = useReducedMotion();
+
   const s = settings ?? DEFAULT_SITE_SETTINGS;
+  const latest = tracksData?.allTracks?.[0] ?? null;
+
+  const isLatestLive = !!latest && currentTrack?.id === latest.id && isPlaying;
+
+  const enter = (delay: number) =>
+    reduce
+      ? { initial: false as const }
+      : {
+          initial: { opacity: 0, y: 18 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as const },
+        };
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="relative pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden"
-    >
-      {/* Background Gradient */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+    <section className="relative border-b border-border">
+      <div className="mx-auto w-full max-w-[1400px] px-6 pt-24 pb-14 sm:pb-20 lg:pt-24 lg:pb-24">
+        <div className="grid items-end gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          {/* ---------------------------------------------------------- type */}
+          <div>
+            <motion.h2
+              {...enter(0.05)}
+              className="masthead font-display text-[clamp(3.25rem,12vw,8rem)] font-bold"
+            >
+              <span className="block text-foreground">{s.hero_title_line1}</span>
+              <span className="block text-ink">{s.hero_title_line2}</span>
+            </motion.h2>
 
-      {/* Aero decorative bubbles */}
-      <AeroBubbles bubbles={HERO_BUBBLES} />
+            <motion.p
+              {...enter(0.16)}
+              className="mt-6 max-w-[38ch] text-base leading-relaxed text-muted-foreground sm:text-lg"
+            >
+              {s.hero_subtitle}
+            </motion.p>
 
-      {/* Soft atmospheric orbs */}
-      <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 bg-aero-sky/8 rounded-full blur-3xl animate-soft-pulse z-0" />
-      <div className="absolute bottom-0 right-10 sm:right-20 w-48 h-48 sm:w-96 sm:h-96 bg-aero-green/6 rounded-full blur-3xl animate-soft-pulse z-0" style={{ animationDelay: '1.5s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-64 sm:h-64 bg-aero-violet/4 rounded-full blur-3xl animate-float z-0" />
-      
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.h2 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-4xl sm:text-6xl md:text-8xl font-display font-bold mb-4 sm:mb-6"
-          >
-            <span className="text-gradient-sky block">
-              {s.hero_title_line1}
-            </span>
-            <span className="text-gradient-sky block">
-              {s.hero_title_line2}
-            </span>
-          </motion.h2>
+            <motion.div {...enter(0.26)} className="mt-8 flex flex-wrap items-center gap-3">
+              {latest && (
+                <button
+                  type="button"
+                  onClick={() => handlePlayTrack(latest)}
+                  className="ink-btn inline-flex h-11 items-center gap-2.5 px-5 text-sm"
+                >
+                  {isLatestLive ? (
+                    <Pause className="h-4 w-4" strokeWidth={1.75} />
+                  ) : (
+                    <Play className="h-4 w-4" strokeWidth={1.75} />
+                  )}
+                  {isLatestLive ? "Pausar" : "Tocar o mais recente"}
+                </button>
+              )}
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-sm sm:text-base md:text-lg text-aero-sky max-w-xl mx-auto px-2 font-medium"
-          >
-            {s.hero_subtitle}
-          </motion.p>
+              <a
+                href="#catalogo"
+                className="ink-ghost inline-flex h-11 items-center gap-2.5 px-5 text-sm font-medium"
+              >
+                Ver o catálogo
+                <ArrowDown className="h-4 w-4" strokeWidth={1.75} />
+              </a>
+            </motion.div>
+          </div>
 
-          {/* Subtle decorative line */}
-          <motion.div 
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="flex justify-center mt-6"
-          >
-            <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-aero-sky/40 to-transparent rounded-full" />
-          </motion.div>
+          {/* --------------------------------------------------------- plate */}
+          {latest?.cover ? (
+            <motion.figure
+              {...enter(0.14)}
+              className="group relative mx-auto w-full max-w-[26rem] lg:mx-0 lg:max-w-none"
+            >
+              <div className="relative aspect-square overflow-hidden border border-border bg-paper-sunk">
+                <img
+                  src={latest.cover}
+                  alt={`Capa de ${latest.title}`}
+                  width={720}
+                  height={720}
+                  loading="eager"
+                  // @ts-expect-error fetchPriority lands in React 19 typings
+                  fetchpriority="high"
+                  data-live={isLatestLive ? "true" : "false"}
+                  className={cn(
+                    "dither-soft dither-release h-full w-full object-cover"
+                  )}
+                />
+                <div className="halftone halftone-fade pointer-events-none absolute inset-0 opacity-40 mix-blend-screen" />
+              </div>
+
+              <figcaption className="mt-3 flex items-baseline justify-between gap-4 border-t border-border pt-3">
+                <span className="truncate text-sm font-medium text-foreground">
+                  {latest.title}
+                </span>
+                <span className="font-mono-data shrink-0 text-xs uppercase tracking-wider text-muted-foreground">
+                  {latest.bpm} bpm
+                </span>
+              </figcaption>
+            </motion.figure>
+          ) : (
+            /* Empty state: no catalogue yet. Composed, not a blank column. */
+            <motion.div
+              {...enter(0.14)}
+              className="mx-auto flex w-full max-w-[26rem] items-center justify-center border border-dashed border-border bg-paper-sunk p-10 lg:mx-0 lg:max-w-none"
+            >
+              <p className="max-w-[28ch] text-center text-sm text-muted-foreground">
+                Nenhuma faixa publicada ainda. A capa da última batida enviada aparece
+                aqui.
+              </p>
+            </motion.div>
+          )}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

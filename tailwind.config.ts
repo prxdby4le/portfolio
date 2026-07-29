@@ -7,17 +7,35 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1.5rem",
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
       fontFamily: {
-        sans: ["'Inter'", "'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
-        display: ["'Inter'", "'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["'Space Grotesk Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
+        display: ["'Space Grotesk Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
+        mono: ["'JetBrains Mono Variable'", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
+        /* ---------------------------------------------------------------
+           The duotone. Two inks, one hue (340). See src/index.css.
+           --------------------------------------------------------------- */
+        paper: {
+          DEFAULT: "hsl(var(--paper))",
+          raised: "hsl(var(--paper-raised))",
+          sunk: "hsl(var(--paper-sunk))",
+        },
+        ink: {
+          DEFAULT: "hsl(var(--ink))",
+          lift: "hsl(var(--ink-lift))",
+          dim: "hsl(var(--ink-dim))",
+          deep: "hsl(var(--ink-deep))",
+        },
+        rule: "hsl(var(--rule))",
+
+        /* --- shadcn/radix semantic tokens --- */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -27,17 +45,14 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
-          glow: "hsl(var(--secondary-glow))",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
-          glow: "hsl(var(--accent-glow))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -65,31 +80,36 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+
+        /* ---------------------------------------------------------------
+           DEPRECATED. Leftovers from the Frutiger Aero theme this project
+           was find-replaced out of. Eleven names, nine of which were the
+           same magenta, which is exactly why the old design had no
+           hierarchy.
+
+           They all point at the ink scale now so untouched pages (admin,
+           About, TrackDetail, PostDetail) keep their accent. Delete each
+           name as its last consumer is rewritten. Do not add new usages:
+           reach for `ink` / `paper` above.
+           --------------------------------------------------------------- */
         aero: {
-          sky: "#FF0066",
-          green: "#FF0066",
-          aqua: "#FF3385",
-          white: "#EBEBEB",
-          cloud: "#1A1A1A",
-          deep: "#990040",
-          amber: "#FF3385",
-          violet: "#CC0052",
-          rose: "#FF0066",
-          orange: "#E6005C",
-          teal: "#CC0052",
+          sky: "hsl(var(--ink))",
+          green: "hsl(var(--ink))",
+          aqua: "hsl(var(--ink-lift))",
+          white: "hsl(var(--foreground))",
+          cloud: "hsl(var(--paper-raised))",
+          deep: "hsl(var(--ink-deep))",
+          amber: "hsl(var(--ink-lift))",
+          violet: "hsl(var(--ink-dim))",
+          rose: "hsl(var(--ink))",
+          orange: "hsl(var(--ink))",
+          teal: "hsl(var(--ink-dim))",
         },
-      },
-      backgroundImage: {
-        'gradient-sky': 'var(--gradient-sky)',
-        'gradient-ocean': 'var(--gradient-ocean)',
-        'gradient-aurora': 'var(--gradient-aurora)',
-        'gradient-cloud': 'var(--gradient-cloud)',
-        'gradient-nature': 'var(--gradient-nature)',
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "var(--radius)",
+        sm: "var(--radius)",
       },
       keyframes: {
         "accordion-down": {
@@ -105,46 +125,36 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "scale-in": {
-          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "0%": { transform: "scale(0.97)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
         "soft-pulse": {
-          "0%, 100%": { opacity: "0.4" },
-          "50%": { opacity: "0.7" },
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
         },
         "slide-up": {
           "0%": { transform: "translateY(100%)" },
           "100%": { transform: "translateY(0)" },
         },
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
-        "bubble-float": {
-          "0%": { transform: "translateY(0) scale(1)", opacity: "0.5" },
-          "50%": { transform: "translateY(-20px) scale(1.05)", opacity: "0.7" },
-          "100%": { transform: "translateY(0) scale(1)", opacity: "0.5" },
-        },
-        "shimmer": {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
+        },
+        /* Playhead ticks across the ink rule under a playing track. */
+        "rule-scan": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.4s ease-out",
-        "scale-in": "scale-in 0.3s ease-out",
-        "soft-pulse": "soft-pulse 3s ease-in-out infinite",
-        "slide-up": "slide-up 0.3s ease-out",
-        "float": "float 5s ease-in-out infinite",
-        "bubble-float": "bubble-float 6s ease-in-out infinite",
-        "shimmer": "shimmer 3s ease-in-out infinite",
+        "fade-in": "fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        "scale-in": "scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        "soft-pulse": "soft-pulse 2s ease-in-out infinite",
+        "slide-up": "slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         "spin-slow": "spin-slow 12s linear infinite",
+        "rule-scan": "rule-scan 1.8s linear infinite",
       },
     },
   },

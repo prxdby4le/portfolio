@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
 import TrackCard from "./TrackCard";
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface GenreSectionProps {
   genre: string;
@@ -13,31 +13,13 @@ interface GenreSectionProps {
   isPlaying: boolean;
   onPlayTrack: (track: Track) => void;
   onPlayAll: () => void;
+  /**
+   * `grid` opens the section out into a full plate wall, `rail` keeps it as a
+   * scrollable row. Alternating the two is what stops eight genre sections
+   * from reading as eight copies of the same carousel.
+   */
+  layout?: 'grid' | 'rail';
 }
-
-const genreEmojis: Record<string, string> = {
-  "Boombap": "💥",
-  "Drum and Bass": "🥁",
-  "Trap Underground": "🔥",
-  "Hyper": "⚡",
-  "Plug": "🔌",
-  "Rock": "🎸",
-  "Fora da Caixa": "🌀",
-  "Favoritos": "⭐",
-  "Uploads Recentes": "🆕",
-};
-
-const genreColors: Record<string, string> = {
-  "Boombap": "#FF0066",
-  "Drum and Bass": "#E6005C",
-  "Trap Underground": "#CC0052",
-  "Hyper": "#FF3385",
-  "Plug": "#FF1A75",
-  "Rock": "#990040",
-  "Fora da Caixa": "#FF4D94",
-  "Favoritos": "#FF1A75",
-  "Uploads Recentes": "#E6005C",
-};
 
 export default function GenreSection({
   genre,
@@ -47,115 +29,126 @@ export default function GenreSection({
   isPlaying,
   onPlayTrack,
   onPlayAll,
+  layout = 'rail',
 }: GenreSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const color = genreColors[genre] || "#0EA5E9";
-  const emoji = genreEmojis[genre] || "●";
+  const reduce = useReducedMotion();
 
   const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
   };
 
   const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const isMobile = window.innerWidth < 640;
-      const scrollAmount = isMobile ? 240 : 320;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
-    }
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({
+      left: direction === 'left' ? -el.clientWidth * 0.8 : el.clientWidth * 0.8,
+      behavior: reduce ? 'auto' : 'smooth',
+    });
   };
+
+  const header = (
+    <div className="mb-6 flex items-end justify-between gap-6 border-t border-ink/30 pt-4">
+      <div className="min-w-0">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          {genre}
+        </h2>
+        <p className="mt-1 max-w-[52ch] text-sm text-muted-foreground">{description}</p>
+      </div>
+
+      {tracks.length > 0 && (
+        <div className="flex shrink-0 items-center gap-2">
+          {layout === 'rail' && (
+            <div className="hidden items-center gap-1 sm:flex">
+              <button
+                type="button"
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+                aria-label={`Rolar ${genre} para a esquerda`}
+                className="grid h-9 w-9 place-items-center border border-border text-muted-foreground transition-colors hover:border-ink hover:text-ink disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
+              </button>
+              <button
+                type="button"
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+                aria-label={`Rolar ${genre} para a direita`}
+                className="grid h-9 w-9 place-items-center border border-border text-muted-foreground transition-colors hover:border-ink hover:text-ink disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onPlayAll}
+            className="ink-ghost inline-flex h-9 items-center gap-2 px-3 text-xs font-medium"
+          >
+            <Play className="h-3.5 w-3.5" strokeWidth={1.75} />
+            Tocar tudo
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   if (tracks.length === 0) {
     return (
-      <motion.section 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5 }}
-        className="mb-8 sm:mb-12"
-      >
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2">
-              <span className="text-gradient-sky">{genre}</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground pr-2 font-medium">{description}</p>
-          </div>
+      <section className="mb-14">
+        {header}
+        <div className="border border-dashed border-border bg-paper-sunk px-6 py-14 text-center">
+          <p className="text-sm text-muted-foreground">
+            Nada publicado em {genre} ainda.
+          </p>
         </div>
-        <div className="aero-card p-12 text-center">
-          <p className="text-muted-foreground font-medium">Em breve...</p>
-        </div>
-      </motion.section>
+      </section>
     );
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 20 }}
+    <motion.section
+      initial={reduce ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5 }}
-      className="mb-12"
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="mb-14"
     >
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 sm:mb-2">
-            <span className="text-gradient-sky">{genre}</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground pr-2 font-medium">{description}</p>
+      {header}
+
+      {layout === 'grid' ? (
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {tracks.map((track, index) => (
+            <TrackCard
+              key={track.id}
+              track={track}
+              isPlaying={isPlaying}
+              isActive={currentTrack?.id === track.id}
+              onPlay={() => onPlayTrack(track)}
+              index={index}
+            />
+          ))}
         </div>
-        
-        <Button
-          variant="glass"
-          size="sm"
-          onClick={onPlayAll}
-          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 flex-shrink-0 aero-btn rounded-lg"
-          style={{ background: `linear-gradient(180deg, ${color}E6, ${color})`, borderColor: `${color}80` }}
-        >
-          <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-          <span className="hidden sm:inline">Play All</span>
-        </Button>
-      </div>
-
-      <div className="relative group">
-        {canScrollLeft && (
-          <Button
-            variant="glass"
-            size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity glass"
-            onClick={() => scroll('left')}
-          >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
-          </Button>
-        )}
-        {canScrollRight && (
-          <Button
-            variant="glass"
-            size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity glass"
-            onClick={() => scroll('right')}
-          >
-            <ChevronRight className="w-5 h-5 text-foreground" />
-          </Button>
-        )}
-
+      ) : (
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex gap-3 sm:gap-4 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory"
-          style={{ scrollbarWidth: 'thin' }}
+          className={cn(
+            "no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4",
+            "sm:mx-0 sm:px-0"
+          )}
         >
           {tracks.map((track, index) => (
-            <div key={track.id} className="flex-none w-56 sm:w-64 md:w-72 snap-start">
+            <div
+              key={track.id}
+              className="w-[44vw] max-w-[15rem] flex-none snap-start sm:w-52 lg:w-56"
+            >
               <TrackCard
                 track={track}
                 isPlaying={isPlaying}
@@ -166,7 +159,7 @@ export default function GenreSection({
             </div>
           ))}
         </div>
-      </div>
+      )}
     </motion.section>
   );
 }

@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Pause, ArrowLeft, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { usePlayer } from "@/contexts/PlayerContext";
-import AeroBubbles, { INDEX_BUBBLES } from "@/components/Aero/AeroBubbles";
 import Navbar from "@/components/Layout/Navbar";
 
 export default function TrackDetail() {
@@ -69,14 +68,8 @@ export default function TrackDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-32 pt-20">
+    <div className="min-h-[100dvh] bg-background pb-32 pt-20">
       <Navbar />
-
-      {/* Frutiger Aero Background */}
-      <div className="fixed inset-0 bg-gradient-cloud pointer-events-none" />
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-aero-sky/10 rounded-full blur-[120px] animate-float pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-aero-green/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
-      <AeroBubbles bubbles={INDEX_BUBBLES} />
 
       <div className="container mx-auto px-4 py-8 relative z-10 max-w-5xl">
         <Button
