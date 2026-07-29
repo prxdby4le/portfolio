@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
 import TrackCard from "./TrackCard";
-import { cn } from "@/lib/utils";
+import { useDragScroll } from "@/hooks/useDragScroll";
+import { cn, slugify } from "@/lib/utils";
 
 interface GenreSectionProps {
   genre: string;
@@ -31,7 +32,7 @@ export default function GenreSection({
   onPlayAll,
   layout = 'rail',
 }: GenreSectionProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const { ref: scrollRef, dragProps } = useDragScroll<HTMLDivElement>();
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const reduce = useReducedMotion();
@@ -53,7 +54,7 @@ export default function GenreSection({
   };
 
   const header = (
-    <div className="mb-6 flex items-end justify-between gap-6 border-t border-ink/30 pt-4">
+    <div className="mb-8 flex items-end justify-between gap-6 border-t border-ink/20 pt-5">
       <div className="min-w-0">
         <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           {genre}
@@ -101,9 +102,9 @@ export default function GenreSection({
 
   if (tracks.length === 0) {
     return (
-      <section className="mb-14">
+      <section id={`genero-${slugify(genre)}`} className="mb-20 scroll-mt-28">
         {header}
-        <div className="border border-dashed border-border bg-paper-sunk px-6 py-14 text-center">
+        <div className="plate-flush border-dashed px-6 py-16 text-center">
           <p className="text-sm text-muted-foreground">
             Nada publicado em {genre} ainda.
           </p>
@@ -118,12 +119,13 @@ export default function GenreSection({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="mb-14"
+      id={`genero-${slugify(genre)}`}
+      className="mb-20 scroll-mt-28"
     >
       {header}
 
       {layout === 'grid' ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {tracks.map((track, index) => (
             <TrackCard
               key={track.id}
@@ -139,8 +141,9 @@ export default function GenreSection({
         <div
           ref={scrollRef}
           onScroll={handleScroll}
+          {...dragProps}
           className={cn(
-            "no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4",
+            "no-scrollbar drag-scroll -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-2",
             "sm:mx-0 sm:px-0"
           )}
         >

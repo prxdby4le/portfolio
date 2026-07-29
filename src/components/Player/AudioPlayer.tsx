@@ -1,41 +1,46 @@
-import { useEffect, useRef, useState } from "react";
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
+import { useEffect, useState } from "react";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
   Repeat,
   Shuffle,
-  ChevronUp
+  ChevronUp,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { Slider } from "@/components/ui/slider";
-import { Track } from "@/types/data";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-import { usePlayer } from "@/contexts/PlayerContext";
+import { usePlayer } from "@/hooks/usePlayer";
+import { useAudioAnalyser } from "@/hooks/useAudioAnalyser";
+import Waveform from "./Waveform";
+import CDDisc from "./CDDisc";
 
 export default function AudioPlayer() {
-  const { 
-    currentTrack, 
-    isPlaying, 
-    queue, 
-    handlePlayPause, 
-    handleNext, 
-    handlePrevious, 
+  const {
+    currentTrack,
+    isPlaying,
+    queue,
+    handlePlayPause,
+    handleNext,
+    handlePrevious,
     handleTrackEnd,
     isRepeat,
     isShuffle,
     toggleRepeat,
-    toggleShuffle
+    toggleShuffle,
+    audioRef,
   } = usePlayer();
-  const audioRef = useRef<HTMLAudioElement>(null);
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const analyser = useAudioAnalyser(audioRef, isPlaying);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -53,23 +58,23 @@ export default function AudioPlayer() {
       audio.removeEventListener("loadedmetadata", updateDuration);
       audio.removeEventListener("ended", handleTrackEnd);
     };
-  }, [handleTrackEnd]);
+    // audioRef now comes from PlayerContext rather than a local useRef, so the
+    // lint rule can no longer tell it is stable. It is: the provider holds one
+    // ref for the life of the app, and listing it never retriggers anything.
+  }, [handleTrackEnd, audioRef]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.loop = isRepeat;
-    }
-  }, [isRepeat]);
+    if (audioRef.current) audioRef.current.loop = isRepeat;
+  }, [isRepeat, audioRef]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch((e) => console.log("Playback interrupted:", e));
-      } else {
-        audioRef.current.pause();
-      }
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.play().catch((e) => console.log("Playback interrupted:", e));
+    } else {
+      audioRef.current.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, audioRef]);
 
   useEffect(() => {
     if (audioRef.current && currentTrack) {
@@ -83,10 +88,8 @@ export default function AudioPlayer() {
   }, [currentTrack]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
+    if (audioRef.current) audioRef.current.volume = volume;
+  }, [volume, audioRef]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -125,232 +128,256 @@ export default function AudioPlayer() {
   };
 
   const formatTime = (time: number) => {
+    if (!Number.isFinite(time)) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (!currentTrack) return null;
+  const iconBtn =
+    "grid h-9 w-9 place-items-center rounded-md text-muted-foreground transition-colors duration-300 hover:bg-ink/10 hover:text-ink";
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        exit={{ y: 100 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 glass-heavy border-t border-white/30",
-          isExpanded ? "h-32 sm:h-40" : "h-16 sm:h-20"
-        )}
-      >
-        <audio ref={audioRef} />
-        
-        {/* Progress bar at top */}
-        <div className="absolute -top-2 left-0 right-0 h-4 group z-50 flex items-center">
-          <Slider
-            value={[currentTime]}
-            max={duration || 100}
-            step={1}
-            onValueChange={handleSeek}
+    <>
+      {/*
+        This element lives outside AnimatePresence on purpose. Web Audio can
+        only tap an element once, so if it unmounted when the queue emptied,
+        the next track would arrive on a fresh element the analyser is not
+        wired to and the audio would go silent.
+        `crossOrigin` must be set before `src`, hence the attribute rather than
+        an assignment in an effect.
+      */}
+      <audio ref={audioRef} crossOrigin="anonymous" />
+
+      <AnimatePresence>
+        {currentTrack && (
+          <motion.div
+            key="player"
+            initial={{ y: 96 }}
+            animate={{ y: 0 }}
+            exit={{ y: 96 }}
+            transition={{ type: "spring", damping: 28, stiffness: 260 }}
             className={cn(
-              "cursor-pointer w-full",
-              "[&>:first-child]:h-1 [&>:first-child]:rounded-none [&>:first-child]:bg-muted/30",
-              "[&>:first-child>span]:bg-gradient-to-r [&>:first-child>span]:from-primary [&>:first-child>span]:to-primary",
-              "[&_[role=slider]]:opacity-0 group-hover:[&_[role=slider]]:opacity-100 [&_[role=slider]]:transition-opacity",
-              "[&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:border-aero-sky [&_[role=slider]]:focus-visible:ring-0"
+              "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-paper-raised shadow-[0_-14px_40px_hsl(340_45%_2%_/_0.5)]",
+              isExpanded ? "h-36 sm:h-44" : "h-20"
             )}
-          />
-        </div>
-        
-        <div className="container mx-auto px-3 sm:px-4 h-full">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
-            {/* Track Info */}
-            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-              {currentTrack.cover && (
-                <img
-                  src={currentTrack.cover}
-                  alt={currentTrack.title}
-                  className={cn(
-                    "w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0 border border-white/30 shadow-md",
-                    isPlaying && "animate-spin-slow"
-                  )}
-                  style={{ 
-                    boxShadow: '0 4px 12px rgba(255,0,102,0.15)',
-                    borderRadius: isPlaying ? '50%' : '0.5rem',
-                    transition: 'border-radius 0.5s ease',
-                  }}
-                />
-              )}
-              <div className="min-w-0 flex-1">
-                <h4 className="font-semibold text-xs sm:text-sm truncate text-foreground">
-                  {currentTrack.title}
-                </h4>
-                <p className="text-[10px] sm:text-xs text-muted-foreground truncate font-medium">
-                  {currentTrack.bpm} BPM {currentTrack.key && `· ${currentTrack.key}`}
-                </p>
-              </div>
+          >
+            {/* The track drawing itself, behind everything. */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <Waveform analyser={analyser} active={isPlaying} />
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleShuffle}
+            {/* Seek bar, sitting on the top edge. */}
+            <div className="group absolute -top-1.5 left-0 right-0 z-50 flex h-3 items-center">
+              <Slider
+                value={[currentTime]}
+                max={duration || 100}
+                step={1}
+                onValueChange={handleSeek}
+                aria-label="Posição na faixa"
                 className={cn(
-                  "h-8 w-8 sm:h-10 sm:w-10",
-                  isShuffle ? "text-aero-amber" : "text-muted-foreground hover:text-foreground"
+                  "w-full cursor-pointer",
+                  "[&>:first-child]:h-[3px] [&>:first-child]:rounded-full [&>:first-child]:bg-ink-deep",
+                  "[&>:first-child>span]:bg-ink",
+                  "[&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:border-0 [&_[role=slider]]:bg-ink",
+                  "[&_[role=slider]]:opacity-0 group-hover:[&_[role=slider]]:opacity-100 [&_[role=slider]]:transition-opacity"
                 )}
-              >
-                <Shuffle className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handlePrevious}
-                className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground"
-              >
-                <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
-              
-              <Button
-                variant="glass"
-                size="icon"
-                onClick={handlePlayPause}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-primary/30 bg-black hover:bg-primary/20 text-white"
-                style={{ boxShadow: '0 2px 12px rgba(255,0,102,0.2)' }}
-              >
-                {isPlaying ? (
-                  <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                ) : (
-                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5 text-primary" />
-                )}
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleNext}
-                className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground"
-              >
-                <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleRepeat}
-                className={cn(
-                  "h-8 w-8 sm:h-10 sm:w-10",
-                  isRepeat ? "text-aero-amber" : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Repeat className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
+              />
             </div>
 
-            {/* Volume & Time - Desktop */}
-            <div className="hidden md:flex items-center gap-4 flex-1 justify-end">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Volume2 className="w-4 h-4 text-muted-foreground" />
-                <div className="w-20">
-                  <Slider
-                    value={[volume]}
-                    max={1}
-                    step={0.01}
-                    onValueChange={(value) => setVolume(value[0])}
-                    className="cursor-pointer"
-                  />
-                </div>
-              </div>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <ChevronUp className={cn(
-                  "w-4 h-4 transition-transform",
-                  isExpanded && "rotate-180"
-                )} />
-              </Button>
-            </div>
-
-            {/* Mobile controls */}
-            <div className="md:hidden flex items-center gap-2 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="h-8 w-8 text-muted-foreground"
-              >
-                <ChevronUp className={cn(
-                  "w-4 h-4 transition-transform",
-                  isExpanded && "rotate-180"
-                )} />
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile expanded */}
-          {isExpanded && (
-            <div className="md:hidden mt-2 space-y-2">
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium px-1">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Volume2 className="w-3 h-3 text-muted-foreground" />
-                <div className="flex-1">
-                  <Slider
-                    value={[volume]}
-                    max={1}
-                    step={0.01}
-                    onValueChange={(value) => setVolume(value[0])}
-                    className="cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Expanded Queue */}
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="hidden md:flex gap-2 overflow-x-auto pb-4 custom-scrollbar"
-            >
-              {queue.slice(0, 10).map((track) => (
-                <div
-                  key={track.id}
-                  className={cn(
-                    "flex-none px-3 py-1 rounded-full glass text-xs font-medium border",
-                    track.id === currentTrack.id 
-                      ? "border-primary text-primary" 
-                      : "border-white/20 text-muted-foreground"
-                  )}
+            <div className="relative mx-auto h-full w-full max-w-[1400px] px-4 sm:px-6">
+              <div className="flex h-20 items-center justify-between gap-3 sm:gap-6">
+                {/* ------------------------------------------------ track */}
+                {/* The disc and the title are one link to the track's page.
+                    The transport controls sit outside it, so pressing play
+                    never navigates by accident. */}
+                <Link
+                  to={`/track/${currentTrack.id}`}
+                  aria-label={`Abrir a página de ${currentTrack.title}`}
+                  className="group flex min-w-0 flex-1 items-center gap-3 rounded-md sm:gap-4"
                 >
-                  {track.title}
+                  {currentTrack.cover && (
+                    <CDDisc
+                      cover={currentTrack.cover}
+                      spinning={isPlaying}
+                      className="h-12 w-12 sm:h-14 sm:w-14"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate text-sm font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-ink">
+                      {currentTrack.title}
+                    </h4>
+                    <p className="font-mono-data mt-0.5 truncate text-[11px] uppercase tracking-wider text-muted-foreground">
+                      {currentTrack.bpm} bpm
+                      {currentTrack.key && `   ${currentTrack.key}`}
+                    </p>
+                  </div>
+                </Link>
+
+                {/* --------------------------------------------- controls */}
+                <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
+                  <button
+                    type="button"
+                    onClick={toggleShuffle}
+                    aria-pressed={isShuffle}
+                    aria-label="Ordem aleatória"
+                    className={cn(iconBtn, "hidden sm:grid", isShuffle && "text-ink")}
+                  >
+                    <Shuffle className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handlePrevious}
+                    aria-label="Faixa anterior"
+                    className={iconBtn}
+                  >
+                    <SkipBack className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handlePlayPause}
+                    aria-label={isPlaying ? "Pausar" : "Tocar"}
+                    data-live="true"
+                    className="play-dot grid h-11 w-11 place-items-center"
+                  >
+                    {isPlaying ? (
+                      <Pause className="h-4 w-4" strokeWidth={2} />
+                    ) : (
+                      <Play className="ml-0.5 h-4 w-4" strokeWidth={2} />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    aria-label="Próxima faixa"
+                    className={iconBtn}
+                  >
+                    <SkipForward className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={toggleRepeat}
+                    aria-pressed={isRepeat}
+                    aria-label="Repetir faixa"
+                    className={cn(iconBtn, "hidden sm:grid", isRepeat && "text-ink")}
+                  >
+                    <Repeat className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
                 </div>
-              ))}
-              {queue.length > 10 && (
-                <div className="flex-none px-3 py-1 text-xs text-muted-foreground font-medium">
-                  +{queue.length - 10} mais
+
+                {/* ------------------------------------- time, volume, more */}
+                <div className="hidden flex-1 items-center justify-end gap-5 md:flex">
+                  <span className="font-mono-data text-xs text-muted-foreground">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
+                    <div className="w-20">
+                      <Slider
+                        value={[volume]}
+                        max={1}
+                        step={0.01}
+                        onValueChange={(value) => setVolume(value[0])}
+                        aria-label="Volume"
+                        className="cursor-pointer [&>:first-child>span]:bg-ink [&_[role=slider]]:border-0 [&_[role=slider]]:bg-ink"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? "Recolher player" : "Expandir player"}
+                    className={iconBtn}
+                  >
+                    <ChevronUp
+                      className={cn(
+                        "h-4 w-4 transition-transform duration-500",
+                        isExpanded && "rotate-180"
+                      )}
+                      strokeWidth={1.75}
+                    />
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? "Recolher player" : "Expandir player"}
+                  className={cn(iconBtn, "md:hidden")}
+                >
+                  <ChevronUp
+                    className={cn(
+                      "h-4 w-4 transition-transform duration-500",
+                      isExpanded && "rotate-180"
+                    )}
+                    strokeWidth={1.75}
+                  />
+                </button>
+              </div>
+
+              {/* -------------------------------------- expanded, mobile */}
+              {isExpanded && (
+                <div className="space-y-2 pt-1 md:hidden">
+                  <div className="font-mono-data flex items-center justify-between px-0.5 text-[10px] text-muted-foreground">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.75} />
+                    <div className="flex-1">
+                      <Slider
+                        value={[volume]}
+                        max={1}
+                        step={0.01}
+                        onValueChange={(value) => setVolume(value[0])}
+                        aria-label="Volume"
+                        className="cursor-pointer [&>:first-child>span]:bg-ink [&_[role=slider]]:border-0 [&_[role=slider]]:bg-ink"
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+
+              {/* --------------------------------------- expanded, queue */}
+              {isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="no-scrollbar hidden gap-2 overflow-x-auto pt-1 md:flex"
+                >
+                  {queue.slice(0, 10).map((track) => (
+                    <span
+                      key={track.id}
+                      className={cn(
+                        "flex-none rounded-md border px-3 py-1 text-xs",
+                        track.id === currentTrack.id
+                          ? "border-ink/50 bg-ink/10 text-ink"
+                          : "border-border text-muted-foreground"
+                      )}
+                    >
+                      {track.title}
+                    </span>
+                  ))}
+                  {queue.length > 10 && (
+                    <span className="flex-none px-2 py-1 text-xs text-muted-foreground">
+                      +{queue.length - 10} mais
+                    </span>
+                  )}
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

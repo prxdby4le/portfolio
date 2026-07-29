@@ -6,7 +6,13 @@ export interface Track {
   cover: string;
   bpm: number;
   key?: string;
-  duration: string;
+  /**
+   * Real length in seconds, read off the file at upload time and stored in
+   * `tracks.duration_seconds`. Optional because rows created before that
+   * column existed do not have it, and an unknown duration is simply not
+   * shown. This replaced a hardcoded "3:00" that was printed on every track.
+   */
+  duration_seconds?: number;
   tags: string[];
   downloadable?: boolean;
   description?: string;

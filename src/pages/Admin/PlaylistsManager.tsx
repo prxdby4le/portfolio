@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getErrorMessage } from "@/lib/errors";
+import type { TrackRow } from "@/types/db";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -54,7 +56,7 @@ export default function PlaylistsManager() {
 
   // ----- Ordem das músicas por gênero (estado local + salvar) -----
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [genreTracks, setGenreTracks] = useState<any[]>([]);
+  const [genreTracks, setGenreTracks] = useState<TrackRow[]>([]);
   const [tracksDirty, setTracksDirty] = useState(false);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function PlaylistsManager() {
       .sort((a, b) => a.favorite_order - b.favorite_order);
   }, [tracksData]);
 
-  const [favoriteList, setFavoriteList] = useState<any[]>([]);
+  const [favoriteList, setFavoriteList] = useState<TrackRow[]>([]);
   const [favoritesDirty, setFavoritesDirty] = useState(false);
 
   useEffect(() => {
@@ -100,11 +102,11 @@ export default function PlaylistsManager() {
       toast({ title: "Ordem dos gêneros salva!" });
       refetchGenres();
       invalidatePublic();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao salvar ordem dos gêneros",
-        description: error.message || "Rode a migração supabase_migration_playlists.sql no Supabase.",
+        description: getErrorMessage(error, "Rode a migração supabase_migration_playlists.sql no Supabase."),
         variant: "destructive",
       });
     } finally {
@@ -125,11 +127,11 @@ export default function PlaylistsManager() {
       toast({ title: `Ordem de "${selectedGenre}" salva!` });
       refetchTracks();
       invalidatePublic();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao salvar ordem das músicas",
-        description: error.message || "Rode a migração supabase_migration_playlists.sql no Supabase.",
+        description: getErrorMessage(error, "Rode a migração supabase_migration_playlists.sql no Supabase."),
         variant: "destructive",
       });
     } finally {
@@ -150,11 +152,11 @@ export default function PlaylistsManager() {
       toast({ title: "Ordem dos favoritos salva!" });
       refetchTracks();
       invalidatePublic();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao salvar ordem dos favoritos",
-        description: error.message || "Ocorreu um erro.",
+        description: getErrorMessage(error, "Ocorreu um erro."),
         variant: "destructive",
       });
     } finally {
@@ -162,7 +164,7 @@ export default function PlaylistsManager() {
     }
   };
 
-  const toggleFavorite = async (track: any) => {
+  const toggleFavorite = async (track: TrackRow) => {
     const isFavorite = track.favorite_order !== null && track.favorite_order !== undefined;
     try {
       const { error } = await supabase
@@ -174,17 +176,17 @@ export default function PlaylistsManager() {
       toast({ title: isFavorite ? "Removida dos favoritos" : "Adicionada aos favoritos" });
       refetchTracks();
       invalidatePublic();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao atualizar favorito",
-        description: error.message || "Rode a migração supabase_migration_playlists.sql no Supabase.",
+        description: getErrorMessage(error, "Rode a migração supabase_migration_playlists.sql no Supabase."),
         variant: "destructive",
       });
     }
   };
 
-  const toggleRecent = async (track: any) => {
+  const toggleRecent = async (track: TrackRow) => {
     const currentlyVisible = track.show_in_recent !== false;
     try {
       const { error } = await supabase
@@ -196,11 +198,11 @@ export default function PlaylistsManager() {
       toast({ title: currentlyVisible ? "Oculta dos Uploads Recentes" : "Visível nos Uploads Recentes" });
       refetchTracks();
       invalidatePublic();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao atualizar Uploads Recentes",
-        description: error.message || "Rode a migração supabase_migration_playlists.sql no Supabase.",
+        description: getErrorMessage(error, "Rode a migração supabase_migration_playlists.sql no Supabase."),
         variant: "destructive",
       });
     }

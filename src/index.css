@@ -18,7 +18,11 @@
     --paper:        340 14% 5%;
     --paper-raised: 340 12% 8%;
     --paper-sunk:   340 18% 3%;
-    --rule:         340 10% 15%;
+
+    /* Two hairline weights. The soft one is the default; the hard one is only
+       for edges that need to actually separate two surfaces. */
+    --rule:      340 10% 13%;
+    --rule-hard: 340 10% 18%;
 
     /* --- INK: the color ink. --------------------------------------------- */
     --ink:        340 100% 50%;   /* #FF0066, the brand */
@@ -28,14 +32,25 @@
 
     /* --- TYPE: paper-white down to whisper. ------------------------------ */
     --type-hi:  340 15% 96%;
-    --type-mid: 340  7% 58%;
-    --type-low: 340  7% 36%;
+    --type-mid: 340  7% 62%;
+    --type-low: 340  7% 40%;
 
-    /* --- Radius lock (Section 4.4): printed matter has square edges. ------
-       ONE rule, no exceptions: every surface and control is 0.
-       The single circle on this site is the play affordance (.play-dot),
-       because a round play button is a function, not a decoration.         */
-    --radius: 0rem;
+    /* --- Shape scale (Section 4.4 wants ONE documented rule) -------------
+       surfaces and plates   14px
+       controls and inputs   10px
+       the play affordance   full round, because a round play button is a
+                             function and not a decoration
+       Nothing else. No section gets its own radius.                        */
+    --radius:         0.875rem;
+    --radius-control: 0.625rem;
+
+    /* --- Depth. Shadows carry the paper's hue, never neutral black. ------ */
+    --shadow-soft:  0 2px 8px hsl(340 40% 2% / 0.55);
+    --shadow-lift:  0 12px 34px hsl(340 45% 2% / 0.6);
+    --shadow-ink:   0 10px 30px hsl(340 100% 30% / 0.16);
+
+    /* --- Motion. One easing for the whole site, so nothing feels borrowed. */
+    --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
     /* =========================================================================
        shadcn / radix semantic mapping.
@@ -64,20 +79,20 @@
     --muted-foreground: var(--type-mid);
 
     --border: var(--rule);
-    --input:  var(--rule);
+    --input:  var(--rule-hard);
     --ring:   var(--ink);
 
     --destructive:            0 70% 46%;
     --destructive-foreground: var(--type-hi);
 
-    --sidebar-background:       var(--paper-sunk);
-    --sidebar-foreground:       var(--type-hi);
-    --sidebar-primary:          var(--ink);
+    --sidebar-background:         var(--paper-sunk);
+    --sidebar-foreground:         var(--type-hi);
+    --sidebar-primary:            var(--ink);
     --sidebar-primary-foreground: var(--paper);
-    --sidebar-accent:           var(--paper-raised);
-    --sidebar-accent-foreground: var(--type-hi);
-    --sidebar-border:           var(--rule);
-    --sidebar-ring:             var(--ink);
+    --sidebar-accent:             var(--paper-raised);
+    --sidebar-accent-foreground:  var(--type-hi);
+    --sidebar-border:             var(--rule);
+    --sidebar-ring:               var(--ink);
 
     /* Legacy alias: .glass surfaces still read this. */
     --glass: var(--paper-raised);
@@ -91,7 +106,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Space Grotesk Variable', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Outfit Variable', 'Segoe UI', system-ui, sans-serif;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -101,10 +116,8 @@
     scroll-behavior: smooth;
   }
 
-  /* Display type is set tight and heavy. Hierarchy by weight and value,
-     never by raw scale alone (Section 9.B). */
   h1, h2, h3 {
-    letter-spacing: -0.035em;
+    letter-spacing: -0.025em;
     text-wrap: balance;
   }
 
@@ -112,10 +125,10 @@
     text-wrap: pretty;
   }
 
-  /* Every number on this site is data (BPM, key, duration, counts) and
-     lines up in a column somewhere. Tabular by default. */
+  /* Every number on this site is data (BPM, key, counts) and lines up in a
+     column somewhere. Tabular by default. */
   :where(time, [data-numeric]) {
-    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
   }
 
@@ -126,7 +139,8 @@
 
   :focus-visible {
     outline: 2px solid hsl(var(--ink));
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -143,24 +157,28 @@
 
   /* ==========================================================================
      SURFACES
-     No glass, no blur, no elevation theatre. A surface is a value change plus
-     a hairline. Cards exist only where elevation carries real hierarchy
-     (Section 4.4).
+     A surface is a value change, a soft hairline, and a hue-matched shadow.
+     No blur, no glass.
      ========================================================================== */
 
   .plate {
     background: hsl(var(--paper-raised));
     border: 1px solid hsl(var(--rule));
-    transition: border-color 200ms ease, background-color 200ms ease;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    transition: border-color 400ms var(--ease-soft),
+                box-shadow 400ms var(--ease-soft);
   }
 
   .plate:hover {
-    border-color: hsl(var(--ink) / 0.45);
+    border-color: hsl(var(--ink) / 0.35);
+    box-shadow: var(--shadow-lift), var(--shadow-ink);
   }
 
   .plate-flush {
     background: hsl(var(--paper-sunk));
     border: 1px solid hsl(var(--rule));
+    border-radius: var(--radius);
   }
 
   /* ==========================================================================
@@ -175,53 +193,77 @@
     inset: 0;
     z-index: 60;
     pointer-events: none;
-    /* Low. The covers carry their own dither; this layer only stops large
-       flat fields of paper from looking like a solid fill. */
-    opacity: 0.14;
+    opacity: 0.09;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
   }
 
-  /* Ordered 4x4 Bayer halftone. Used on large flat ink fields so they read as
-     printed rather than as a filled div. */
-  .halftone {
-    background-image:
-      radial-gradient(hsl(var(--ink) / 0.55) 0.6px, transparent 0.7px),
-      radial-gradient(hsl(var(--ink) / 0.55) 0.6px, transparent 0.7px);
-    background-size: 4px 4px, 4px 4px;
-    background-position: 0 0, 2px 2px;
-  }
-
-  .halftone-fade {
-    -webkit-mask-image: linear-gradient(to bottom, black, transparent);
-    mask-image: linear-gradient(to bottom, black, transparent);
-  }
-
   /* ==========================================================================
-     DITHERED COVER PLATE
-     The catalogue is printed in two inks. A cover sits dithered until it is
-     the track you are playing (or pointing at), then it comes back to color.
-     That state change is the whole interaction language of the grid.
-     Filter defs live in components/Duotone/DitherDefs.tsx.
+     DUOTONE PLATE
+     Two stacked copies of the same cover: the colour original underneath, the
+     duotone print on top. The top layer is masked by a wide soft-edged
+     gradient; sliding that mask sweeps the ink away and lets the colour
+     through.
+
+     Sweeping beats toggling `filter` because the transition is legible: you
+     watch the record come back to life rather than having it snap.
+     Markup lives in components/Duotone/DuotonePlate.tsx.
      ========================================================================== */
 
-  .dither {
-    filter: url(#duotone-dither);
-    transition: filter 300ms ease, opacity 300ms ease;
+  .duo-plate {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: hsl(var(--paper-sunk));
   }
 
-  .dither-soft {
-    filter: url(#duotone-soft);
-    transition: filter 300ms ease;
+  .duo-plate-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    /* Develops in when the bitmap is ready, rather than popping in at whatever
+       moment the network delivers it. */
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity 700ms var(--ease-soft), transform 1000ms var(--ease-soft);
   }
 
-  .group:hover .dither-release,
-  .dither-release[data-live="true"] {
-    filter: none;
+  .duo-plate[data-loaded="true"] .duo-plate-img {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .duo-plate-ink {
+    position: absolute;
+    inset: 0;
+    filter: url(#duotone);
+
+    /* Mask is 2.6x the plate width. At position 0% the opaque head of the
+       gradient covers the plate; at 100% only its transparent tail is left. */
+    -webkit-mask-image: linear-gradient(105deg, #000 34%, transparent 66%);
+            mask-image: linear-gradient(105deg, #000 34%, transparent 66%);
+    -webkit-mask-size: 260% 100%;
+            mask-size: 260% 100%;
+    -webkit-mask-position: 0% 0;
+            mask-position: 0% 0;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+
+    transition: -webkit-mask-position 900ms var(--ease-soft),
+                        mask-position 900ms var(--ease-soft);
+  }
+
+  .duo-plate[data-live="true"] .duo-plate-ink,
+  .group:hover .duo-plate-ink,
+  .group:focus-within .duo-plate-ink {
+    -webkit-mask-position: 100% 0;
+            mask-position: 100% 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .dither, .dither-soft { transition: none; }
+    .duo-plate-ink { transition: none; }
   }
 
   /* ==========================================================================
@@ -229,14 +271,14 @@
      ========================================================================== */
 
   .font-mono-data {
-    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-family: 'Geist Mono Variable', ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "zero" 1;
   }
 
   .masthead {
-    letter-spacing: -0.055em;
-    line-height: 0.86;
+    letter-spacing: -0.04em;
+    line-height: 0.94;
     text-wrap: balance;
   }
 
@@ -249,54 +291,220 @@
     color: hsl(var(--paper));
     font-weight: 600;
     border: 1px solid hsl(var(--ink));
-    transition: background-color 180ms ease, transform 120ms ease;
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-ink);
+    transition: background-color 300ms var(--ease-soft),
+                box-shadow 300ms var(--ease-soft),
+                transform 300ms var(--ease-soft);
   }
 
-  .ink-btn:hover { background: hsl(var(--ink-lift)); border-color: hsl(var(--ink-lift)); }
-  .ink-btn:active { transform: translateY(1px); }
+  .ink-btn:hover {
+    background: hsl(var(--ink-lift));
+    border-color: hsl(var(--ink-lift));
+    box-shadow: var(--shadow-lift), 0 14px 40px hsl(340 100% 35% / 0.3);
+    transform: translateY(-1px);
+  }
+
+  .ink-btn:active { transform: translateY(0); }
 
   .ink-ghost {
     background: transparent;
     color: hsl(var(--type-hi));
-    border: 1px solid hsl(var(--rule));
-    transition: border-color 180ms ease, color 180ms ease, transform 120ms ease;
+    border: 1px solid hsl(var(--rule-hard));
+    border-radius: var(--radius-control);
+    transition: border-color 300ms var(--ease-soft),
+                color 300ms var(--ease-soft),
+                background-color 300ms var(--ease-soft),
+                transform 300ms var(--ease-soft);
   }
 
-  .ink-ghost:hover { border-color: hsl(var(--ink)); color: hsl(var(--ink)); }
-  .ink-ghost:active { transform: translateY(1px); }
+  .ink-ghost:hover {
+    border-color: hsl(var(--ink) / 0.6);
+    color: hsl(var(--ink));
+    background: hsl(var(--ink) / 0.06);
+    transform: translateY(-1px);
+  }
 
-  /* The one circle on the site. */
+  .ink-ghost:active { transform: translateY(0); }
+
+  /* The one circle on the site.
+     Reveal is CSS rather than a motion value: Framer writes `transform`
+     inline, which would fight any Tailwind scale utility on the same element.
+     The overshoot curve gives it the spring without the conflict. */
   .play-dot {
     border-radius: 9999px;
     background: hsl(var(--ink));
     color: hsl(var(--paper));
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), background-color 160ms ease;
+    box-shadow: var(--shadow-ink);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 320ms var(--ease-soft),
+                transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 260ms var(--ease-soft);
   }
 
-  .play-dot:hover { background: hsl(var(--ink-lift)); transform: scale(1.06); }
-  .play-dot:active { transform: scale(0.96); }
+  .group:hover .play-dot,
+  .group:focus-within .play-dot,
+  .play-dot[data-live="true"] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .play-dot:hover { background: hsl(var(--ink-lift)); transform: scale(1.09); }
+  .play-dot:active { transform: scale(0.95); }
+
+  /* Touch devices have no hover to reveal it with. */
+  @media (hover: none) {
+    .play-dot { opacity: 1; transform: scale(1); }
+  }
+
+  /* ==========================================================================
+     THE DISC
+     On play, the player's cover becomes a CD: it rounds off, the spindle hub
+     opens in the middle, grooves appear and it starts turning.
+
+     The sheen is a real CD's rainbow reduced to this site's one ink. A
+     spectrum here would be the only place on the page carrying a second hue,
+     which breaks the colour lock for the sake of literalism.
+
+     Note which layers spin and which do not. The art and the grooves belong to
+     the disc and turn with it. The sheen is a reflection of the room's light,
+     so it stays put while the disc rotates underneath it. Spinning the
+     highlight is the usual mistake and it instantly reads as a sticker.
+     ========================================================================== */
+
+  .cd {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-control);
+    background: hsl(var(--paper-sunk));
+    transition: border-radius 700ms var(--ease-soft);
+  }
+
+  .cd[data-spinning="true"] {
+    border-radius: 9999px;
+  }
+
+  .cd-spin {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .cd[data-spinning="true"] .cd-spin {
+    animation: spin-slow 3.4s linear infinite;
+  }
+
+  .cd-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cd-grooves,
+  .cd-sheen,
+  .cd-hub {
+    opacity: 0;
+    transition: opacity 600ms var(--ease-soft), transform 700ms var(--ease-soft);
+    pointer-events: none;
+  }
+
+  .cd[data-spinning="true"] .cd-grooves,
+  .cd[data-spinning="true"] .cd-sheen,
+  .cd[data-spinning="true"] .cd-hub {
+    opacity: 1;
+  }
+
+  .cd-grooves {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: repeating-radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.05) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  .cd-sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    mix-blend-mode: screen;
+    background: conic-gradient(
+      from 205deg,
+      transparent 0deg,
+      hsl(var(--ink) / 0.34) 38deg,
+      transparent 88deg,
+      transparent 172deg,
+      hsl(var(--ink) / 0.22) 214deg,
+      transparent 262deg
+    );
+  }
+
+  .cd-hub {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 34%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    transform: translate(-50%, -50%) scale(0.4);
+    background: hsl(var(--paper-raised));
+    box-shadow: 0 0 0 1px hsl(var(--rule) / 0.9);
+  }
+
+  .cd[data-spinning="true"] .cd-hub {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* The spindle hole itself. */
+  .cd-hub::after {
+    content: "";
+    position: absolute;
+    inset: 30%;
+    border-radius: 9999px;
+    background: hsl(var(--paper));
+    box-shadow: inset 0 0 0 1px hsl(var(--rule));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cd[data-spinning="true"] .cd-spin { animation: none; }
+  }
 
   /* ==========================================================================
      SCROLLBAR
      ========================================================================== */
 
   .custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: hsl(var(--paper-sunk)); }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--ink-deep));
-    border: 3px solid hsl(var(--paper-sunk));
+    border-radius: 9999px;
+    border: 3px solid hsl(var(--paper));
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(var(--ink-dim)); }
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+  /* Rails are draggable on pointer devices. While a drag is running, snapping
+     and smooth scrolling both have to stand down or the rail fights the hand. */
+  .drag-scroll { cursor: grab; }
+  .drag-scroll[data-dragging="true"] {
+    cursor: grabbing;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+
   /* ==========================================================================
      LEGACY ALIASES
      -----------------------------------------------------------------------
-     Pages not yet touched by the redesign (admin panel, TrackDetail,
-     PostCard, AudioPlayer, About) still reference the old Aero class names.
-     These map them onto the duotone system so nothing renders unstyled.
+     Pages not yet touched by the redesign (admin panel, PostCard, About)
+     still reference the old Aero class names. These map them onto the duotone
+     system so nothing renders unstyled.
 
      TECHNICAL DEBT, ON PURPOSE. Delete each alias as its consumers get
      rewritten. Do not add new usages.
@@ -307,17 +515,24 @@
   .aero-card {
     background: hsl(var(--paper-raised));
     border: 1px solid hsl(var(--rule));
-    transition: border-color 200ms ease;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    transition: border-color 400ms var(--ease-soft), box-shadow 400ms var(--ease-soft);
   }
 
-  .aero-card:hover { border-color: hsl(var(--ink) / 0.45); }
+  .aero-card:hover {
+    border-color: hsl(var(--ink) / 0.35);
+    box-shadow: var(--shadow-lift), var(--shadow-ink);
+  }
 
   .aero-btn {
     background: hsl(var(--ink));
     color: hsl(var(--paper));
     font-weight: 600;
     border: 1px solid hsl(var(--ink));
-    transition: background-color 180ms ease;
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-ink);
+    transition: background-color 300ms var(--ease-soft);
   }
 
   .aero-btn:hover { background: hsl(var(--ink-lift)); }
@@ -330,5 +545,6 @@
 
   .glow-sky, .glow-green, .glow-violet,
   .text-glow-sky, .text-glow-green,
-  .bubble, .tilt-3d, .dither-overlay, .grain { /* retired */ }
+  .bubble, .tilt-3d, .dither-overlay, .grain,
+  .halftone, .halftone-fade { /* retired */ }
 }

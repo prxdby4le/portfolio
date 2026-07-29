@@ -1,5 +1,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import Navbar from "@/components/Layout/Navbar";
+import Footer from "@/components/Layout/Footer";
 
 const NotFound = () => {
   const location = useLocation();
@@ -9,24 +11,36 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background">
-      <div className="text-center relative z-10">
-        <h1 className="mb-4 text-6xl sm:text-8xl font-bold text-gradient-sky">
-          404
+    <div className="flex min-h-[100dvh] flex-col bg-background pt-20">
+      <Navbar activeTab="beats" onTabChange={() => {}} />
+
+      <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-6 py-20">
+        <p className="font-mono-data text-xs uppercase tracking-[0.18em] text-ink">
+          Erro 404
+        </p>
+
+        <h1 className="masthead font-display mt-5 text-[clamp(2.75rem,9vw,6rem)] font-bold text-foreground">
+          Essa página
+          <br />
+          não existe
         </h1>
-        <p className="mb-4 text-xl text-aero-sky font-semibold">
-          Oops! Página não encontrada
+
+        <p className="mt-7 max-w-[46ch] text-base leading-relaxed text-muted-foreground">
+          O endereço <span className="font-mono-data text-ink">{location.pathname}</span> não
+          leva a lugar nenhum. Pode ter sido removido ou o link veio quebrado.
         </p>
-        <p className="mb-6 text-muted-foreground font-medium">
-          Essa página não existe
-        </p>
-        <Link 
-          to="/" 
-          className="aero-btn inline-block px-6 py-3 rounded-xl font-semibold text-white no-underline"
-        >
-          Voltar para Home
-        </Link>
-      </div>
+
+        <div className="mt-10 flex flex-wrap gap-3">
+          <Link to="/" className="ink-btn inline-flex h-12 items-center px-6 text-sm">
+            Ver o catálogo
+          </Link>
+          <Link to="/sobre" className="ink-ghost inline-flex h-12 items-center px-6 text-sm font-medium">
+            Sobre
+          </Link>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

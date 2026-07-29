@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getErrorMessage } from "@/lib/errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -69,11 +70,11 @@ export default function SiteSettingsManager() {
       toast({ title: "Configurações do site salvas!" });
       queryClient.invalidateQueries({ queryKey: ["site-settings"] });
       queryClient.invalidateQueries({ queryKey: ["admin-site-settings"] });
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao salvar configurações",
-        description: error.message || "Rode a migração supabase_migration_site_settings.sql no Supabase.",
+        description: getErrorMessage(error, "Rode a migração supabase_migration_site_settings.sql no Supabase."),
         variant: "destructive",
       });
     } finally {

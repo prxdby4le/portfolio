@@ -17,7 +17,10 @@ export default function Navbar({ activeTab = 'beats', onTabChange }: NavbarProps
 
   const tabClass = (active: boolean) =>
     cn(
-      "relative h-10 px-1 text-sm font-medium tracking-tight transition-colors",
+      // inline-flex matters: "Sobre" is an <a>, which is inline by default, so
+      // height and vertical centring are ignored on it and it sits higher than
+      // the two <button> tabs beside it.
+      "relative inline-flex h-10 items-center px-1 text-sm font-medium tracking-tight transition-colors",
       "after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:transition-colors",
       active
         ? "text-ink after:bg-ink"

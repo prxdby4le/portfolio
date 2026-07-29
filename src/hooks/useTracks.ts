@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Track, Playlists } from "@/types/data";
+import type { TrackRow } from "@/types/db";
 
 export interface TracksData {
   playlists: Playlists;
@@ -20,7 +21,7 @@ export function useTracks() {
         throw new Error(error.message);
       }
 
-      const allTracks: Track[] = data.map((row: any) => ({
+      const allTracks: Track[] = (data as TrackRow[]).map((row) => ({
         id: row.id,
         title: row.title,
         genre: row.genre,
@@ -29,7 +30,7 @@ export function useTracks() {
         cover: row.cover_url,
         src: row.audio_url,
         tags: row.tags || [],
-        duration: "3:00", // Would be calculated with an audio context if needed
+        duration_seconds: row.duration_seconds ?? undefined,
         description: row.description || undefined,
         timeline_image: row.timeline_image_url || undefined,
         created_at: row.created_at,

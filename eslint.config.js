@@ -23,4 +23,19 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // Vendored shadcn/ui primitives. Several of them export a cva variants
+    // object or a hook alongside the component, which is simply how the
+    // generator emits them. Splitting those files by hand would be undone the
+    // next time any component is re-added with `npx shadcn add`, so the rule is
+    // switched off here rather than fought file by file.
+    //
+    // This exemption covers generated primitives only. Application code keeps
+    // the rule: see contexts/player-context.ts and hooks/usePlayer.ts, which
+    // were split out of PlayerContext.tsx for exactly this reason.
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getErrorMessage } from "@/lib/errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -46,11 +47,11 @@ export default function PostsManager() {
       toast({ title: "Post excluído com sucesso!" });
       refetchPosts();
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao excluir post",
-        description: error.message || "Ocorreu um erro.",
+        description: getErrorMessage(error, "Ocorreu um erro."),
         variant: "destructive",
       });
     }
@@ -146,11 +147,11 @@ export default function PostsManager() {
       refetchPosts();
       queryClient.invalidateQueries({ queryKey: ["posts"] });
 
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao salvar post",
-        description: error.message || "Ocorreu um erro desconhecido.",
+        description: getErrorMessage(error, "Ocorreu um erro desconhecido."),
         variant: "destructive",
       });
     } finally {

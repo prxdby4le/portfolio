@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
-import { cn } from "@/lib/utils";
+import DuotonePlate from "@/components/Duotone/DuotonePlate";
+import Tilt3D from "@/components/Duotone/Tilt3D";
 
 interface FeaturedTrackProps {
   track: Track;
@@ -34,23 +35,19 @@ export default function FeaturedTrack({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative mb-14 border border-border bg-paper-raised"
+      className="group plate relative mb-20 overflow-hidden"
     >
-      <div className="halftone halftone-fade pointer-events-none absolute inset-0 opacity-25" />
-
-      <div className="relative grid gap-8 p-6 sm:p-8 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-10 lg:p-10">
-        <div
-          className="relative aspect-square cursor-pointer overflow-hidden border border-border bg-paper-sunk"
-          onClick={() => navigate(`/track/${track.id}`)}
-        >
+      <div className="relative grid gap-10 p-7 sm:p-9 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-12 lg:p-12">
+        <div className="cursor-pointer" onClick={() => navigate(`/track/${track.id}`)}>
           {track.cover && (
-            <img
-              src={track.cover}
-              alt={`Capa de ${track.title}`}
-              loading="lazy"
-              data-live={isActive ? "true" : "false"}
-              className="dither-soft dither-release h-full w-full object-cover"
-            />
+            <Tilt3D max={8} lift={48}>
+              <DuotonePlate
+                src={track.cover}
+                alt={`Capa de ${track.title}`}
+                live={isActive}
+                className="aspect-square shadow-[var(--shadow-lift)]"
+              />
+            </Tilt3D>
           )}
         </div>
 
@@ -78,11 +75,14 @@ export default function FeaturedTrack({
             </p>
           )}
 
-          <div className="mt-7">
-            <button
+          <div className="mt-8">
+            <motion.button
               type="button"
               onClick={onPlay}
-              className={cn("ink-btn inline-flex h-11 items-center gap-2.5 px-5 text-sm")}
+              whileHover={reduce ? undefined : { y: -2 }}
+              whileTap={reduce ? undefined : { y: 0, scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 320, damping: 24 }}
+              className="ink-btn inline-flex h-12 items-center gap-2.5 px-6 text-sm"
             >
               {live ? (
                 <Pause className="h-4 w-4" strokeWidth={1.75} />
@@ -90,7 +90,7 @@ export default function FeaturedTrack({
                 <Play className="h-4 w-4" strokeWidth={1.75} />
               )}
               {live ? "Pausar" : "Ouvir agora"}
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

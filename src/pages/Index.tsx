@@ -3,7 +3,8 @@ import Navbar from "@/components/Layout/Navbar";
 import Hero from "@/components/Hero/Hero";
 import BeatsGrid from "@/components/Beats/BeatsGrid";
 import PostsList from "@/components/Posts/PostsList";
-import { usePlayer } from "@/contexts/PlayerContext";
+import Footer from "@/components/Layout/Footer";
+import { usePlayer } from "@/hooks/usePlayer";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'beats' | 'posts'>('beats');
@@ -15,7 +16,8 @@ const Index = () => {
 
       <Hero />
 
-      <main id="catalogo" className={currentTrack ? "pb-28" : "pb-16"}>
+      {/* No bottom padding for the player here: the footer owns that clearance. */}
+      <main id="catalogo">
         {activeTab === 'beats' ? (
           <BeatsGrid
             onPlayTrack={handlePlayTrack}
@@ -27,6 +29,8 @@ const Index = () => {
           <PostsList />
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };

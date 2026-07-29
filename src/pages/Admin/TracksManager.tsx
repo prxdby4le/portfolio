@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { getErrorMessage } from "@/lib/errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Upload, Music, Image as ImageIcon, Loader2, Trash2, Pencil, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { readAudioDuration } from "@/lib/audioMeta";
+import type { TrackRow } from "@/types/db";
 
 const GENRES = [
   "Boombap",
@@ -73,11 +76,11 @@ export default function TracksManager() {
       refetchTracks();
       // Invalidate the public tracks query to update the main page
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao excluir track",
-        description: error.message || "Ocorreu um erro.",
+        description: getErrorMessage(error, "Ocorreu um erro."),
         variant: "destructive",
       });
     }
@@ -96,7 +99,7 @@ export default function TracksManager() {
     }
   };
 
-  const handleEdit = (track: any) => {
+  const handleEdit = (track: TrackRow) => {
     setEditingId(track.id);
     setTitle(track.title);
     setGenre(track.genre);
@@ -204,7 +207,12 @@ export default function TracksManager() {
         timelineUrl = supabase.storage.from("timelines").getPublicUrl(timelineFileName).data.publicUrl;
       }
 
-      const trackData = {
+      // Real length, read off the file itself. The site used to print a
+      // hardcoded "3:00" under every track; now an unknown duration is just
+      // left out instead of invented.
+      const durationSeconds = audioFile ? await readAudioDuration(audioFile) : null;
+
+      const trackData: Record<string, unknown> = {
         title,
         genre,
         bpm: parseInt(bpm, 10),
@@ -216,21 +224,43 @@ export default function TracksManager() {
         timeline_image_url: timelineUrl,
       };
 
-      if (editingId) {
-        const { error: dbError } = await supabase.from("tracks").update(trackData).eq("id", editingId);
-        if (dbError) throw dbError;
-        toast({
-          title: "Sucesso!",
-          description: "Música atualizada com sucesso.",
-        });
-      } else {
-        const { error: dbError } = await supabase.from("tracks").insert([trackData]);
-        if (dbError) throw dbError;
-        toast({
-          title: "Sucesso!",
-          description: "Música adicionada com sucesso ao portfólio.",
-        });
+      if (durationSeconds !== null) {
+        trackData.duration_seconds = Math.round(durationSeconds);
       }
+
+      /**
+       * `duration_seconds` arrives with supabase_migration_duration.sql. If
+       * that migration has not been run yet, PostgREST rejects the whole write
+       * for the unknown column. Rather than block every upload on a pending
+       * migration, drop the field and save the rest, then say so.
+       */
+      const save = async (payload: Record<string, unknown>) =>
+        editingId
+          ? supabase.from("tracks").update(payload).eq("id", editingId)
+          : supabase.from("tracks").insert([payload]);
+
+      let { error: dbError } = await save(trackData);
+
+      if (dbError && /duration_seconds/.test(dbError.message ?? "")) {
+        const { duration_seconds: _omitted, ...withoutDuration } = trackData;
+        ({ error: dbError } = await save(withoutDuration));
+        if (!dbError) {
+          toast({
+            title: "Duração não salva",
+            description:
+              "Rode supabase_migration_duration.sql para guardar a duração das faixas.",
+          });
+        }
+      }
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Sucesso!",
+        description: editingId
+          ? "Música atualizada com sucesso."
+          : "Música adicionada com sucesso ao portfólio.",
+      });
 
       // Reset form
       cancelEdit();
@@ -238,11 +268,11 @@ export default function TracksManager() {
       refetchTracks();
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
 
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       toast({
         title: "Erro ao fazer upload",
-        description: error.message || "Ocorreu um erro desconhecido.",
+        description: getErrorMessage(error, "Ocorreu um erro desconhecido."),
         variant: "destructive",
       });
     } finally {

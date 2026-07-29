@@ -13,7 +13,7 @@ export default function SpotifyPlaylistSection() {
       className="mb-8 sm:mb-12"
     >
       {/* Same header shape as GenreSection: ink rule, name, one line of body. */}
-      <div className="mb-6 flex items-end justify-between gap-6 border-t border-ink/30 pt-4">
+      <div className="mb-8 flex items-end justify-between gap-6 border-t border-ink/20 pt-5">
         <div className="min-w-0">
           <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Trabalhos Publicados
@@ -34,7 +34,7 @@ export default function SpotifyPlaylistSection() {
         </a>
       </div>
 
-      <div className="overflow-hidden border border-border">
+      <div className="overflow-hidden rounded-lg border border-border shadow-[var(--shadow-soft)]">
         <iframe
           src={embedUrl}
           width="100%"

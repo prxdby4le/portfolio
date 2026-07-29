@@ -1,26 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { useRef, useState, ReactNode } from "react";
 import { Track } from "@/types/data";
+import { PlayerContext } from "./player-context";
 
-interface PlayerContextType {
-  currentTrack: Track | null;
-  isPlaying: boolean;
-  queue: Track[];
-  currentIndex: number;
-  handlePlayTrack: (track: Track) => void;
-  handlePlayAllGenre: (tracks: Track[]) => void;
-  handlePlayPause: () => void;
-  handleNext: () => void;
-  handlePrevious: () => void;
-  isRepeat: boolean;
-  isShuffle: boolean;
-  toggleRepeat: () => void;
-  toggleShuffle: () => void;
-  handleTrackEnd: () => void;
-}
-
-const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
-
+/**
+ * This file exports the provider and nothing else, so React Fast Refresh can
+ * hot-swap it without tearing down playback. The context object lives in
+ * `player-context.ts` and the consumer hook in `hooks/usePlayer.ts`.
+ */
 export function PlayerProvider({ children }: { children: ReactNode }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [queue, setQueue] = useState<Track[]>([]);
@@ -30,6 +18,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const toggleRepeat = () => setIsRepeat(!isRepeat);
   const toggleShuffle = () => setIsShuffle(!isShuffle);
+
+  const seek = (seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio || !Number.isFinite(seconds)) return;
+    const limit = Number.isFinite(audio.duration) ? audio.duration : seconds;
+    audio.currentTime = Math.max(0, Math.min(seconds, limit));
+  };
 
   const handlePlayTrack = (track: Track) => {
     if (currentTrack?.id === track.id) {
@@ -113,6 +108,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   return (
     <PlayerContext.Provider
       value={{
+        audioRef,
+        seek,
         currentTrack,
         isPlaying,
         queue,
@@ -132,12 +129,4 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       {children}
     </PlayerContext.Provider>
   );
-}
-
-export function usePlayer() {
-  const context = useContext(PlayerContext);
-  if (context === undefined) {
-    throw new Error("usePlayer must be used within a PlayerProvider");
-  }
-  return context;
 }

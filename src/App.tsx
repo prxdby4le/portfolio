@@ -11,9 +11,10 @@ import Dashboard from "./pages/Admin/Dashboard";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import TrackDetail from "./pages/TrackDetail";
 import PostDetail from "./pages/PostDetail";
-import { PlayerProvider, usePlayer } from "./contexts/PlayerContext";
+import { PlayerProvider } from "./contexts/PlayerContext";
 import AudioPlayer from "./components/Player/AudioPlayer";
 import DitherDefs from "./components/Duotone/DitherDefs";
+import RouteSweep from "./components/Layout/RouteSweep";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
       <Sonner />
       <PlayerProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <RouteSweep />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/sobre" element={<About />} />

@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
 
 export default {
   darkMode: ["class"],
@@ -14,9 +16,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Space Grotesk Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
-        display: ["'Space Grotesk Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
-        mono: ["'JetBrains Mono Variable'", "ui-monospace", "SFMono-Regular", "monospace"],
+        sans: ["'Outfit Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
+        display: ["'Outfit Variable'", "'Segoe UI'", "system-ui", "sans-serif"],
+        mono: ["'Geist Mono Variable'", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
         /* ---------------------------------------------------------------
@@ -106,10 +108,13 @@ export default {
           teal: "hsl(var(--ink-dim))",
         },
       },
+      /* One documented shape rule for the whole site:
+         lg = surfaces and plates, md = controls and inputs, sm = small chips.
+         The play affordance is the only `rounded-full` on the page. */
       borderRadius: {
         lg: "var(--radius)",
-        md: "var(--radius)",
-        sm: "var(--radius)",
+        md: "var(--radius-control)",
+        sm: "0.375rem",
       },
       keyframes: {
         "accordion-down": {
@@ -158,8 +163,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography")
-  ],
+  plugins: [tailwindcssAnimate, typography],
 } satisfies Config;

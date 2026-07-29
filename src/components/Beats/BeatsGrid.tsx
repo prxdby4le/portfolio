@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { Track, Playlists } from "@/types/data";
 import GenreSection from "./GenreSection";
+import GenreIndex, { GenreIndexEntry } from "./GenreIndex";
 import SpotifyPlaylistSection from "./SpotifyPlaylistSection";
 import FeaturedTrack from "./FeaturedTrack";
 import { useTracks } from "@/hooks/useTracks";
@@ -23,10 +24,10 @@ const RECENT_UPLOADS_LIMIT = 10;
 function PlateSkeleton() {
   return (
     <div aria-hidden="true">
-      <div className="aspect-square animate-soft-pulse border border-border bg-paper-raised" />
-      <div className="mt-2.5 border-t border-border pt-2.5">
-        <div className="h-3.5 w-3/4 animate-soft-pulse bg-paper-raised" />
-        <div className="mt-2 h-2.5 w-1/2 animate-soft-pulse bg-paper-raised" />
+      <div className="aspect-square animate-soft-pulse rounded-lg bg-paper-raised" />
+      <div className="mt-4 px-0.5">
+        <div className="h-3.5 w-3/4 animate-soft-pulse rounded-sm bg-paper-raised" />
+        <div className="mt-2.5 h-2.5 w-1/2 animate-soft-pulse rounded-sm bg-paper-raised" />
       </div>
     </div>
   );
@@ -41,12 +42,17 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
 
   const query = searchQuery.trim().toLowerCase();
 
-  const matchesSearch = (track: Track) =>
-    !query ||
-    track.title.toLowerCase().includes(query) ||
-    track.tags.some(tag => tag.toLowerCase().includes(query));
+  const matchesSearch = useCallback(
+    (track: Track) =>
+      !query ||
+      track.title.toLowerCase().includes(query) ||
+      track.tags.some(tag => tag.toLowerCase().includes(query)),
+    [query]
+  );
 
-  const allTracks = data?.allTracks ?? [];
+  // Memoised because `data?.allTracks ?? []` builds a new array identity on
+  // every render, which would invalidate every useMemo below it each time.
+  const allTracks = useMemo(() => data?.allTracks ?? [], [data]);
 
   // Uploads Recentes: últimas músicas enviadas (admin pode ocultar via show_in_recent)
   const recentTracks = useMemo(() => {
@@ -100,7 +106,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
 
       return acc;
     }, {} as Playlists);
-  }, [orderedGenres, data, query]);
+  }, [orderedGenres, data, query, matchesSearch]);
 
   const filteredRecent = recentTracks.filter(matchesSearch);
   const filteredFavorites = favoriteTracks.filter(matchesSearch);
@@ -144,6 +150,29 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
     filteredRecent.length > 0 ||
     Object.values(filteredPlaylists).some(p => p.tracks.length > 0);
 
+  // Only genres that actually have something in them get an entry.
+  const indexEntries: GenreIndexEntry[] = useMemo(() => {
+    const entries: GenreIndexEntry[] = [];
+    if (settings.show_favorites && favoriteTracks.length > 0) {
+      entries.push({ label: "Favoritos", count: favoriteTracks.length });
+    }
+    if (settings.show_recent && recentTracks.length > 0) {
+      entries.push({ label: "Uploads Recentes", count: recentTracks.length });
+    }
+    orderedGenres.forEach(genre => {
+      const count = data?.playlists?.[genre]?.tracks.length ?? 0;
+      if (count > 0) entries.push({ label: genre, count });
+    });
+    return entries;
+  }, [
+    settings.show_favorites,
+    settings.show_recent,
+    favoriteTracks.length,
+    recentTracks.length,
+    orderedGenres,
+    data,
+  ]);
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 sm:py-14">
       {/* ------------------------------------------------------------ search */}
@@ -176,13 +205,13 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
 
       {/* ----------------------------------------------------------- content */}
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {Array.from({ length: 10 }).map((_, i) => (
             <PlateSkeleton key={i} />
           ))}
         </div>
       ) : error ? (
-        <div className="border border-destructive/40 bg-paper-raised px-6 py-10">
+        <div className="plate border-destructive/40 px-6 py-12">
           <p className="text-sm font-medium text-foreground">
             Não foi possível carregar as faixas.
           </p>
@@ -191,7 +220,7 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
           </p>
         </div>
       ) : query && !hasAnyResult ? (
-        <div className="border border-dashed border-border bg-paper-sunk px-6 py-16 text-center">
+        <div className="plate-flush border-dashed px-6 py-20 text-center">
           <p className="text-sm font-medium text-foreground">
             Nenhuma faixa para "{searchQuery.trim()}".
           </p>
@@ -216,6 +245,10 @@ export default function BeatsGrid({ onPlayTrack, onPlayAllGenre, currentTrack, i
           )}
 
           {settings.show_spotify && <SpotifyPlaylistSection />}
+
+          <div className="mb-20">
+            <GenreIndex entries={indexEntries} />
+          </div>
 
           {orderedSpecialSections}
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Navbar from "@/components/Layout/Navbar";
+import Footer from "@/components/Layout/Footer";
 import { PostCarousel } from "@/components/Posts/PostCarousel";
 
 export default function PostDetail() {
@@ -49,29 +50,34 @@ export default function PostDetail() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-background pb-32 pt-20">
+    <div className="min-h-[100dvh] bg-background pt-20">
       <Navbar activeTab="posts" />
 
       <div className="container mx-auto px-4 py-8 relative z-10 max-w-4xl">
-        <Button
-          variant="ghost"
+        <button
+          type="button"
           onClick={() => navigate(-1)}
-          className="mb-6 hover:bg-primary/10 glass"
+          className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-ink"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
           Voltar
-        </Button>
+        </button>
 
-        <article className="aero-card p-6 md:p-10 glass-heavy">
-          <header className="mb-8 border-b border-white/20 pb-6">
-            <h1 className="text-3xl md:text-5xl font-display font-bold text-gradient-sky mb-4">{post.title}</h1>
-            <p className="text-aero-sky/80 font-medium flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-aero-sky"></span>
-              {new Date(post.created_at).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              })}
+        <article>
+          {/* Title in foreground, date as quiet metadata. Ink is reserved for
+              things you act on, the same rule the rest of the site follows. */}
+          <header className="mb-10 border-b border-border pb-7">
+            <h1 className="font-display text-3xl font-bold leading-[1.08] tracking-tight text-foreground md:text-5xl">
+              {post.title}
+            </h1>
+            <p className="font-mono-data mt-4 text-[11px] uppercase tracking-wider text-muted-foreground">
+              <time dateTime={post.created_at}>
+                {new Date(post.created_at).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </time>
             </p>
           </header>
 
@@ -81,11 +87,21 @@ export default function PostDetail() {
             </div>
           )}
 
-          <div className="prose prose-invert md:prose-lg prose-p:text-foreground/90 prose-headings:text-gradient-sky max-w-none leading-relaxed">
+          <div
+            className="prose prose-invert md:prose-lg max-w-none leading-relaxed
+                       prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
+                       prose-p:text-muted-foreground prose-li:text-muted-foreground
+                       prose-strong:text-foreground
+                       prose-a:text-ink prose-a:no-underline hover:prose-a:underline
+                       prose-code:text-ink prose-hr:border-border
+                       prose-blockquote:border-l-ink prose-blockquote:text-muted-foreground"
+          >
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>
         </article>
       </div>
+
+      <Footer />
     </div>
   );
 }
