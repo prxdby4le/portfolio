@@ -46,7 +46,7 @@ export default function Navbar({ activeTab = 'beats', onTabChange }: NavbarProps
               className="h-7 w-7 transition-opacity group-hover:opacity-80"
             />
             <span className="font-display text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-ink">
-              prxdby4le
+              alethia
             </span>
           </Link>
 

@@ -53,7 +53,7 @@ export default function About() {
         <motion.div {...enter(0)} className="group">
           <DuotonePlate
             src="/cover.jpg"
-            alt="Foto de capa de prxdby4le"
+            alt="Foto de capa de alethia"
             priority
             className="h-40 w-full shadow-[var(--shadow-lift)] sm:h-56 lg:h-72"
           />
@@ -66,7 +66,7 @@ export default function About() {
               {...enter(0.06)}
               className="masthead font-display text-[clamp(2.75rem,8vw,5.5rem)] font-bold text-foreground"
             >
-              prxdby4le
+              alethia
             </motion.h1>
 
             <motion.p
@@ -104,7 +104,7 @@ export default function About() {
             <Tilt3D max={8} lift={44}>
               <DuotonePlate
                 src="/profile.jpg"
-                alt="Foto de perfil de prxdby4le"
+                alt="Foto de perfil de alethia"
                 priority
                 className="aspect-square shadow-[var(--shadow-lift)]"
               />

@@ -1,6 +1,6 @@
-# prxdby4le Portfolio
+# alethia Portfolio
 
-Um site de portfólio moderno e interativo desenvolvido para o artista **prxdby4le**.
+Um site de portfólio moderno e interativo desenvolvido para o artista **alethia**.
 
 ## Tecnologias Utilizadas
 

@@ -43,7 +43,7 @@ export default function Login() {
             <Lock className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-display font-bold text-gradient-sky text-center">
-            prxdby4le Admin
+            alethia Admin
           </h1>
           <p className="text-muted-foreground text-sm mt-2 text-center font-medium">
             Área restrita para envio de músicas.

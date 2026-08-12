@@ -97,13 +97,13 @@ export default function Footer() {
         {/* Closing plate. Oversized, clipped, ink on paper. */}
         <div className="relative mt-16 select-none" aria-hidden="true">
           <p className="masthead whitespace-nowrap font-display text-[clamp(4rem,17vw,13rem)] font-bold leading-[0.8] text-ink-deep">
-            prxdby4le
+            alethia
           </p>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border py-6">
           <p className="font-mono-data text-[11px] uppercase tracking-wider text-muted-foreground">
-            {year} prxdby4le
+            {year} alethia
           </p>
           <p className="font-mono-data text-[11px] uppercase tracking-wider text-muted-foreground">
             Todos os direitos reservados
