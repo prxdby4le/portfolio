@@ -4,8 +4,8 @@
  * worse than no link at all.
  */
 export const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://www.instagram.com/prxdby4le/" },
-  { label: "Twitter", href: "https://x.com/prxdby4le" },
+  { label: "Instagram", href: "https://www.instagram.com/alethiasongs/" },
+  { label: "Twitter", href: "https://x.com/alethiasongs" },
   { label: "Discord", href: "https://discord.gg/prJAME5pwx" },
 ] as const;
 
