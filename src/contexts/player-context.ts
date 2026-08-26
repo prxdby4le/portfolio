@@ -21,6 +21,20 @@ export interface PlayerContextType {
    * directly and draw to a canvas instead.
    */
   audioRef: React.RefObject<HTMLAudioElement>;
+  /**
+   * The one AnalyserNode tapping the element above, owned by the provider.
+   *
+   * `createMediaElementSource` may be called once per element for the life of
+   * the page, so this cannot be a hook each visualiser calls for itself: the
+   * second call would throw and return nothing. Everything that draws the
+   * audio — the player's waveform, the halo behind whichever cover is playing
+   * — reads this same node.
+   *
+   * Null until the first play (an AudioContext needs a user gesture) and null
+   * forever where Web Audio is unavailable. Callers render nothing in that
+   * case rather than faking a signal.
+   */
+  analyser: AnalyserNode | null;
   seek: (seconds: number) => void;
   currentTrack: Track | null;
   isPlaying: boolean;

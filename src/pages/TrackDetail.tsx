@@ -13,6 +13,7 @@ import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
 import DuotonePlate from "@/components/Duotone/DuotonePlate";
 import Tilt3D from "@/components/Duotone/Tilt3D";
+import TrackPlate from "@/components/Player/TrackPlate";
 import TrackWaveform from "@/components/Player/TrackWaveform";
 import { formatDuration } from "@/lib/format";
 
@@ -160,15 +161,13 @@ export default function TrackDetail() {
         <div className="grid gap-12 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-16">
           {/* ------------------------------------------------------- plate */}
           <motion.div {...enter(0)} className="group">
-            <Tilt3D max={8} lift={48}>
-              <DuotonePlate
-                src={track.cover}
-                alt={`Capa de ${track.title}`}
-                live={isCurrent}
-                priority
-                className="aspect-square shadow-[var(--shadow-lift)]"
-              />
-            </Tilt3D>
+            <TrackPlate
+              track={track}
+              tiltMax={8}
+              tiltLift={48}
+              priority
+              className="aspect-square shadow-[var(--shadow-lift)]"
+            />
           </motion.div>
 
           {/* -------------------------------------------------------- meta */}

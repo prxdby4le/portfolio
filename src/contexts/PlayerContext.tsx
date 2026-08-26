@@ -1,5 +1,6 @@
 import { useRef, useState, ReactNode } from "react";
 import { Track } from "@/types/data";
+import { useAudioAnalyser } from "@/hooks/useAudioAnalyser";
 import { PlayerContext } from "./player-context";
 
 /**
@@ -15,6 +16,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
+
+  // Tapped here rather than inside AudioPlayer because the element can only be
+  // routed once, and several views draw the same signal. The <audio> itself is
+  // rendered by AudioPlayer, a descendant, which has mounted by the time this
+  // hook's effect runs.
+  const analyser = useAudioAnalyser(audioRef, isPlaying);
 
   const toggleRepeat = () => setIsRepeat(!isRepeat);
   const toggleShuffle = () => setIsShuffle(!isShuffle);
@@ -109,6 +116,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     <PlayerContext.Provider
       value={{
         audioRef,
+        analyser,
         seek,
         currentTrack,
         isPlaying,

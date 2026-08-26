@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Routes the player's <audio> element through a Web Audio AnalyserNode so the
- * waveform can draw the track that is actually playing.
+ * visualisers can draw the track that is actually playing.
+ *
+ * Called exactly once, by PlayerProvider, which hands the node to everything
+ * that draws it through context. Do not call it from a view: see constraint 1.
  *
  * Three constraints shape this:
  *
  * 1. `createMediaElementSource` may be called ONCE per element, ever. Call it
- *    twice and the second call throws and the audio goes silent. Hence the
- *    module-level guard in `graph`, which is never rebuilt.
+ *    twice and the second call throws and the audio goes silent. `graph` holds
+ *    the one graph and is never rebuilt; since the provider is a single
+ *    instance for the life of the app, that ref is effectively a singleton.
  * 2. Once routed, the element's output only reaches the speakers through the
  *    graph, so the analyser must always stay connected to `destination`.
  * 3. An AudioContext created before a user gesture starts suspended. This runs

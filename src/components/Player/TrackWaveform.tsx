@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
+import { readInk } from "@/lib/ink";
 import { cn } from "@/lib/utils";
 
 interface TrackWaveformProps {
@@ -14,16 +15,6 @@ interface TrackWaveformProps {
 
 const BAR = 3;
 const GAP = 2;
-
-function readInk() {
-  const styles = getComputedStyle(document.documentElement);
-  const get = (name: string) => styles.getPropertyValue(name).trim();
-  return {
-    played: `hsl(${get("--ink")})`,
-    ahead: `hsl(${get("--ink-deep")})`,
-    hover: `hsl(${get("--ink-dim")})`,
-  };
-}
 
 /**
  * The whole track, drawn as a peak envelope you can click into.
@@ -78,9 +69,9 @@ export default function TrackWaveform({
       const peak = peaks[Math.floor((i / count) * peaks.length)] ?? 0;
       const barH = Math.max(barW, peak * h * 0.92);
 
-      if (x < playedTo) ctx.fillStyle = ink.played;
-      else if (hoverTo !== null && x < hoverTo) ctx.fillStyle = ink.hover;
-      else ctx.fillStyle = ink.ahead;
+      if (x < playedTo) ctx.fillStyle = ink.ink;
+      else if (hoverTo !== null && x < hoverTo) ctx.fillStyle = ink.dim;
+      else ctx.fillStyle = ink.deep;
 
       const radius = barW / 2;
       ctx.beginPath();

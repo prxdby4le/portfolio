@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Track } from "@/types/data";
-import DuotonePlate from "@/components/Duotone/DuotonePlate";
-import Tilt3D from "@/components/Duotone/Tilt3D";
+import TrackPlate from "@/components/Player/TrackPlate";
 
 interface FeaturedTrackProps {
   track: Track;
@@ -40,14 +39,12 @@ export default function FeaturedTrack({
       <div className="relative grid gap-10 p-7 sm:p-9 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-12 lg:p-12">
         <div className="cursor-pointer" onClick={() => navigate(`/track/${track.id}`)}>
           {track.cover && (
-            <Tilt3D max={8} lift={48}>
-              <DuotonePlate
-                src={track.cover}
-                alt={`Capa de ${track.title}`}
-                live={isActive}
-                className="aspect-square shadow-[var(--shadow-lift)]"
-              />
-            </Tilt3D>
+            <TrackPlate
+              track={track}
+              tiltMax={8}
+              tiltLift={48}
+              className="aspect-square shadow-[var(--shadow-lift)]"
+            />
           )}
         </div>
 

@@ -106,6 +106,13 @@
 
   body {
     @apply bg-background text-foreground;
+
+    /* The halo behind a playing cover hangs outside its plate on all four
+       sides, and on a narrow screen the hero's can reach the viewport edge.
+       `clip` and not `hidden`: hidden would make the body a scroll container
+       and break `position: sticky` anywhere below it. */
+    overflow-x: clip;
+
     font-family: 'Outfit Variable', 'Segoe UI', system-ui, sans-serif;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;

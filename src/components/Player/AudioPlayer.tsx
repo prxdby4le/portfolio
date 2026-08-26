@@ -15,7 +15,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 import { usePlayer } from "@/hooks/usePlayer";
-import { useAudioAnalyser } from "@/hooks/useAudioAnalyser";
 import Waveform from "./Waveform";
 import CDDisc from "./CDDisc";
 
@@ -33,14 +32,13 @@ export default function AudioPlayer() {
     toggleRepeat,
     toggleShuffle,
     audioRef,
+    analyser,
   } = usePlayer();
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const analyser = useAudioAnalyser(audioRef, isPlaying);
 
   useEffect(() => {
     const audio = audioRef.current;

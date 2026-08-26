@@ -5,8 +5,7 @@ import { Track } from "@/types/data";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { formatDuration } from "@/lib/format";
-import DuotonePlate from "@/components/Duotone/DuotonePlate";
-import Tilt3D from "@/components/Duotone/Tilt3D";
+import TrackPlate from "@/components/Player/TrackPlate";
 
 interface TrackCardProps {
   track: Track;
@@ -79,41 +78,37 @@ export default function TrackCard({ track, isPlaying, isActive, onPlay, index }:
         )}
         onClick={() => navigate(`/track/${track.id}`)}
       >
-        <Tilt3D>
         {track.cover && (
-          <DuotonePlate
-            src={track.cover}
-            alt={`Capa de ${track.title}`}
-            live={isActive}
+          <TrackPlate
+            track={track}
             className="aspect-square shadow-[var(--shadow-soft)] transition-shadow duration-500 group-hover:shadow-[var(--shadow-lift),var(--shadow-ink)]"
-          />
-        )}
+          >
+            <button
+              type="button"
+              data-live={isActive ? "true" : "false"}
+              aria-label={live ? `Pausar ${track.title}` : `Tocar ${track.title}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onPlay();
+              }}
+              className="play-dot absolute bottom-3.5 right-3.5 grid h-11 w-11 place-items-center"
+            >
+              {live ? (
+                <Pause className="h-4 w-4" strokeWidth={2} />
+              ) : (
+                <Play className="ml-0.5 h-4 w-4" strokeWidth={2} />
+              )}
+            </button>
 
-        <button
-          type="button"
-          data-live={isActive ? "true" : "false"}
-          aria-label={live ? `Pausar ${track.title}` : `Tocar ${track.title}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onPlay();
-          }}
-          className="play-dot absolute bottom-3.5 right-3.5 grid h-11 w-11 place-items-center"
-        >
-          {live ? (
-            <Pause className="h-4 w-4" strokeWidth={2} />
-          ) : (
-            <Play className="ml-0.5 h-4 w-4" strokeWidth={2} />
-          )}
-        </button>
-
-        {/* Playhead. Only while audio is actually running, so the motion means
-            something. */}
-        {live && (
-          <div className="absolute inset-x-3 bottom-3 h-[3px] overflow-hidden rounded-full bg-paper/70">
-            <div className="h-full w-1/3 animate-rule-scan rounded-full bg-ink" />
-          </div>
+            {/* Playhead. Only while audio is actually running, so the motion
+                means something. */}
+            {live && (
+              <div className="absolute inset-x-3 bottom-3 h-[3px] overflow-hidden rounded-full bg-paper/70">
+                <div className="h-full w-1/3 animate-rule-scan rounded-full bg-ink" />
+              </div>
+            )}
+          </TrackPlate>
         )}
-        </Tilt3D>
       </div>
 
       {/* ---------------------------------------------------------- caption */}
